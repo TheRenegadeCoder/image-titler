@@ -7,6 +7,14 @@ TITLE = "Hello World in Swift"
 
 
 def split_string_by_nearest_middle_space(input_string):
+    """
+    Splits a string by the nearest middle space.
+
+    :param input_string: some string
+    :type input_string: str
+    :return: a pair of strings
+    :rtype: tuple
+    """
     index = len(input_string) // 2
     curr_char = input_string[index]
     n = 1
