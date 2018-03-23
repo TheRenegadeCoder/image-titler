@@ -1,9 +1,8 @@
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
+import argparse
 
-SOURCE = 'E:\\Documents\\Work\\The Renegade Coder\\Assets\\Featured Images\\Sources\\hello-world-in-swift.jpg'
-TITLE = "A Wild World Ahead Boy"
 FONT = "BERNHC.TTF"
 TEXT_FILL = (255, 255, 255)
 RECTANGLE_FILL = (201, 2, 41)
@@ -32,7 +31,7 @@ def split_string_by_nearest_middle_space(input_string):
     curr_char = input_string[index]
     n = 1
     while not curr_char.isspace():
-        index += (-1)**(n + 1) * n  # thanks wolfram alpha (1, -2, 3, -4, ...)
+        index += (-1) ** (n + 1) * n  # thanks wolfram alpha (1, -2, 3, -4, ...)
         curr_char = input_string[index]
         n += 1
     return input_string[:index], input_string[index + 1:]
@@ -45,7 +44,6 @@ def draw_text(image, title):
     top_half, bottom_half = split_string_by_nearest_middle_space(title)
     top_width, top_height = draw.textsize(top_half, font)
     bottom_width, bottom_height = draw.textsize(bottom_half, font)
-    print(top_height, bottom_height)
     draw.rectangle(
         (
             (IMAGE_WIDTH - top_width - X_OFFSET * 2, TOP_RECTANGLE_Y),
@@ -76,10 +74,13 @@ def draw_text(image, title):
 
 
 def main():
-    img = Image.open(SOURCE)
-    draw_text(img, TITLE)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('path')
+    parser.add_argument('title')
+    args = parser.parse_args()
+    img = Image.open(args.path)
+    draw_text(img, args.title)
 
 
 if __name__ == '__main__':
     main()
-
