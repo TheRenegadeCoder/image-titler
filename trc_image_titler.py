@@ -5,6 +5,8 @@ from PIL import ImageDraw
 SOURCE = 'E:\\Documents\\Work\\The Renegade Coder\\Assets\\Featured Images\\Sources\\hello-world-in-swift.jpg'
 TITLE = "A Wild World Ahead Boy"
 FONT = "BERNHC.TTF"
+TEXT_FILL = (255, 255, 255)
+RECTANGLE_FILL = (201, 2, 41)
 
 FONT_SIZE = 114
 TOP_RECTANGLE_Y = 145
@@ -44,10 +46,32 @@ def draw_text(image, title):
     top_width, top_height = draw.textsize(top_half, font)
     bottom_width, bottom_height = draw.textsize(bottom_half, font)
     print(top_height, bottom_height)
-    draw.rectangle(((IMAGE_WIDTH - top_width - X_OFFSET * 2, TOP_RECTANGLE_Y), (IMAGE_WIDTH, TOP_RECTANGLE_Y + RECTANGLE_HEIGHT)), fill="red")
-    draw.rectangle(((IMAGE_WIDTH - bottom_width - X_OFFSET * 2, BOTTOM_RECTANGLE_Y), (IMAGE_WIDTH, BOTTOM_RECTANGLE_Y + RECTANGLE_HEIGHT)), fill="red")
-    draw.text((IMAGE_WIDTH - top_width - X_OFFSET, TOP_TEXT_Y), top_half, fill=(255, 255, 255), font=font)
-    draw.text((IMAGE_WIDTH - bottom_width - X_OFFSET, BOTTOM_TEXT_Y), bottom_half, fill=(255, 255, 255), font=font)
+    draw.rectangle(
+        (
+            (IMAGE_WIDTH - top_width - X_OFFSET * 2, TOP_RECTANGLE_Y),
+            (IMAGE_WIDTH, TOP_RECTANGLE_Y + RECTANGLE_HEIGHT)
+        ),
+        fill=RECTANGLE_FILL
+    )
+    draw.rectangle(
+        (
+            (IMAGE_WIDTH - bottom_width - X_OFFSET * 2, BOTTOM_RECTANGLE_Y),
+            (IMAGE_WIDTH, BOTTOM_RECTANGLE_Y + RECTANGLE_HEIGHT)
+        ),
+        fill=RECTANGLE_FILL
+    )
+    draw.text(
+        (IMAGE_WIDTH - top_width - X_OFFSET, TOP_TEXT_Y),
+        top_half,
+        fill=TEXT_FILL,
+        font=font
+    )
+    draw.text(
+        (IMAGE_WIDTH - bottom_width - X_OFFSET, BOTTOM_TEXT_Y),
+        bottom_half,
+        fill=TEXT_FILL,
+        font=font
+    )
     cropped_img.show()
 
 
