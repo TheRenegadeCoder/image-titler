@@ -2,6 +2,8 @@ from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
 import argparse
+import os
+import time
 
 FONT = "BERNHC.TTF"
 TEXT_FILL = (255, 255, 255)
@@ -38,6 +40,16 @@ def split_string_by_nearest_middle_space(input_string):
 
 
 def draw_text(image, title):
+    """
+    Draws text over an image.
+
+    :param image: an image
+    :type image: Image
+    :param title: the image title
+    :type title: str
+    :return: the updated image
+    :rtype: Image
+    """
     cropped_img = image.crop((0, 0, IMAGE_WIDTH, IMAGE_HEIGHT))
     draw = ImageDraw.Draw(cropped_img)
     font = ImageFont.truetype(FONT, FONT_SIZE)
@@ -71,6 +83,22 @@ def draw_text(image, title):
         font=font
     )
     cropped_img.show()
+    return cropped_img
+
+
+def save_copy(og_image, edited_image, title):
+    """
+    A helper function for saving a copy of the image.
+
+    :param og_image:
+    :param edited_image:
+    :param title:
+    :return:
+    """
+    file_name = title.lower().replace(" ", "-")
+    time_in_seconds = str(int(time.time()))
+    storage_path = "dump{0}{1}-{2}.{3}".format(os.sep, file_name, time_in_seconds, og_image.format)
+    edited_image.save(storage_path)
 
 
 def main():
@@ -78,8 +106,11 @@ def main():
     parser.add_argument('path')
     parser.add_argument('title')
     args = parser.parse_args()
-    img = Image.open(args.path)
-    draw_text(img, args.title)
+    path = args.path  # type: str
+    title = args.title  # type: str
+    img = Image.open(path)
+    edited_image = draw_text(img, title)
+    save_copy(img, edited_image, title)
 
 
 if __name__ == '__main__':
