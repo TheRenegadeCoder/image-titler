@@ -90,10 +90,13 @@ def save_copy(og_image, edited_image, title):
     """
     A helper function for saving a copy of the image.
 
-    :param og_image:
-    :param edited_image:
-    :param title:
-    :return:
+    :param og_image: the original image
+    :type og_image: Image
+    :param edited_image: the edited image
+    :type edited_image: Image
+    :param title: the title of the image
+    :type title: str
+    :return: nothing
     """
     file_name = title.lower().replace(" ", "-")
     time_in_seconds = str(int(time.time()))
