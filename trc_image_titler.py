@@ -2,6 +2,7 @@ import argparse
 import os
 import tkinter
 from tkinter.filedialog import askopenfilename
+from pathlib import Path
 
 from PIL import Image
 from PIL import ImageDraw
@@ -107,7 +108,7 @@ def save_copy(og_image, edited_image, title):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('title')
+    parser.add_argument('-t', '--title')
     parser.add_argument('-p', '--path')
     args = parser.parse_args()
     path = args.path  # type: str
@@ -115,6 +116,9 @@ def main():
     if path is None:
         tkinter.Tk().withdraw()
         path = askopenfilename()
+    if title is None:
+        file_name = Path(path).resolve().stem
+        title = file_name.replace('-', ' ').title()
     img = Image.open(path)
     edited_image = draw_text(img, title)
     save_copy(img, edited_image, title)
