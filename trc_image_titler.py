@@ -3,6 +3,7 @@ import os
 import tkinter
 from tkinter.filedialog import askopenfilename
 from pathlib import Path
+from titlecase import titlecase
 
 from PIL import Image
 from PIL import ImageDraw
@@ -118,7 +119,7 @@ def main():
         path = askopenfilename()
     if title is None:
         file_name = Path(path).resolve().stem
-        title = file_name.replace('-', ' ').title()
+        title = titlecase(file_name.replace('-', ' '))
     img = Image.open(path)
     edited_image = draw_text(img, title)
     save_copy(img, edited_image, title)
