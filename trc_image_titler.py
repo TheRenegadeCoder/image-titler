@@ -3,7 +3,6 @@ from PIL import ImageFont
 from PIL import ImageDraw
 import argparse
 import os
-import time
 
 FONT = "BERNHC.TTF"
 TEXT_FILL = (255, 255, 255)
