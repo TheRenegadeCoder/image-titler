@@ -1,8 +1,11 @@
-from PIL import Image
-from PIL import ImageFont
-from PIL import ImageDraw
 import argparse
 import os
+import tkinter
+from tkinter.filedialog import askopenfilename
+
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
 
 FONT = "BERNHC.TTF"
 TEXT_FILL = (255, 255, 255)
@@ -104,11 +107,14 @@ def save_copy(og_image, edited_image, title):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('path')
     parser.add_argument('title')
+    parser.add_argument('-p', '--path')
     args = parser.parse_args()
     path = args.path  # type: str
     title = args.title  # type: str
+    if path is None:
+        tkinter.Tk().withdraw()
+        path = askopenfilename()
     img = Image.open(path)
     edited_image = draw_text(img, title)
     save_copy(img, edited_image, title)
