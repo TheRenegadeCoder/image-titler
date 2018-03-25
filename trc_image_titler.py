@@ -99,8 +99,7 @@ def save_copy(og_image, edited_image, title):
     :return: nothing
     """
     file_name = title.lower().replace(" ", "-")
-    time_in_seconds = str(int(time.time()))
-    storage_path = "dump{0}{1}-{2}.{3}".format(os.sep, file_name, time_in_seconds, og_image.format)
+    storage_path = "dump{0}{1}-featured-image.{2}".format(os.sep, file_name, og_image.format)
     edited_image.save(storage_path)
 
 
