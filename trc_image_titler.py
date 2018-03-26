@@ -1,9 +1,13 @@
-from PIL import Image
-from PIL import ImageFont
-from PIL import ImageDraw
 import argparse
 import os
-import time
+import tkinter
+from tkinter.filedialog import askopenfilename
+from pathlib import Path
+from titlecase import titlecase
+
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
 
 FONT = "BERNHC.TTF"
 TEXT_FILL = (255, 255, 255)
@@ -99,18 +103,23 @@ def save_copy(og_image, edited_image, title):
     :return: nothing
     """
     file_name = title.lower().replace(" ", "-")
-    time_in_seconds = str(int(time.time()))
-    storage_path = "dump{0}{1}-{2}.{3}".format(os.sep, file_name, time_in_seconds, og_image.format)
+    storage_path = "dump{0}{1}-featured-image.{2}".format(os.sep, file_name, og_image.format)
     edited_image.save(storage_path)
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('path')
-    parser.add_argument('title')
+    parser.add_argument('-t', '--title')
+    parser.add_argument('-p', '--path')
     args = parser.parse_args()
     path = args.path  # type: str
     title = args.title  # type: str
+    if path is None:
+        tkinter.Tk().withdraw()
+        path = askopenfilename()
+    if title is None:
+        file_name = Path(path).resolve().stem
+        title = titlecase(file_name.replace('-', ' '))
     img = Image.open(path)
     edited_image = draw_text(img, title)
     save_copy(img, edited_image, title)
