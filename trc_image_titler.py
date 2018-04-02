@@ -90,7 +90,7 @@ def draw_text(image, title):
     return cropped_img
 
 
-def save_copy(og_image, edited_image, title):
+def save_copy(og_image, edited_image, title, output_path=None):
     """
     A helper function for saving a copy of the image.
 
@@ -103,7 +103,11 @@ def save_copy(og_image, edited_image, title):
     :return: nothing
     """
     file_name = title.lower().replace(" ", "-")
-    storage_path = "dump{0}{1}-featured-image.{2}".format(os.sep, file_name, og_image.format)
+    format_path = "{0}{1}{2}-featured-image.{3}"
+    if output_path is None:
+        storage_path = format_path.format('dump', os.sep, file_name, og_image.format)
+    else:
+        storage_path = format_path.format(output_path, os.sep, file_name, og_image.format)
     edited_image.save(storage_path)
 
 
@@ -111,9 +115,11 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-t', '--title')
     parser.add_argument('-p', '--path')
+    parser.add_argument('-o', '--output_path')
     args = parser.parse_args()
     path = args.path  # type: str
     title = args.title  # type: str
+    output_path = args.output_path
     if path is None:
         tkinter.Tk().withdraw()
         path = askopenfilename()
@@ -122,7 +128,7 @@ def main():
         title = titlecase(file_name.replace('-', ' '))
     img = Image.open(path)
     edited_image = draw_text(img, title)
-    save_copy(img, edited_image, title)
+    save_copy(img, edited_image, title, output_path)
 
 
 if __name__ == '__main__':
