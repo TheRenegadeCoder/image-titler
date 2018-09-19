@@ -1,4 +1,7 @@
 # Image Titler
+
+[![Join the chat at https://gitter.im/TheRenegadeCoder/image-titler](https://badges.gitter.im/TheRenegadeCoder/image-titler.svg)](https://gitter.im/TheRenegadeCoder/image-titler?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Adds a title to an image using The Renegade Coder Featured Image style. The style can be
 defined as the following:
 
