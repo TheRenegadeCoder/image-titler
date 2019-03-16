@@ -103,6 +103,7 @@ ENV/
 # PyCharm
 
 .idea/
+.history/
 
 # Remove file dump
 /dump

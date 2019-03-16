@@ -1,0 +1,17 @@
+language: python
+python:
+  - "3.6"
+
+script:
+  - echo "Hello, World!"
+  # TODO: add tests
+
+deploy:
+  provider: pypi
+  user: ${PYPI_USERNAME}
+  password: ${PYPI_PASSWORD}
+  on:
+    tags: true
+
+notifications:
+  email: false
