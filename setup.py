@@ -18,9 +18,13 @@ setuptools.setup(
             'image_titler = image_titler.trc_image_titler:main',
         ],
     },
-    classifiers=(
+    classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: OS Independent",
-    ),
+    ],
+    install_requires=[
+        'titlecase',
+        'pillow'
+    ],
 )
