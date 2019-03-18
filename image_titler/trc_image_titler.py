@@ -9,7 +9,7 @@ from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 
-FONT = "BERNHC.TTF"
+FONT = os.path.join(os.path.dirname(__file__), "BERNHC.TTF")
 TEXT_FILL = (255, 255, 255)
 RECTANGLE_FILL = (201, 2, 41)
 
