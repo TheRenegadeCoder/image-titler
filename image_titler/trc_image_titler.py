@@ -105,7 +105,7 @@ def save_copy(og_image, edited_image, title, output_path=None):
     file_name = title.lower().replace(" ", "-")
     format_path = "{0}{1}{2}-featured-image.{3}"
     if output_path is None:
-        storage_path = format_path.format('dump', os.sep, file_name, og_image.format)
+        storage_path = format_path.format("", "", file_name, og_image.format)
     else:
         storage_path = format_path.format(output_path, os.sep, file_name, og_image.format)
     edited_image.save(storage_path)
