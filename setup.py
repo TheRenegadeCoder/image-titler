@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="image-titler",
-    version="1.3.1",
+    version="1.3.2",
     author="The Renegade Coder",
     author_email="jeremy.grifski@therenegadecoder.com",
     description="Adds a title to an image using The Renegade Coder Featured Image style",
@@ -18,9 +18,13 @@ setuptools.setup(
             'image_titler = image_titler.trc_image_titler:main',
         ],
     },
-    classifiers=(
+    classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: OS Independent",
-    ),
+    ],
+    install_requires=[
+        'titlecase',
+        'pillow'
+    ],
 )
