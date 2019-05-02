@@ -26,6 +26,6 @@ setuptools.setup(
     ],
     install_requires=[
         'titlecase',
-        'pillow'
+        'pillow>=6.0.0'
     ],
 )
