@@ -53,11 +53,11 @@ def draw_rectangle(draw: ImageDraw, position: int, width: int, tier: str = ""):
     Draws a rectangle over the image given a ImageDraw object and the intended
     position, width, and tier.
 
-    :param draw:
-    :param position:
-    :param width:
-    :param tier:
-    :return:
+    :param draw: an picture we're editing
+    :param position: the position of the rectangle to be added
+    :param width: the width of the rectangle to be added
+    :param tier: the tier which determines the outline
+    :return: nothing
     """
     draw.rectangle(
         (
@@ -70,16 +70,13 @@ def draw_rectangle(draw: ImageDraw, position: int, width: int, tier: str = ""):
     )
 
 
-def draw_text(image, title):
+def draw_text(image: Image, title: str) -> Image:
     """
     Draws text over an image.
 
     :param image: an image
-    :type image: Image
     :param title: the image title
-    :type title: str
     :return: the updated image
-    :rtype: Image
     """
     cropped_img = image.crop((0, 0, IMAGE_WIDTH, IMAGE_HEIGHT))
     draw = ImageDraw.Draw(cropped_img)
