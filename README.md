@@ -12,8 +12,16 @@ For example:
 
 ![Hello World in Pascal](https://i0.wp.com/therenegadecoder.com/wp-content/uploads/2018/04/hello-world-in-pascal-featured-image.jpeg?resize=1024%2C640&ssl=1)
 
-## How to run
+## How to Run
 
-`pip install image-titler`
+The following code snippet demonstrates a few ways you might use the script:
 
-`image_titler -t title -p ./path_to_image -o ./output`
+```shell
+pip install image-titler # Installs the script
+
+image_titler # Runs as default
+image_titler --title "Hello, World!"  # Adds a custom title
+image_titler --output_path "path/to/output"  # Sets the output path
+image_titler --path "path/to/image"  # Sets the image path
+image_titler --tier "free"  # Sets the membership tier which changes the rectangle borders
+```
