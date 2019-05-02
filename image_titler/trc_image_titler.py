@@ -31,14 +31,12 @@ TIER_MAP = {
 }
 
 
-def split_string_by_nearest_middle_space(input_string):
+def split_string_by_nearest_middle_space(input_string: str) -> tuple:
     """
     Splits a string by the nearest middle space.
 
     :param input_string: some string
-    :type input_string: str
     :return: a pair of strings
-    :rtype: tuple
     """
     index = len(input_string) // 2
     curr_char = input_string[index]
@@ -51,6 +49,16 @@ def split_string_by_nearest_middle_space(input_string):
 
 
 def draw_rectangle(draw: ImageDraw, position: int, width: int, tier: str = ""):
+    """
+    Draws a rectangle over the image given a ImageDraw object and the intended
+    position, width, and tier.
+
+    :param draw:
+    :param position:
+    :param width:
+    :param tier:
+    :return:
+    """
     draw.rectangle(
         (
             (IMAGE_WIDTH - width - X_OFFSET * 2, position),
