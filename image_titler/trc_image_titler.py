@@ -22,16 +22,21 @@ RECTANGLE_HEIGHT = 145
 IMAGE_WIDTH = 1920
 IMAGE_HEIGHT = 1200
 X_OFFSET = 30
+GOLD = (255, 215, 0)
+SILVER = (211, 211, 211)
+
+TIER_MAP = {
+    "free": SILVER,
+    "premium": GOLD
+}
 
 
-def split_string_by_nearest_middle_space(input_string):
+def split_string_by_nearest_middle_space(input_string: str) -> tuple:
     """
     Splits a string by the nearest middle space.
 
     :param input_string: some string
-    :type input_string: str
     :return: a pair of strings
-    :rtype: tuple
     """
     index = len(input_string) // 2
     curr_char = input_string[index]
@@ -43,16 +48,55 @@ def split_string_by_nearest_middle_space(input_string):
     return input_string[:index], input_string[index + 1:]
 
 
-def draw_text(image, title):
+def draw_rectangle(draw: ImageDraw, position: int, width: int, tier: str):
+    """
+    Draws a rectangle over the image given a ImageDraw object and the intended
+    position, width, and tier.
+
+    :param draw: an picture we're editing
+    :param position: the position of the rectangle to be added
+    :param width: the width of the rectangle to be added
+    :param tier: the tier which determines the outline
+    :return: nothing
+    """
+    draw.rectangle(
+        (
+            (IMAGE_WIDTH - width - X_OFFSET * 2, position),
+            (IMAGE_WIDTH, position + RECTANGLE_HEIGHT)
+        ),
+        fill=RECTANGLE_FILL,
+        outline=TIER_MAP.get(tier.lower(), None),
+        width=7
+    )
+
+
+def draw_text(draw: ImageDraw, position: int, width: int, text: str, font: ImageFont):
+    """
+    Draws text on the image.
+
+    :param draw: the picture to edit
+    :param position: the position of the text
+    :param width: the width of the text
+    :param text: the text
+    :param font: the font of the text
+    :return: nothing
+    """
+    draw.text(
+        (IMAGE_WIDTH - width - X_OFFSET, position),
+        text,
+        fill=TEXT_FILL,
+        font=font
+    )
+
+
+def draw_overlay(image: Image, title: str, tier: str) -> Image:
     """
     Draws text over an image.
 
     :param image: an image
-    :type image: Image
     :param title: the image title
-    :type title: str
+    :param tier: the image tier
     :return: the updated image
-    :rtype: Image
     """
     cropped_img = image.crop((0, 0, IMAGE_WIDTH, IMAGE_HEIGHT))
     draw = ImageDraw.Draw(cropped_img)
@@ -60,46 +104,22 @@ def draw_text(image, title):
     top_half, bottom_half = split_string_by_nearest_middle_space(title)
     top_width, top_height = draw.textsize(top_half, font)
     bottom_width, bottom_height = draw.textsize(bottom_half, font)
-    draw.rectangle(
-        (
-            (IMAGE_WIDTH - top_width - X_OFFSET * 2, TOP_RECTANGLE_Y),
-            (IMAGE_WIDTH, TOP_RECTANGLE_Y + RECTANGLE_HEIGHT)
-        ),
-        fill=RECTANGLE_FILL
-    )
-    draw.rectangle(
-        (
-            (IMAGE_WIDTH - bottom_width - X_OFFSET * 2, BOTTOM_RECTANGLE_Y),
-            (IMAGE_WIDTH, BOTTOM_RECTANGLE_Y + RECTANGLE_HEIGHT)
-        ),
-        fill=RECTANGLE_FILL
-    )
-    draw.text(
-        (IMAGE_WIDTH - top_width - X_OFFSET, TOP_TEXT_Y),
-        top_half,
-        fill=TEXT_FILL,
-        font=font
-    )
-    draw.text(
-        (IMAGE_WIDTH - bottom_width - X_OFFSET, BOTTOM_TEXT_Y),
-        bottom_half,
-        fill=TEXT_FILL,
-        font=font
-    )
+    draw_rectangle(draw, TOP_RECTANGLE_Y, top_width, tier)
+    draw_rectangle(draw, BOTTOM_RECTANGLE_Y, bottom_width, tier)
+    draw_text(draw, TOP_TEXT_Y, top_width, top_half, font)
+    draw_text(draw, BOTTOM_TEXT_Y, bottom_width, bottom_half, font)
     cropped_img.show()
     return cropped_img
 
 
-def save_copy(og_image, edited_image, title, output_path=None):
+def save_copy(og_image: Image, edited_image: Image, title: str, output_path: str = None):
     """
     A helper function for saving a copy of the image.
 
     :param og_image: the original image
-    :type og_image: Image
     :param edited_image: the edited image
-    :type edited_image: Image
     :param title: the title of the image
-    :type title: str
+    :param output_path: the path to dump the picture
     :return: nothing
     """
     file_name = title.lower().replace(" ", "-")
@@ -116,10 +136,12 @@ def main():
     parser.add_argument('-t', '--title')
     parser.add_argument('-p', '--path')
     parser.add_argument('-o', '--output_path')
+    parser.add_argument('-r', '--tier', default="")
     args = parser.parse_args()
     path = args.path  # type: str
     title = args.title  # type: str
-    output_path = args.output_path
+    tier = args.tier  # type: str
+    output_path = args.output_path  # type: str
     if path is None:
         tkinter.Tk().withdraw()
         path = askopenfilename()
@@ -127,7 +149,7 @@ def main():
         file_name = Path(path).resolve().stem
         title = titlecase(file_name.replace('-', ' '))
     img = Image.open(path)
-    edited_image = draw_text(img, title)
+    edited_image = draw_overlay(img, title, tier)
     save_copy(img, edited_image, title, output_path)
 
 
