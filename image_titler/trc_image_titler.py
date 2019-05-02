@@ -22,6 +22,13 @@ RECTANGLE_HEIGHT = 145
 IMAGE_WIDTH = 1920
 IMAGE_HEIGHT = 1200
 X_OFFSET = 30
+GOLD = (255, 215, 0)
+SILVER = (192, 192, 192)
+
+TIER_MAP = {
+    "free": SILVER,
+    "premium": GOLD
+}
 
 
 def split_string_by_nearest_middle_space(input_string):
@@ -43,6 +50,18 @@ def split_string_by_nearest_middle_space(input_string):
     return input_string[:index], input_string[index + 1:]
 
 
+def draw_rectangle(draw: ImageDraw, position: int, width: int, tier: str = ""):
+    draw.rectangle(
+        (
+            (IMAGE_WIDTH - width - X_OFFSET * 2, position),
+            (IMAGE_WIDTH, position + RECTANGLE_HEIGHT)
+        ),
+        fill=RECTANGLE_FILL,
+        outline=TIER_MAP.get(tier.lower(), None),
+        width=7
+    )
+
+
 def draw_text(image, title):
     """
     Draws text over an image.
@@ -60,20 +79,8 @@ def draw_text(image, title):
     top_half, bottom_half = split_string_by_nearest_middle_space(title)
     top_width, top_height = draw.textsize(top_half, font)
     bottom_width, bottom_height = draw.textsize(bottom_half, font)
-    draw.rectangle(
-        (
-            (IMAGE_WIDTH - top_width - X_OFFSET * 2, TOP_RECTANGLE_Y),
-            (IMAGE_WIDTH, TOP_RECTANGLE_Y + RECTANGLE_HEIGHT)
-        ),
-        fill=RECTANGLE_FILL
-    )
-    draw.rectangle(
-        (
-            (IMAGE_WIDTH - bottom_width - X_OFFSET * 2, BOTTOM_RECTANGLE_Y),
-            (IMAGE_WIDTH, BOTTOM_RECTANGLE_Y + RECTANGLE_HEIGHT)
-        ),
-        fill=RECTANGLE_FILL
-    )
+    draw_rectangle(draw, TOP_RECTANGLE_Y, top_width)
+    draw_rectangle(draw, BOTTOM_RECTANGLE_Y, bottom_width)
     draw.text(
         (IMAGE_WIDTH - top_width - X_OFFSET, TOP_TEXT_Y),
         top_half,
