@@ -48,7 +48,7 @@ def split_string_by_nearest_middle_space(input_string: str) -> tuple:
     return input_string[:index], input_string[index + 1:]
 
 
-def draw_rectangle(draw: ImageDraw, position: int, width: int, tier: str = ""):
+def draw_rectangle(draw: ImageDraw, position: int, width: int, tier: str):
     """
     Draws a rectangle over the image given a ImageDraw object and the intended
     position, width, and tier.
@@ -70,12 +70,32 @@ def draw_rectangle(draw: ImageDraw, position: int, width: int, tier: str = ""):
     )
 
 
-def draw_text(image: Image, title: str) -> Image:
+def draw_text(draw: ImageDraw, position: int, width: int, text: str, font: ImageFont):
+    """
+    Draws text on the image.
+
+    :param draw: the picture to edit
+    :param position: the position of the text
+    :param width: the width of the text
+    :param text: the text
+    :param font: the font of the text
+    :return: nothing
+    """
+    draw.text(
+        (IMAGE_WIDTH - width - X_OFFSET, position),
+        text,
+        fill=TEXT_FILL,
+        font=font
+    )
+
+
+def draw_overlay(image: Image, title: str, tier: str) -> Image:
     """
     Draws text over an image.
 
     :param image: an image
     :param title: the image title
+    :param tier: the image tier
     :return: the updated image
     """
     cropped_img = image.crop((0, 0, IMAGE_WIDTH, IMAGE_HEIGHT))
@@ -84,20 +104,10 @@ def draw_text(image: Image, title: str) -> Image:
     top_half, bottom_half = split_string_by_nearest_middle_space(title)
     top_width, top_height = draw.textsize(top_half, font)
     bottom_width, bottom_height = draw.textsize(bottom_half, font)
-    draw_rectangle(draw, TOP_RECTANGLE_Y, top_width)
-    draw_rectangle(draw, BOTTOM_RECTANGLE_Y, bottom_width)
-    draw.text(
-        (IMAGE_WIDTH - top_width - X_OFFSET, TOP_TEXT_Y),
-        top_half,
-        fill=TEXT_FILL,
-        font=font
-    )
-    draw.text(
-        (IMAGE_WIDTH - bottom_width - X_OFFSET, BOTTOM_TEXT_Y),
-        bottom_half,
-        fill=TEXT_FILL,
-        font=font
-    )
+    draw_rectangle(draw, TOP_RECTANGLE_Y, top_width, tier)
+    draw_rectangle(draw, BOTTOM_RECTANGLE_Y, bottom_width, tier)
+    draw_text(draw, TOP_TEXT_Y, top_width, top_half, font)
+    draw_text(draw, BOTTOM_TEXT_Y, bottom_width, bottom_half, font)
     cropped_img.show()
     return cropped_img
 
@@ -126,10 +136,12 @@ def main():
     parser.add_argument('-t', '--title')
     parser.add_argument('-p', '--path')
     parser.add_argument('-o', '--output_path')
+    parser.add_argument('-r', '--tier', default="")
     args = parser.parse_args()
     path = args.path  # type: str
     title = args.title  # type: str
-    output_path = args.output_path
+    tier = args.tier  # type: str
+    output_path = args.output_path  # type: str
     if path is None:
         tkinter.Tk().withdraw()
         path = askopenfilename()
@@ -137,7 +149,7 @@ def main():
         file_name = Path(path).resolve().stem
         title = titlecase(file_name.replace('-', ' '))
     img = Image.open(path)
-    edited_image = draw_text(img, title)
+    edited_image = draw_overlay(img, title, tier)
     save_copy(img, edited_image, title, output_path)
 
 
