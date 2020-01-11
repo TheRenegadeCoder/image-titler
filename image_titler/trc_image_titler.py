@@ -25,6 +25,7 @@ X_OFFSET = 30
 GOLD = (255, 215, 0)
 SILVER = (211, 211, 211)
 LOGO_SIZE = (RECTANGLE_HEIGHT, RECTANGLE_HEIGHT)
+LOGO_PADDING = 30
 
 TIER_MAP = {
     "free": SILVER,
@@ -127,7 +128,7 @@ def draw_logo(img: Image, logo_path: str):
         logo = Image.open(logo_path, "r")
         logo.thumbnail(LOGO_SIZE)
         width, height = img.size
-        img.paste(logo, (30, height - LOGO_SIZE[1] - 30), logo)
+        img.paste(logo, (LOGO_PADDING, height - LOGO_SIZE[1] - LOGO_PADDING), logo)
 
 
 def save_copy(og_image: Image, edited_image: Image, title: str, output_path: str = None):
@@ -141,11 +142,11 @@ def save_copy(og_image: Image, edited_image: Image, title: str, output_path: str
     :return: nothing
     """
     file_name = title.lower().replace(" ", "-")
-    format_path = "{0}{1}{2}-featured-image.{3}"
+    tag = "featured-image"
     if output_path is None:
-        storage_path = format_path.format("", "", file_name, og_image.format)
+        storage_path = f'{file_name}-{tag}.{og_image.format}'
     else:
-        storage_path = format_path.format(output_path, os.sep, file_name, og_image.format)
+        storage_path = f'{output_path}{os.sep}{file_name}-{tag}.{og_image.format}'
     edited_image.save(storage_path)
 
 
