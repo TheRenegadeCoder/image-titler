@@ -137,11 +137,13 @@ def main():
     parser.add_argument('-p', '--path')
     parser.add_argument('-o', '--output_path')
     parser.add_argument('-r', '--tier', default="")
+    parser.add_argument('-l', '--logo')
     args = parser.parse_args()
-    path = args.path  # type: str
-    title = args.title  # type: str
-    tier = args.tier  # type: str
-    output_path = args.output_path  # type: str
+    path: str = args.path
+    title: str = args.title
+    tier: str = args.tier
+    output_path: str = args.output_path
+    logo = args.logo
     if path is None:
         tkinter.Tk().withdraw()
         path = askopenfilename()
