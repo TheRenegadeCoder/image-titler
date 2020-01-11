@@ -147,7 +147,7 @@ def save_copy(og_image: Image, edited_image: Image, title: str, output_path: str
         storage_path = f'{file_name}-{tag}.{og_image.format}'
     else:
         storage_path = f'{output_path}{os.sep}{file_name}-{tag}.{og_image.format}'
-    edited_image.save(storage_path)
+    edited_image.save(storage_path, subsampling=0, quality=100)  # Improved quality
 
 
 def main():
