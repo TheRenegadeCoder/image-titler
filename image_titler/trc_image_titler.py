@@ -24,6 +24,8 @@ IMAGE_HEIGHT = 1200
 X_OFFSET = 30
 GOLD = (255, 215, 0)
 SILVER = (211, 211, 211)
+LOGO_SIZE = (RECTANGLE_HEIGHT, RECTANGLE_HEIGHT)
+LOGO_PADDING = 30
 
 TIER_MAP = {
     "free": SILVER,
@@ -89,16 +91,17 @@ def draw_text(draw: ImageDraw, position: int, width: int, text: str, font: Image
     )
 
 
-def draw_overlay(image: Image, title: str, tier: str) -> Image:
+def draw_overlay(image: Image, title: str, tier: str, logo_path: str) -> Image:
     """
     Draws text over an image.
 
+    :param logo_path: the path to a logo
     :param image: an image
     :param title: the image title
     :param tier: the image tier
     :return: the updated image
     """
-    cropped_img = image.crop((0, 0, IMAGE_WIDTH, IMAGE_HEIGHT))
+    cropped_img: Image = image.crop((0, 0, IMAGE_WIDTH, IMAGE_HEIGHT))
     draw = ImageDraw.Draw(cropped_img)
     font = ImageFont.truetype(FONT, FONT_SIZE)
     top_half, bottom_half = split_string_by_nearest_middle_space(title)
@@ -108,8 +111,24 @@ def draw_overlay(image: Image, title: str, tier: str) -> Image:
     draw_rectangle(draw, BOTTOM_RECTANGLE_Y, bottom_width, tier)
     draw_text(draw, TOP_TEXT_Y, top_width, top_half, font)
     draw_text(draw, BOTTOM_TEXT_Y, bottom_width, bottom_half, font)
+    draw_logo(cropped_img, logo_path)
     cropped_img.show()
     return cropped_img
+
+
+def draw_logo(img: Image, logo_path: str):
+    """
+    Adds a logo to the image if a path is provided.
+
+    :param img: an image to be modified
+    :param logo_path: the path to a logo
+    :return: nothing
+    """
+    if logo_path:
+        logo = Image.open(logo_path, "r")
+        logo.thumbnail(LOGO_SIZE)
+        width, height = img.size
+        img.paste(logo, (LOGO_PADDING, height - LOGO_SIZE[1] - LOGO_PADDING), logo)
 
 
 def save_copy(og_image: Image, edited_image: Image, title: str, output_path: str = None):
@@ -123,11 +142,11 @@ def save_copy(og_image: Image, edited_image: Image, title: str, output_path: str
     :return: nothing
     """
     file_name = title.lower().replace(" ", "-")
-    format_path = "{0}{1}{2}-featured-image.{3}"
+    tag = "featured-image"
     if output_path is None:
-        storage_path = format_path.format("", "", file_name, og_image.format)
+        storage_path = f'{file_name}-{tag}.{og_image.format}'
     else:
-        storage_path = format_path.format(output_path, os.sep, file_name, og_image.format)
+        storage_path = f'{output_path}{os.sep}{file_name}-{tag}.{og_image.format}'
     edited_image.save(storage_path)
 
 
@@ -137,20 +156,23 @@ def main():
     parser.add_argument('-p', '--path')
     parser.add_argument('-o', '--output_path')
     parser.add_argument('-r', '--tier', default="")
+    parser.add_argument('-l', '--logo_path')
     args = parser.parse_args()
-    path = args.path  # type: str
-    title = args.title  # type: str
-    tier = args.tier  # type: str
-    output_path = args.output_path  # type: str
+    path: str = args.path
+    title: str = args.title
+    tier: str = args.tier
+    output_path: str = args.output_path
+    logo_path: str = args.logo_path
     if path is None:
         tkinter.Tk().withdraw()
         path = askopenfilename()
     if title is None:
         file_name = Path(path).resolve().stem
         title = titlecase(file_name.replace('-', ' '))
-    img = Image.open(path)
-    edited_image = draw_overlay(img, title, tier)
-    save_copy(img, edited_image, title, output_path)
+    if path:
+        img = Image.open(path)
+        edited_image = draw_overlay(img, title, tier, logo_path)
+        save_copy(img, edited_image, title, output_path)
 
 
 if __name__ == '__main__':

@@ -24,4 +24,5 @@ image_titler --title "Hello, World!"  # Adds a custom title
 image_titler --output_path "path/to/output"  # Sets the output path
 image_titler --path "path/to/image"  # Sets the image path
 image_titler --tier "free"  # Sets the membership tier which changes the rectangle borders
+image_titler --logo_path "path/to/logo"  # Adds a 145x145 logo to the lower left corner of the image
 ```
