@@ -148,9 +148,10 @@ def main():
     if title is None:
         file_name = Path(path).resolve().stem
         title = titlecase(file_name.replace('-', ' '))
-    img = Image.open(path)
-    edited_image = draw_overlay(img, title, tier)
-    save_copy(img, edited_image, title, output_path)
+    if path:
+        img = Image.open(path)
+        edited_image = draw_overlay(img, title, tier)
+        save_copy(img, edited_image, title, output_path)
 
 
 if __name__ == '__main__':
