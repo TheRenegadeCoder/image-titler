@@ -10,7 +10,7 @@ defined as the following:
 
 For example:
 
-![Hello World in Pascal](https://i0.wp.com/therenegadecoder.com/wp-content/uploads/2018/04/hello-world-in-pascal-featured-image.jpeg?resize=1024%2C640&ssl=1)
+![Hello World in Pascal](https://i0.wp.com/therenegadecoder.com/wp-content/uploads/2019/12/python-code-snippets-for-everyday-problems-featured-image-2.jpeg)
 
 ## How to Run
 
