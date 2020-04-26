@@ -1,13 +1,14 @@
 import argparse
 import os
 import tkinter
-from tkinter.filedialog import askopenfilename
 from pathlib import Path
-from titlecase import titlecase
+from tkinter.filedialog import askopenfilename
 
+import pkg_resources
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
+from titlecase import titlecase
 
 FONT = os.path.join(os.path.dirname(__file__), "BERNHC.TTF")
 TEXT_FILL = (255, 255, 255)
@@ -143,10 +144,11 @@ def save_copy(og_image: Image, edited_image: Image, title: str, output_path: str
     """
     file_name = title.lower().replace(" ", "-")
     tag = "featured-image"
+    version = pkg_resources.require("image-titler")[0].version
     if output_path is None:
-        storage_path = f'{file_name}-{tag}.{og_image.format}'
+        storage_path = f'{file_name}-{tag}-v{version}.{og_image.format}'
     else:
-        storage_path = f'{output_path}{os.sep}{file_name}-{tag}.{og_image.format}'
+        storage_path = f'{output_path}{os.sep}{file_name}-{tag}-v{version}.{og_image.format}'
     edited_image.save(storage_path, subsampling=0, quality=100)  # Improved quality
 
 
