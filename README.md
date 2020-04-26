@@ -10,7 +10,7 @@ defined as the following:
 
 For example:
 
-![Hello World in Pascal](https://i0.wp.com/therenegadecoder.com/wp-content/uploads/2019/12/python-code-snippets-for-everyday-problems-featured-image-2.jpeg)
+![3 Ways to Check if a List is Empty in Python](samples/3-ways-to-check-if-a-list-is-empty-in-python-featured-image-v1.6.0.JPEG)
 
 ## How to Run
 
