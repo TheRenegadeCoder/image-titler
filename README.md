@@ -10,7 +10,7 @@ defined as the following:
 
 For example:
 
-![Hello World in Pascal](https://i0.wp.com/therenegadecoder.com/wp-content/uploads/2019/12/python-code-snippets-for-everyday-problems-featured-image-2.jpeg)
+![3 Ways to Check if a List is Empty in Python](samples/3-ways-to-check-if-a-list-is-empty-in-python-featured-image-v1.6.0.JPEG)
 
 ## How to Run
 
@@ -25,4 +25,5 @@ image_titler --output_path "path/to/output"  # Sets the output path
 image_titler --path "path/to/image"  # Sets the image path
 image_titler --tier "free"  # Sets the membership tier which changes the rectangle borders
 image_titler --logo_path "path/to/logo"  # Adds a 145x145 logo to the lower left corner of the image
+image_titler --batch # Runs the program in batch mode on a directory
 ```
