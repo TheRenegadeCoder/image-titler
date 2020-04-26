@@ -170,47 +170,74 @@ def parse_input() -> argparse.Namespace:
     return args
 
 
-def process_image(args: argparse.Namespace):
+def request_input_path(path: str, batch: bool) -> str:
     """
-    Initiates image processing based on a set of arguments.
+    A helper function which asks the user for an input path
+    if one is not supplied on the command line. In this implementation,
+    the type of request we make (e.g. file vs. folder) depends on the state of batch.
 
-    :param args: a set of processed command line arguments
-    :return: None
+    :param path: a folder or file path
+    :param batch: tells us if we are in batch mode or not
+    :return: the input path after the request
     """
-    batch: bool = args.batch
-    input_path: str = args.path
-    title: str = args.title
-    tier: str = args.tier
-    output_path: str = args.output_path
-    logo_path: str = args.logo_path
-    if not input_path:
+    input_path = path
+    if not path:
         tkinter.Tk().withdraw()
         if not batch:
             input_path = askopenfilename()
         else:
             input_path = askdirectory()
-    # Just in case the user still doesn't pick a path
-    if input_path:
-        if not batch:
-            if not title:
-                file_name = Path(input_path).resolve().stem
-                title = titlecase(file_name.replace('-', ' '))
-            img = Image.open(input_path)
-            edited_image = draw_overlay(img, title, tier, logo_path)
-            save_copy(img, edited_image, title, output_path)
-        else:
-            for path in os.listdir(input_path):
-                file_name = Path(path).resolve().stem
-                title = titlecase(file_name.replace('-', ' '))
-                absolute_path = os.path.join(input_path, path)
-                img = Image.open(absolute_path)
-                edited_image = draw_overlay(img, title, tier, logo_path)
-                save_copy(img, edited_image, title, output_path)
+    return input_path
+
+
+def process_batch(input_path: str, tier: str = None, logo_path: str = None, output_path: str = None):
+    """
+    Processes a batch of images.
+
+    :param input_path: the path to a folder of images
+    :param tier: the image tier (free or premium)
+    :param logo_path: the path to a logo
+    :param output_path: the output path of the processed images
+    :return: None
+    """
+    for path in os.listdir(input_path):
+        absolute_path = os.path.join(input_path, path)
+        process_image(absolute_path, tier, logo_path, output_path)
+
+
+def process_image(input_path: str, tier: str = None, logo_path: str = None, output_path: str = None, title: str = None):
+    """
+    Processes a single image.
+
+    :param input_path: the path of an image
+    :param tier: the image tier (free or premium)
+    :param logo_path: the path to a logo
+    :param output_path: the output path of the processed image
+    :param title: the title of the processed image
+    :return: None
+    """
+    if not title:
+        file_name = Path(input_path).resolve().stem
+        title = titlecase(file_name.replace('-', ' '))
+    img = Image.open(input_path)
+    edited_image = draw_overlay(img, title, tier, logo_path)
+    save_copy(img, edited_image, title, output_path)
 
 
 def main():
     args = parse_input()
-    process_image(args)
+    path: str = args.path
+    batch: bool = args.batch
+    tier: str = args.tier
+    logo_path: str = args.logo_path
+    output_path: str = args.output_path
+    title: str = args.title
+    input_path = request_input_path(path, batch)
+    if input_path:
+        if args.batch:
+            process_batch(input_path, tier, logo_path, output_path)
+        else:
+            process_image(input_path, tier, logo_path, output_path, title)
 
 
 if __name__ == '__main__':
