@@ -37,7 +37,7 @@ TIER_MAP = {
 
 def split_string_by_nearest_middle_space(input_string: str) -> tuple:
     """
-    Splits a string by the nearest middle space.
+    Splits a string by the nearest middle space. Assumes space is in string.
 
     :param input_string: some string
     :return: a pair of strings
@@ -106,13 +106,24 @@ def draw_overlay(image: Image, title: str, tier: str, logo_path: str) -> Image:
     cropped_img: Image = image.crop((0, 0, IMAGE_WIDTH, IMAGE_HEIGHT))
     draw = ImageDraw.Draw(cropped_img)
     font = ImageFont.truetype(FONT, FONT_SIZE)
-    top_half, bottom_half = split_string_by_nearest_middle_space(title)
+
+    # Detect space (precondition for split)
+    if len(title.split()) > 1:
+        top_half, bottom_half = split_string_by_nearest_middle_space(title)
+    else:
+        top_half, bottom_half = title, None
+
+    # Draw top
     top_width, top_height = draw.textsize(top_half, font)
-    bottom_width, bottom_height = draw.textsize(bottom_half, font)
     draw_rectangle(draw, TOP_RECTANGLE_Y, top_width, tier)
-    draw_rectangle(draw, BOTTOM_RECTANGLE_Y, bottom_width, tier)
     draw_text(draw, TOP_TEXT_Y, top_width, top_half, font)
-    draw_text(draw, BOTTOM_TEXT_Y, bottom_width, bottom_half, font)
+
+    # Draw bottom
+    if bottom_half:
+        bottom_width, bottom_height = draw.textsize(bottom_half, font)
+        draw_rectangle(draw, BOTTOM_RECTANGLE_Y, bottom_width, tier)
+        draw_text(draw, BOTTOM_TEXT_Y, bottom_width, bottom_half, font)
+
     draw_logo(cropped_img, logo_path)
     return cropped_img
 
