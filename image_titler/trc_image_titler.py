@@ -114,7 +114,6 @@ def draw_overlay(image: Image, title: str, tier: str, logo_path: str) -> Image:
     draw_text(draw, TOP_TEXT_Y, top_width, top_half, font)
     draw_text(draw, BOTTOM_TEXT_Y, bottom_width, bottom_half, font)
     draw_logo(cropped_img, logo_path)
-    cropped_img.show()
     return cropped_img
 
 
@@ -205,7 +204,8 @@ def process_batch(input_path: str, tier: str = None, logo_path: str = None, outp
         process_image(absolute_path, tier, logo_path, output_path)
 
 
-def process_image(input_path: str, tier: str = None, logo_path: str = None, output_path: str = None, title: str = None):
+def process_image(input_path: str, tier: str = None, logo_path: str = None, output_path: str = None,
+                  title: str = None) -> Image.Image:
     """
     Processes a single image.
 
@@ -214,7 +214,7 @@ def process_image(input_path: str, tier: str = None, logo_path: str = None, outp
     :param logo_path: the path to a logo
     :param output_path: the output path of the processed image
     :param title: the title of the processed image
-    :return: None
+    :return: the edited image
     """
     if not title:
         file_name = Path(input_path).resolve().stem
@@ -222,6 +222,7 @@ def process_image(input_path: str, tier: str = None, logo_path: str = None, outp
     img = Image.open(input_path)
     edited_image = draw_overlay(img, title, tier, logo_path)
     save_copy(img, edited_image, title, output_path)
+    return edited_image
 
 
 def main():
@@ -237,7 +238,7 @@ def main():
         if args.batch:
             process_batch(input_path, tier, logo_path, output_path)
         else:
-            process_image(input_path, tier, logo_path, output_path, title)
+            process_image(input_path, tier, logo_path, output_path, title).show()
 
 
 if __name__ == '__main__':
