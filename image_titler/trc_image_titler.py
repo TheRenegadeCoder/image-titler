@@ -3,6 +3,7 @@ import os
 import tkinter
 from pathlib import Path
 from tkinter.filedialog import askopenfilename
+from tkinter.filedialog import askdirectory
 
 import pkg_resources
 from PIL import Image
@@ -152,29 +153,64 @@ def save_copy(og_image: Image, edited_image: Image, title: str, output_path: str
     edited_image.save(storage_path, subsampling=0, quality=100)  # Improved quality
 
 
-def main():
+def parse_input() -> argparse.Namespace:
+    """
+    Creates and executes a parser on the command line inputs.
+
+    :return: the processed command line arguments
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument('-t', '--title')
     parser.add_argument('-p', '--path')
     parser.add_argument('-o', '--output_path')
     parser.add_argument('-r', '--tier', default="")
     parser.add_argument('-l', '--logo_path')
+    parser.add_argument('-b', '--batch', default=False, action='store_true')
     args = parser.parse_args()
-    path: str = args.path
+    return args
+
+
+def process_image(args: argparse.Namespace):
+    """
+    Initiates image processing based on a set of arguments.
+
+    :param args: a set of processed command line arguments
+    :return: None
+    """
+    batch: bool = args.batch
+    input_path: str = args.path
     title: str = args.title
     tier: str = args.tier
     output_path: str = args.output_path
     logo_path: str = args.logo_path
-    if path is None:
+    if not input_path:
         tkinter.Tk().withdraw()
-        path = askopenfilename()
-    if title is None:
-        file_name = Path(path).resolve().stem
-        title = titlecase(file_name.replace('-', ' '))
-    if path:
-        img = Image.open(path)
-        edited_image = draw_overlay(img, title, tier, logo_path)
-        save_copy(img, edited_image, title, output_path)
+        if not batch:
+            input_path = askopenfilename()
+        else:
+            input_path = askdirectory()
+    # Just in case the user still doesn't pick a path
+    if input_path:
+        if not batch:
+            if not title:
+                file_name = Path(input_path).resolve().stem
+                title = titlecase(file_name.replace('-', ' '))
+            img = Image.open(input_path)
+            edited_image = draw_overlay(img, title, tier, logo_path)
+            save_copy(img, edited_image, title, output_path)
+        else:
+            for path in os.listdir(input_path):
+                file_name = Path(path).resolve().stem
+                title = titlecase(file_name.replace('-', ' '))
+                absolute_path = os.path.join(input_path, path)
+                img = Image.open(absolute_path)
+                edited_image = draw_overlay(img, title, tier, logo_path)
+                save_copy(img, edited_image, title, output_path)
+
+
+def main():
+    args = parse_input()
+    process_image(args)
 
 
 if __name__ == '__main__':
