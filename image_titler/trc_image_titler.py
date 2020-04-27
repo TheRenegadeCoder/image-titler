@@ -240,6 +240,12 @@ def process_image(input_path: str, tier: str = None, logo_path: str = None, outp
 
 
 def get_best_top_color(image: Image.Image) -> tuple:
+    """
+    Computes the most popular non-white color from an image.
+
+    :param image: an image file
+    :return: the most dominant color as a tuple
+    """
     top_colors = sorted(image.getcolors(image.size[0] * image.size[1]), reverse=True)
     curr_color = iter(top_colors)
     while (color := next(curr_color)[1]) == WHITE:
