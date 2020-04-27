@@ -155,7 +155,8 @@ def save_copy(og_image: Image, edited_image: Image, title: str, output_path: str
     """
     file_name = title.lower().replace(" ", "-")
     tag = "featured-image"
-    version = pkg_resources.require("image-titler")[0].version
+    version: str = pkg_resources.require("image-titler")[0].version
+    version = version.replace(".", "-")
     if output_path is None:
         storage_path = f'{file_name}-{tag}-v{version}.{og_image.format}'
     else:
