@@ -1,7 +1,7 @@
+import os
+import shutil
 import sys
 from unittest import TestCase
-import shutil
-import os
 
 from PIL import Image
 
@@ -39,10 +39,12 @@ class TestProcessImage(TestImageTitler):
         trc_image_titler.process_image(SAMPLE_IMAGE, output_path=TEST_DUMP, title="Test Title")
 
     def test_logo_red(self):
-        trc_image_titler.process_image(SAMPLE_IMAGE, output_path=TEST_DUMP, title="Test Red Logo", logo_path=TRC_ICON_PATH)
+        trc_image_titler.process_image(SAMPLE_IMAGE, output_path=TEST_DUMP, title="Test Red Logo",
+                                       logo_path=TRC_ICON_PATH)
 
     def test_logo_blue(self):
-        trc_image_titler.process_image(SAMPLE_IMAGE, output_path=TEST_DUMP, title="Test Blue Logo", logo_path=VF_ICON_PATH)
+        trc_image_titler.process_image(SAMPLE_IMAGE, output_path=TEST_DUMP, title="Test Blue Logo",
+                                       logo_path=VF_ICON_PATH)
 
     def test_free_tier(self):
         trc_image_titler.process_image(SAMPLE_IMAGE, output_path=TEST_DUMP, title="Test Free Tier", tier="free")
