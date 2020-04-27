@@ -227,7 +227,7 @@ def convert_file_name_to_title(file_name: str, separator: str = SEPARATOR) -> st
     return titlecase(file_name.replace(separator, ' '))
 
 
-def process_image(input_path: str, tier: str = None, logo_path: str = None, output_path: str = None,
+def process_image(input_path: str, tier: str = "", logo_path: str = None, output_path: str = None,
                   title: str = None) -> Image.Image:
     """
     Processes a single image.
