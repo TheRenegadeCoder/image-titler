@@ -16,6 +16,13 @@ class TestImageTitler(TestCase):
     pass
 
 
+class TestConvertFileNameToTitle(TestImageTitler):
+
+    def test_default(self):
+        title = trc_image_titler.convert_file_name_to_title("how-to-loop-in-python")
+        self.assertEqual(title, "How to Loop in Python")
+
+
 class TestGetBestTopColor(TestImageTitler):
 
     def test_renegade_coder_icon(self):
