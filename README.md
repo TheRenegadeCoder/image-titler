@@ -10,7 +10,7 @@ defined as the following:
 
 For example:
 
-![3 Ways to Check if a List is Empty in Python](samples/3-ways-to-check-if-a-list-is-empty-in-python-featured-image-v1.6.0.JPEG)
+![23 Tech Topics to Tackle](samples/23-tech-topics-to-tackle-featured-image-v1-7-2.JPEG)
 
 ## How to Run
 
