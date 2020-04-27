@@ -22,6 +22,10 @@ class TestConvertFileNameToTitle(TestImageTitler):
         title = trc_image_titler.convert_file_name_to_title("how-to-loop-in-python")
         self.assertEqual(title, "How to Loop in Python")
 
+    def test_custom_sep(self):
+        title = trc_image_titler.convert_file_name_to_title("how.to.loop.in.python", ".")
+        self.assertEqual(title, "How to Loop in Python")
+
 
 class TestGetBestTopColor(TestImageTitler):
 
