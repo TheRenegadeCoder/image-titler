@@ -1,7 +1,7 @@
+import sys
 from unittest import TestCase
 
 from image_titler import trc_image_titler
-import sys
 
 
 class TestImageTitler(TestCase):
@@ -115,4 +115,3 @@ class TestParseInput(TestImageTitler):
         self.assertEqual(args.output_path, None)
         self.assertEqual(args.logo_path, None)
         self.assertEqual(args.title, None)
-
