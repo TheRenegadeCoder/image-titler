@@ -14,6 +14,7 @@ from titlecase import titlecase
 FONT = os.path.join(os.path.dirname(__file__), "BERNHC.TTF")
 TEXT_FILL = (255, 255, 255)
 RECTANGLE_FILL = (201, 2, 41)
+WHITE = (255, 255, 255, 0)
 
 FONT_SIZE = 114
 TOP_RECTANGLE_Y = 30
@@ -52,7 +53,7 @@ def split_string_by_nearest_middle_space(input_string: str) -> tuple:
     return input_string[:index], input_string[index + 1:]
 
 
-def draw_rectangle(draw: ImageDraw, position: int, width: int, tier: str):
+def draw_rectangle(draw: ImageDraw, position: int, width: int, tier: str, color: tuple):
     """
     Draws a rectangle over the image given a ImageDraw object and the intended
     position, width, and tier.
@@ -68,7 +69,7 @@ def draw_rectangle(draw: ImageDraw, position: int, width: int, tier: str):
             (IMAGE_WIDTH - width - X_OFFSET * 2, position),
             (IMAGE_WIDTH, position + RECTANGLE_HEIGHT)
         ),
-        fill=RECTANGLE_FILL,
+        fill=color,
         outline=TIER_MAP.get(tier.lower(), None),
         width=7
     )
@@ -93,18 +94,16 @@ def draw_text(draw: ImageDraw, position: int, width: int, text: str, font: Image
     )
 
 
-def draw_overlay(image: Image, title: str, tier: str, logo_path: str) -> Image:
+def draw_overlay(image: Image.Image, title: str, tier: str, color: tuple) -> Image:
     """
     Draws text over an image.
 
-    :param logo_path: the path to a logo
     :param image: an image
     :param title: the image title
     :param tier: the image tier
     :return: the updated image
     """
-    cropped_img: Image = image.crop((0, 0, IMAGE_WIDTH, IMAGE_HEIGHT))
-    draw = ImageDraw.Draw(cropped_img)
+    draw = ImageDraw.Draw(image)
     font = ImageFont.truetype(FONT, FONT_SIZE)
 
     # Detect space (precondition for split)
@@ -115,32 +114,29 @@ def draw_overlay(image: Image, title: str, tier: str, logo_path: str) -> Image:
 
     # Draw top
     top_width, top_height = draw.textsize(top_half, font)
-    draw_rectangle(draw, TOP_RECTANGLE_Y, top_width, tier)
+    draw_rectangle(draw, TOP_RECTANGLE_Y, top_width, tier, color)
     draw_text(draw, TOP_TEXT_Y, top_width, top_half, font)
 
     # Draw bottom
     if bottom_half:
         bottom_width, bottom_height = draw.textsize(bottom_half, font)
-        draw_rectangle(draw, BOTTOM_RECTANGLE_Y, bottom_width, tier)
+        draw_rectangle(draw, BOTTOM_RECTANGLE_Y, bottom_width, tier, color)
         draw_text(draw, BOTTOM_TEXT_Y, bottom_width, bottom_half, font)
 
-    draw_logo(cropped_img, logo_path)
-    return cropped_img
+    return image
 
 
-def draw_logo(img: Image, logo_path: str):
+def draw_logo(img: Image.Image, logo: Image.Image):
     """
     Adds a logo to the image if a path is provided.
 
     :param img: an image to be modified
-    :param logo_path: the path to a logo
+    :param logo: the logo file to be added
     :return: nothing
     """
-    if logo_path:
-        logo = Image.open(logo_path, "r")
-        logo.thumbnail(LOGO_SIZE)
-        width, height = img.size
-        img.paste(logo, (LOGO_PADDING, height - LOGO_SIZE[1] - LOGO_PADDING), logo)
+    logo.thumbnail(LOGO_SIZE)
+    width, height = img.size
+    img.paste(logo, (LOGO_PADDING, height - LOGO_SIZE[1] - LOGO_PADDING), logo)
 
 
 def save_copy(og_image: Image, edited_image: Image, title: str, output_path: str = None):
@@ -232,9 +228,29 @@ def process_image(input_path: str, tier: str = None, logo_path: str = None, outp
         file_name = Path(input_path).resolve().stem
         title = titlecase(file_name.replace('-', ' '))
     img = Image.open(input_path)
-    edited_image = draw_overlay(img, title, tier, logo_path)
+    cropped_img: Image = img.crop((0, 0, IMAGE_WIDTH, IMAGE_HEIGHT))
+    color = RECTANGLE_FILL
+    if logo_path:
+        logo: Image.Image = Image.open(logo_path)
+        color = get_best_top_color(logo)
+        draw_logo(cropped_img, logo)
+    edited_image = draw_overlay(cropped_img, title, tier, color)
     save_copy(img, edited_image, title, output_path)
     return edited_image
+
+
+def get_best_top_color(image: Image.Image) -> tuple:
+    """
+    Computes the most popular non-white color from an image.
+
+    :param image: an image file
+    :return: the most dominant color as a tuple
+    """
+    top_colors = sorted(image.getcolors(image.size[0] * image.size[1]), reverse=True)
+    curr_color = iter(top_colors)
+    while (color := next(curr_color)[1]) == WHITE:
+        pass
+    return color
 
 
 def main():

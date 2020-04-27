@@ -10,7 +10,9 @@ defined as the following:
 
 For example:
 
-![23 Tech Topics to Tackle](samples/23-tech-topics-to-tackle-featured-image-v1-7-2.JPEG)
+![23 Tech Topics to Tackle](samples/23-tech-topics-to-tackle-featured-image-v1-8-0.JPEG)
+
+To see more examples, check out our [list of samples](samples).
 
 ## How to Run
 
