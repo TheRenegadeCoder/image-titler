@@ -29,3 +29,22 @@ image_titler --tier "free"  # Sets the membership tier which changes the rectang
 image_titler --logo_path "path/to/logo"  # Adds a 145x145 logo to the lower left corner of the image
 image_titler --batch # Runs the program in batch mode on a directory
 ```
+
+## Default Behavior
+
+Currently, the image-titler script makes a few assumptions about the images it 
+processes automatically: 
+
+- The size of an image is assumed to be 1920x960. Otherwise, this tool 
+will automatically crop the image to size. 
+- This tool scrapes file names for image titles. To do this, it assumes 
+file names are written in kebab-case where each word is separated by a hyphen.
+Then, words are extracted and title cased before being printed on the image.
+- The color of the title bars defaults to The Renegade Coder Red (201, 2, 41, 255).
+If you'd like a different color, the script automatically extracts the most dominant
+color from logos. At this time, there is no way to customize bar color. 
+- Added elements have fixed position. Logos will always appear in the bottom left.
+Titles will always appear in the top right. 
+
+There are likely other default behaviors not documented here. Feel free to experiment
+with the tool and share any issues you find. 
