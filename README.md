@@ -10,9 +10,9 @@ defined as the following:
 
 For example:
 
-![23 Tech Topics to Tackle](samples/23-tech-topics-to-tackle-featured-image-v1-8-0.JPEG)
+![23 Tech Topics to Tackle](https://raw.githubusercontent.com/TheRenegadeCoder/image-titler/master/samples/23-tech-topics-to-tackle-featured-image-v1-8-0.JPEG)
 
-To see more examples, check out our [list of samples](samples).
+To see more examples, check out our [list of samples](https://github.com/TheRenegadeCoder/image-titler/tree/master/samples).
 
 ## How to Run
 
