@@ -1,11 +1,34 @@
 import sys
 from unittest import TestCase
 
+from PIL import Image
+
 from image_titler import trc_image_titler
+
+TRC_ICON_PATH = "../icons/the-renegade-coder-sample-icon.png"
+TRC_RED = (201, 2, 41, 255)
+
+VF_ICON_PATH = "../icons/virtual-flat-sample-icon.png"
+VF_BLUE = (0, 164, 246, 255)
 
 
 class TestImageTitler(TestCase):
     pass
+
+
+class TestGetBestTopColor(TestImageTitler):
+
+    def test_renegade_coder_icon(self):
+        img: Image.Image = Image.open(TRC_ICON_PATH)
+        color = trc_image_titler.get_best_top_color(img)
+        self.assertEqual(color, TRC_RED)
+        img.close()
+
+    def test_virtual_flat_icon(self):
+        img: Image.Image = Image.open(VF_ICON_PATH)
+        color = trc_image_titler.get_best_top_color(img)
+        self.assertEqual(color, VF_BLUE)
+        img.close()
 
 
 class TestSplitString(TestImageTitler):
