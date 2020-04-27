@@ -6,7 +6,8 @@ Adds a title to an image using The Renegade Coder Featured Image style. The styl
 defined as the following:
 
 > Titles are split in half by the closest space and displayed using two solid red bars
-> with a white text overlay on the upper right portion of the image.
+> with a white text overlay on the upper right portion of the image. In addition, logos
+> can be added which will affect the bar color. 
 
 For example:
 
