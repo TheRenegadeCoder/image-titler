@@ -1,5 +1,7 @@
 import sys
 from unittest import TestCase
+import shutil
+import os
 
 from PIL import Image
 
@@ -13,6 +15,8 @@ VF_BLUE = (0, 164, 246, 255)
 
 SAMPLE_IMAGE = "../assets/23-tech-topics-to-tackle.jpg"
 
+TEST_DUMP = "dump"
+
 
 class TestImageTitler(TestCase):
     pass
@@ -20,23 +24,31 @@ class TestImageTitler(TestCase):
 
 class TestProcessImage(TestImageTitler):
 
+    @classmethod
+    def setUpClass(cls) -> None:
+        try:
+            shutil.rmtree(TEST_DUMP)
+        except FileNotFoundError:
+            pass
+        os.mkdir(TEST_DUMP)
+
     def test_default(self):
-        trc_image_titler.process_image(SAMPLE_IMAGE, output_path="dump")
+        trc_image_titler.process_image(SAMPLE_IMAGE, output_path=TEST_DUMP)
 
     def test_title(self):
-        trc_image_titler.process_image(SAMPLE_IMAGE, output_path="dump", title="Test Title")
+        trc_image_titler.process_image(SAMPLE_IMAGE, output_path=TEST_DUMP, title="Test Title")
 
     def test_logo_red(self):
-        trc_image_titler.process_image(SAMPLE_IMAGE, output_path="dump", title="Test Red Logo", logo_path=TRC_ICON_PATH)
+        trc_image_titler.process_image(SAMPLE_IMAGE, output_path=TEST_DUMP, title="Test Red Logo", logo_path=TRC_ICON_PATH)
 
     def test_logo_blue(self):
-        trc_image_titler.process_image(SAMPLE_IMAGE, output_path="dump", title="Test Blue Logo", logo_path=VF_ICON_PATH)
+        trc_image_titler.process_image(SAMPLE_IMAGE, output_path=TEST_DUMP, title="Test Blue Logo", logo_path=VF_ICON_PATH)
 
     def test_free_tier(self):
-        trc_image_titler.process_image(SAMPLE_IMAGE, output_path="dump", title="Test Free Tier", tier="free")
+        trc_image_titler.process_image(SAMPLE_IMAGE, output_path=TEST_DUMP, title="Test Free Tier", tier="free")
 
     def test_premium_tier(self):
-        trc_image_titler.process_image(SAMPLE_IMAGE, output_path="dump", title="Test Premium Tier", tier="premium")
+        trc_image_titler.process_image(SAMPLE_IMAGE, output_path=TEST_DUMP, title="Test Premium Tier", tier="premium")
 
 
 class TestConvertFileNameToTitle(TestImageTitler):
