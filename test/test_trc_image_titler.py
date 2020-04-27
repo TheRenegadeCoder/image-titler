@@ -7,15 +7,15 @@ from PIL import Image
 
 from image_titler import trc_image_titler
 
-TRC_ICON_PATH = "../icons/the-renegade-coder-sample-icon.png"
+TRC_ICON_PATH = "icons/the-renegade-coder-sample-icon.png"
 TRC_RED = (201, 2, 41, 255)
 
-VF_ICON_PATH = "../icons/virtual-flat-sample-icon.png"
+VF_ICON_PATH = "icons/virtual-flat-sample-icon.png"
 VF_BLUE = (0, 164, 246, 255)
 
-SAMPLE_IMAGE = "../assets/23-tech-topics-to-tackle.jpg"
+SAMPLE_IMAGE = "assets/23-tech-topics-to-tackle.jpg"
 
-TEST_DUMP = "dump"
+TEST_DUMP = "test/dump"
 
 
 class TestImageTitler(TestCase):
