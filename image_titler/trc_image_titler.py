@@ -170,7 +170,7 @@ def parse_input() -> argparse.Namespace:
     parser.add_argument('-t', '--title', help="Adds a custom title to the image")
     parser.add_argument('-p', '--path', help="Selects an image file")
     parser.add_argument('-o', '--output_path', help="Selects an output path for the processed image")
-    parser.add_argument('-r', '--tier', default="", help="Selects a image tier (free or premium)")
+    parser.add_argument('-r', '--tier', default="", choices=TIER_MAP.keys(), help="Selects a image tier (free or premium)")
     parser.add_argument('-l', '--logo_path', help="Selects a logo file for addition to the processed image")
     parser.add_argument('-b', '--batch', default=False, action='store_true', help="Turns on batch processing")
     args = parser.parse_args()

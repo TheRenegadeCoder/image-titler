@@ -94,3 +94,14 @@ class TestParseInput(TestImageTitler):
         self.assertEqual(args.logo_path, None)
         self.assertEqual(args.title, None)
 
+    def test_tier(self):
+        sys.argv.append("-r")
+        sys.argv.append("premium")
+        args = trc_image_titler.parse_input()
+        self.assertEqual(args.batch, False)
+        self.assertEqual(args.path, None)
+        self.assertEqual(args.tier, "premium")
+        self.assertEqual(args.output_path, None)
+        self.assertEqual(args.logo_path, None)
+        self.assertEqual(args.title, None)
+
