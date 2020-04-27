@@ -73,3 +73,24 @@ class TestParseInput(TestImageTitler):
         self.assertEqual(args.logo_path, None)
         self.assertEqual(args.title, None)
 
+    def test_logo_path(self):
+        sys.argv.append("-l")
+        sys.argv.append("path/to/stuff")
+        args = trc_image_titler.parse_input()
+        self.assertEqual(args.batch, False)
+        self.assertEqual(args.path, None)
+        self.assertEqual(args.tier, "")
+        self.assertEqual(args.output_path, None)
+        self.assertEqual(args.logo_path, "path/to/stuff")
+        self.assertEqual(args.title, None)
+
+    def test_batch(self):
+        sys.argv.append("-b")
+        args = trc_image_titler.parse_input()
+        self.assertEqual(args.batch, True)
+        self.assertEqual(args.path, None)
+        self.assertEqual(args.tier, "")
+        self.assertEqual(args.output_path, None)
+        self.assertEqual(args.logo_path, None)
+        self.assertEqual(args.title, None)
+
