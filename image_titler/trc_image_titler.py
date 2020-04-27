@@ -29,6 +29,7 @@ GOLD = (255, 215, 0)
 SILVER = (211, 211, 211)
 LOGO_SIZE = (RECTANGLE_HEIGHT, RECTANGLE_HEIGHT)
 LOGO_PADDING = 30
+SEPARATOR = "-"
 
 TIER_MAP = {
     "free": SILVER,
@@ -149,10 +150,10 @@ def save_copy(og_image: Image, edited_image: Image, title: str, output_path: str
     :param output_path: the path to dump the picture
     :return: nothing
     """
-    file_name = title.lower().replace(" ", "-")
+    file_name = title.lower().replace(" ", SEPARATOR)
     tag = "featured-image"
     version: str = pkg_resources.require("image-titler")[0].version
-    version = version.replace(".", "-")
+    version = version.replace(".", SEPARATOR)
     if output_path is None:
         storage_path = f'{file_name}-{tag}-v{version}.{og_image.format}'
     else:
@@ -170,7 +171,8 @@ def parse_input() -> argparse.Namespace:
     parser.add_argument('-t', '--title', help="Adds a custom title to the image")
     parser.add_argument('-p', '--path', help="Selects an image file")
     parser.add_argument('-o', '--output_path', help="Selects an output path for the processed image")
-    parser.add_argument('-r', '--tier', default="", choices=TIER_MAP.keys(), help="Selects a image tier (free or premium)")
+    parser.add_argument('-r', '--tier', default="", choices=TIER_MAP.keys(),
+                        help="Selects a image tier (free or premium)")
     parser.add_argument('-l', '--logo_path', help="Selects a logo file for addition to the processed image")
     parser.add_argument('-b', '--batch', default=False, action='store_true', help="Turns on batch processing")
     args = parser.parse_args()
@@ -212,6 +214,17 @@ def process_batch(input_path: str, tier: str = None, logo_path: str = None, outp
         process_image(absolute_path, tier, logo_path, output_path)
 
 
+def convert_file_name_to_title(file_name: str, separator: str = SEPARATOR) -> str:
+    """
+    A helper method which converts file names into titles.
+
+    :param separator: the word separator (default "-")
+    :param file_name: the name of a file without the extension or path information
+    :return: a title string
+    """
+    return titlecase(file_name.replace(separator, ' '))
+
+
 def process_image(input_path: str, tier: str = None, logo_path: str = None, output_path: str = None,
                   title: str = None) -> Image.Image:
     """
@@ -226,7 +239,7 @@ def process_image(input_path: str, tier: str = None, logo_path: str = None, outp
     """
     if not title:
         file_name = Path(input_path).resolve().stem
-        title = titlecase(file_name.replace('-', ' '))
+        title = convert_file_name_to_title(file_name)
     img = Image.open(input_path)
     cropped_img: Image = img.crop((0, 0, IMAGE_WIDTH, IMAGE_HEIGHT))
     color = RECTANGLE_FILL
