@@ -204,8 +204,7 @@ def request_input_path(path: str, batch: bool) -> str:
             )
         else:
             input_path = askdirectory(
-                title="Select a Folder of Images",
-                filetypes=FILE_TYPES
+                title="Select a Folder of Images"
             )
     return input_path
 
