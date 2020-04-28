@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="image-titler",
-    version="1.8.2",
+    version="1.8.3",
     author="The Renegade Coder",
     author_email="jeremy.grifski@therenegadecoder.com",
     description="Adds a title and logo to an image using The Renegade Coder Featured Image style",
@@ -27,6 +27,7 @@ setuptools.setup(
     ],
     install_requires=[
         'titlecase',
-        'pillow>=6.0.0'
+        'pillow>=6.0.0',
+        'pathvalidate'
     ],
 )
