@@ -52,6 +52,9 @@ class TestProcessImage(TestImageTitler):
     def test_premium_tier(self):
         trc_image_titler.process_image(SAMPLE_IMAGE, output_path=TEST_DUMP, title="Test Premium Tier", tier="premium")
 
+    def test_special_chars_in_title(self):
+        trc_image_titler.process_image(SAMPLE_IMAGE, output_path=TEST_DUMP, title="Test Special Chars?", tier="premium")
+
 
 class TestConvertFileNameToTitle(TestImageTitler):
 

@@ -2,9 +2,10 @@ import argparse
 import os
 import tkinter
 from pathlib import Path
-from tkinter.filedialog import askopenfilename
 from tkinter.filedialog import askdirectory
+from tkinter.filedialog import askopenfilename
 
+import pathvalidate
 import pkg_resources
 from PIL import Image
 from PIL import ImageDraw
@@ -35,6 +36,8 @@ TIER_MAP = {
     "free": SILVER,
     "premium": GOLD
 }
+
+FILE_TYPES = [('image files', ('.png', '.jpg', '.jpeg'))]
 
 
 def split_string_by_nearest_middle_space(input_string: str) -> tuple:
@@ -152,7 +155,7 @@ def save_copy(og_image: Image, edited_image: Image, title: str, output_path: str
     :param output_path: the path to dump the picture
     :return: nothing
     """
-    file_name = title.lower().replace(" ", SEPARATOR)
+    file_name = pathvalidate.sanitize_filename(title.lower().replace(" ", SEPARATOR))
     tag = "featured-image"
     version: str = pkg_resources.require("image-titler")[0].version
     version = version.replace(".", SEPARATOR)
@@ -170,13 +173,13 @@ def parse_input() -> argparse.Namespace:
     :return: the processed command line arguments
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument('-t', '--title', help="Adds a custom title to the image")
-    parser.add_argument('-p', '--path', help="Selects an image file")
-    parser.add_argument('-o', '--output_path', help="Selects an output path for the processed image")
+    parser.add_argument('-t', '--title', help="add a custom title to the image (no effect when batch processing)")
+    parser.add_argument('-p', '--path', help="select an image file")
+    parser.add_argument('-o', '--output_path', help="select an output path for the processed image")
     parser.add_argument('-r', '--tier', default="", choices=TIER_MAP.keys(),
-                        help="Selects a image tier (free or premium)")
-    parser.add_argument('-l', '--logo_path', help="Selects a logo file for addition to the processed image")
-    parser.add_argument('-b', '--batch', default=False, action='store_true', help="Turns on batch processing")
+                        help="select an image tier")
+    parser.add_argument('-l', '--logo_path', help="select a logo file for addition to the processed image")
+    parser.add_argument('-b', '--batch', default=False, action='store_true', help="turn on batch processing")
     args = parser.parse_args()
     return args
 
@@ -195,9 +198,15 @@ def request_input_path(path: str, batch: bool) -> str:
     if not path:
         tkinter.Tk().withdraw()
         if not batch:
-            input_path = askopenfilename()
+            input_path = askopenfilename(
+                title="Select an Image File",
+                filetypes=FILE_TYPES
+            )
         else:
-            input_path = askdirectory()
+            input_path = askdirectory(
+                title="Select a Folder of Images",
+                filetypes=FILE_TYPES
+            )
     return input_path
 
 
