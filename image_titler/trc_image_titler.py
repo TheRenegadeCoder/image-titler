@@ -37,6 +37,8 @@ TIER_MAP = {
     "premium": GOLD
 }
 
+FILE_TYPES = [('image files', ('.png', '.jpg', '.jpeg'))]
+
 
 def split_string_by_nearest_middle_space(input_string: str) -> tuple:
     """
@@ -175,7 +177,7 @@ def parse_input() -> argparse.Namespace:
     parser.add_argument('-p', '--path', help="select an image file")
     parser.add_argument('-o', '--output_path', help="select an output path for the processed image")
     parser.add_argument('-r', '--tier', default="", choices=TIER_MAP.keys(),
-                        help="select an image tier (free or premium)")
+                        help="select an image tier")
     parser.add_argument('-l', '--logo_path', help="select a logo file for addition to the processed image")
     parser.add_argument('-b', '--batch', default=False, action='store_true', help="turn on batch processing")
     args = parser.parse_args()
@@ -196,9 +198,15 @@ def request_input_path(path: str, batch: bool) -> str:
     if not path:
         tkinter.Tk().withdraw()
         if not batch:
-            input_path = askopenfilename()
+            input_path = askopenfilename(
+                title="Select an Image File",
+                filetypes=FILE_TYPES
+            )
         else:
-            input_path = askdirectory()
+            input_path = askdirectory(
+                title="Select a Folder of Images",
+                filetypes=FILE_TYPES
+            )
     return input_path
 
 
