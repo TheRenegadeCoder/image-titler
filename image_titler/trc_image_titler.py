@@ -2,9 +2,10 @@ import argparse
 import os
 import tkinter
 from pathlib import Path
-from tkinter.filedialog import askopenfilename
 from tkinter.filedialog import askdirectory
+from tkinter.filedialog import askopenfilename
 
+import pathvalidate
 import pkg_resources
 from PIL import Image
 from PIL import ImageDraw
@@ -152,7 +153,7 @@ def save_copy(og_image: Image, edited_image: Image, title: str, output_path: str
     :param output_path: the path to dump the picture
     :return: nothing
     """
-    file_name = title.lower().replace(" ", SEPARATOR)
+    file_name = pathvalidate.sanitize_filename(title.lower().replace(" ", SEPARATOR))
     tag = "featured-image"
     version: str = pkg_resources.require("image-titler")[0].version
     version = version.replace(".", SEPARATOR)
