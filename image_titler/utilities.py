@@ -182,7 +182,7 @@ def split_string_by_nearest_middle_space(input_string: str) -> tuple:
     return input_string[:index], input_string[index + 1:]
 
 
-def save_copy(input_path: str, edited_image: Image.Image, title: str = None, output_path: str = None):
+def save_copy(input_path: str, edited_image: Image.Image, title: Optional[str] = None, output_path: Optional[str] = None):
     """
     A helper function for saving a copy of the image.
 
@@ -193,7 +193,7 @@ def save_copy(input_path: str, edited_image: Image.Image, title: str = None, out
     :return: nothing
     """
     og_image = Image.open(input_path)
-    title = convert_file_name_to_title(input_path, title)
+    title = convert_file_name_to_title(input_path, title=title)
     version: str = pkg_resources.require("image-titler")[0].version
     version = version.replace(".", SEPARATOR)
     storage_path = _generate_image_output_path(og_image.format, output_path, title, version)
