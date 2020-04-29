@@ -6,6 +6,7 @@ import pkg_resources
 from PIL import Image
 
 from image_titler import utilities
+from image_titler.utilities import save_copy
 
 TRC_ICON_PATH = "icons/the-renegade-coder-sample-icon.png"
 TRC_RED = (201, 2, 41, 255)
@@ -47,25 +48,25 @@ class TestProcessImage(TestUtilities):
 
     @staticmethod
     def generate_image(input_path, title=None, logo_path=None, tier=""):
-        utilities.process_image(
+        test_image = utilities.process_image(
             input_path=input_path,
-            output_path=TEST_DUMP,
             title=title,
             logo_path=logo_path,
             tier=tier
         )
-        utilities.process_image(
+        save_copy(input_path, test_image, output_path=TEST_DUMP, title=title)
+
+        title = utilities.convert_file_name_to_title(input_path)
+        sample_image = utilities.process_image(
             input_path=input_path,
-            output_path=SAMPLE_DUMP,
+            title=title,
             logo_path=logo_path,
             tier=tier
         )
+        save_copy(input_path, sample_image, output_path=SAMPLE_DUMP)
 
     def test_default(self):
-        TestProcessImage.generate_image(DEFAULT_IMAGE)
-
-    def test_title(self):
-        TestProcessImage.generate_image(DEFAULT_IMAGE, title="Test Title")
+        TestProcessImage.generate_image(DEFAULT_IMAGE, title="Test Default")
 
     def test_logo_red(self):
         TestProcessImage.generate_image(LOGO_RED_IMAGE, title="Test Red Logo", logo_path=TRC_ICON_PATH)
@@ -80,18 +81,19 @@ class TestProcessImage(TestUtilities):
         TestProcessImage.generate_image(PREMIUM_IMAGE, title="Test Premium Tier", tier="premium")
 
     def test_special_chars_in_title(self):
-        utilities.process_image(SPECIAL_IMAGE, output_path=TEST_DUMP, title="Test Special Chars?")
+        test_image = utilities.process_image(SPECIAL_IMAGE, title="Test Special Chars?")
+        save_copy(SPECIAL_IMAGE, test_image, output_path=TEST_DUMP, title="Test Special Chars?")
 
 
 class TestConvertFileNameToTitle(TestUtilities):
 
     def test_default(self):
-        title = utilities.convert_file_name_to_title("how-to-loop-in-python")
+        title = utilities.convert_file_name_to_title("how-to-loop-in-python.png")
         self.assertEqual(title, "How to Loop in Python")
 
     def test_custom_sep(self):
-        title = utilities.convert_file_name_to_title("how.to.loop.in.python", ".")
-        self.assertEqual(title, "How to Loop in Python")
+        title = utilities.convert_file_name_to_title("how.to.loop.in.python.png", ".")
+        self.assertEqual("How to Loop in Python", title)
 
 
 class TestGetBestTopColor(TestUtilities):
