@@ -1,3 +1,4 @@
+import os
 import tkinter as tk
 import tkinter.filedialog
 
@@ -5,6 +6,9 @@ import pkg_resources
 from PIL import ImageTk, Image
 
 from image_titler.utilities import process_image, convert_file_name_to_title, save_copy
+
+
+TRC_ICON = os.path.join(os.path.dirname(__file__), '../icons/the-renegade-coder-sample-icon.png')
 
 
 class ImageTitlerMain(tk.Tk):
@@ -96,7 +100,7 @@ def main():
     root = ImageTitlerMain()
     version = pkg_resources.require("image-titler")[0].version
     root.title(f"The Renegade Coder Image Titler {version}")
-    root.iconphoto(False, tk.PhotoImage(file='../icons/the-renegade-coder-sample-icon.png'))
+    root.iconphoto(False, tk.PhotoImage(file=TRC_ICON))
     root.mainloop()
 
 
