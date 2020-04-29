@@ -53,5 +53,9 @@ class ImageTitlerMenuBar(tk.Menu):
         save_copy(self.image_path, self.current_edit, output_path=output_path)
 
 
-if __name__ == '__main__':
+def main():
     ImageTitlerGUI().mainloop()
+
+
+if __name__ == '__main__':
+    main()

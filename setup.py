@@ -17,7 +17,8 @@ setuptools.setup(
     python_requires=">=3.8",
     entry_points={
         "console_scripts": [
-            'image_titler = image_titler.trc_image_titler:main',
+            'image-titler = image_titler.command:main',
+            'image-titler-gui = image_titler.gui:main'
         ],
     },
     classifiers=[
