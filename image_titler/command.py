@@ -3,7 +3,8 @@ import tkinter
 from tkinter.filedialog import askopenfilename, askdirectory
 from typing import Optional
 
-from image_titler.utilities import process_batch, process_image, TIER_MAP, FILE_TYPES
+from image_titler.utilities import process_batch, process_image, TIER_MAP, FILE_TYPES, save_copy, \
+    convert_file_name_to_title
 
 
 def _request_input_path(path: str, batch: bool) -> Optional[str]:
@@ -67,7 +68,15 @@ def title_image(args: argparse.Namespace) -> None:
         if args.batch:
             process_batch(input_path, tier, logo_path, output_path)
         else:
-            process_image(input_path, tier, logo_path, output_path, title).show()
+            title = convert_file_name_to_title(input_path, title=title)
+            edited_image = process_image(
+                input_path,
+                title,
+                tier=tier,
+                logo_path=logo_path,
+            )
+            edited_image.show()
+            save_copy(input_path, edited_image, output_path=output_path)
 
 
 def main() -> None:
