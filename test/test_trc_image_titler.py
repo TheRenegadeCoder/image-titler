@@ -3,6 +3,7 @@ import shutil
 import sys
 from unittest import TestCase
 
+import pkg_resources
 from PIL import Image
 
 from image_titler import trc_image_titler
@@ -14,12 +15,26 @@ VF_ICON_PATH = "icons/virtual-flat-sample-icon.png"
 VF_BLUE = (0, 164, 246, 255)
 
 SAMPLE_IMAGE = "assets/23-tech-topics-to-tackle.jpg"
+DEFAULT_IMAGE = "assets/23-tech-topics-to-tackle.jpg"
 
 TEST_DUMP = "test/dump"
+SAMPLE_DUMP = "samples/v" + pkg_resources.require("image-titler")[0].version
 
 
 class TestImageTitler(TestCase):
     pass
+
+
+class TestSampleDump(TestImageTitler):
+    """
+    A custom test class for generating the samples folder.
+    """
+
+    def test_sample_dump(self):
+        if not os.path.exists(SAMPLE_DUMP):
+            os.mkdir(SAMPLE_DUMP)
+        trc_image_titler.process_image(DEFAULT_IMAGE, output_path=SAMPLE_DUMP)
+        trc_image_titler.process_image(DEFAULT_IMAGE, output_path=SAMPLE_DUMP, logo_path=TRC_ICON_PATH)
 
 
 class TestProcessImage(TestImageTitler):
