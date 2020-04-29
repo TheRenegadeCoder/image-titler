@@ -33,8 +33,8 @@ class TestSampleDump(TestImageTitler):
     def test_sample_dump(self):
         if not os.path.exists(SAMPLE_DUMP):
             os.mkdir(SAMPLE_DUMP)
-        trc_image_titler.process_image(DEFAULT_IMAGE, output_path=SAMPLE_DUMP)
-        trc_image_titler.process_image(DEFAULT_IMAGE, output_path=SAMPLE_DUMP, logo_path=TRC_ICON_PATH)
+        trc_image_titler.process_image(DEFAULT_IMAGE, output_path=SAMPLE_DUMP)  # default
+        trc_image_titler.process_image(DEFAULT_IMAGE, output_path=SAMPLE_DUMP, logo_path=TRC_ICON_PATH)  # -l
 
 
 class TestProcessImage(TestImageTitler):
