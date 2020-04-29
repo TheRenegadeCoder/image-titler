@@ -4,7 +4,7 @@ import tkinter
 from pathlib import Path
 from tkinter.filedialog import askdirectory
 from tkinter.filedialog import askopenfilename
-from typing import Union, Optional
+from typing import Optional
 
 import pathvalidate
 import pkg_resources
@@ -39,6 +39,7 @@ TIER_MAP = {
 }
 
 FILE_TYPES = [('image files', ('.png', '.jpg', '.jpeg'))]
+
 
 def _draw_rectangle(draw: ImageDraw, position: int, width: int, tier: str, color: tuple = RECTANGLE_FILL):
     """
