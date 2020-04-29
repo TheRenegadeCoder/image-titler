@@ -2,7 +2,7 @@ import tkinter as tk
 import tkinter.filedialog
 
 import pkg_resources
-from PIL import ImageTk
+from PIL import ImageTk, Image
 
 from image_titler.utilities import process_image, convert_file_name_to_title, save_copy
 
@@ -21,7 +21,7 @@ class ImageTitlerGUI(tk.Frame):
         self.preview = ImageTitlerPreviewPane(self)
         self.option_pane = ImageTitlerOptionPane(self)
         self.set_layout()
-        self.pack()
+        self.pack(anchor=tk.W)
 
     def set_layout(self):
         self.option_pane.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.YES, padx=10, pady=5, anchor=tk.W)
@@ -73,7 +73,10 @@ class ImageTitlerMenuBar(tk.Menu):
         if self.image_path:
             title = convert_file_name_to_title(self.image_path)
             self.current_edit = process_image(self.image_path, title)
-            image = ImageTk.PhotoImage(self.current_edit)
+            maxsize = (1028, 1028)
+            small_image = self.current_edit.copy()
+            small_image.thumbnail(maxsize, Image.ANTIALIAS)
+            image = ImageTk.PhotoImage(small_image)
             self.parent.gui.preview.config(image=image)
             self.parent.gui.preview.image = image
             self.parent.gui.set_layout()
