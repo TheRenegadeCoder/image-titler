@@ -214,7 +214,13 @@ def process_batch(input_path: str, tier: str = None, logo_path: str = None, outp
     """
     for path in os.listdir(input_path):
         absolute_path = os.path.join(input_path, path)
-        edited_image = process_image(absolute_path, tier, logo_path, output_path)
+        title = convert_file_name_to_title(absolute_path)
+        edited_image = process_image(
+            absolute_path,
+            title,
+            tier=tier,
+            logo_path=logo_path
+        )
         save_copy(absolute_path, edited_image, output_path=output_path)
 
 
