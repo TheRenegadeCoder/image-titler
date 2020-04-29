@@ -10,7 +10,7 @@ class ImageTitlerMain(tk.Tk):
         super().__init__()
         self.menu = ImageTitlerMenuBar(self)
         self.gui = ImageTitlerGUI(self)
-        self.geometry("1920x960+0+0")
+        #self.geometry("1920x960+0+0")
 
 
 class ImageTitlerGUI(tk.Frame):
@@ -19,11 +19,12 @@ class ImageTitlerGUI(tk.Frame):
         super().__init__(parent, **kw)
         self.preview = ImageTitlerPreviewPane(self)
         self.option_pane = ImageTitlerOptionPane(self)
+        self.set_layout()
         self.pack()
 
     def set_layout(self):
-        #self.preview.pack(side)
-        pass
+        self.option_pane.pack(side="left", fill="both", expand="yes")
+        self.preview.pack(side="right", fill="both", expand="yes")
 
 
 class ImageTitlerPreviewPane(tk.Label):
@@ -36,6 +37,12 @@ class ImageTitlerOptionPane(tk.Frame):
 
     def __init__(self, parent, **kw):
         super().__init__(parent, **kw)
+        self.init_option_pane()
+        self.pack()
+
+    def init_option_pane(self):
+        label = tk.Label(self, text="Title")
+        label.pack()
 
 
 class ImageTitlerMenuBar(tk.Menu):
@@ -66,7 +73,7 @@ class ImageTitlerMenuBar(tk.Menu):
             image = ImageTk.PhotoImage(self.current_edit)
             self.parent.gui.preview.config(image=image)
             self.parent.gui.preview.image = image
-            self.parent.gui.preview.pack(side="bottom", fill="both", expand="yes")
+            self.parent.gui.set_layout()
 
     def save_as(self):
         output_path = tk.filedialog.askdirectory()
