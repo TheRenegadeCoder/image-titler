@@ -4,7 +4,10 @@ import tkinter
 from pathlib import Path
 from tkinter.filedialog import askdirectory
 from tkinter.filedialog import askopenfilename
+from typing import Optional
 
+import piexif
+import piexif.helper
 import pathvalidate
 import pkg_resources
 from PIL import Image
@@ -40,24 +43,7 @@ TIER_MAP = {
 FILE_TYPES = [('image files', ('.png', '.jpg', '.jpeg'))]
 
 
-def split_string_by_nearest_middle_space(input_string: str) -> tuple:
-    """
-    Splits a string by the nearest middle space. Assumes space is in string.
-
-    :param input_string: some string
-    :return: a pair of strings
-    """
-    index = len(input_string) // 2
-    curr_char = input_string[index]
-    n = 1
-    while not curr_char.isspace():
-        index += (-1) ** (n + 1) * n  # thanks wolfram alpha (1, -2, 3, -4, ...)
-        curr_char = input_string[index]
-        n += 1
-    return input_string[:index], input_string[index + 1:]
-
-
-def draw_rectangle(draw: ImageDraw, position: int, width: int, tier: str, color: tuple = RECTANGLE_FILL):
+def _draw_rectangle(draw: ImageDraw, position: int, width: int, tier: str, color: tuple = RECTANGLE_FILL):
     """
     Draws a rectangle over the image given a ImageDraw object and the intended
     position, width, and tier.
@@ -80,7 +66,7 @@ def draw_rectangle(draw: ImageDraw, position: int, width: int, tier: str, color:
     )
 
 
-def draw_text(draw: ImageDraw, position: int, width: int, text: str, font: ImageFont):
+def _draw_text(draw: ImageDraw, position: int, width: int, text: str, font: ImageFont):
     """
     Draws text on the image.
 
@@ -99,7 +85,7 @@ def draw_text(draw: ImageDraw, position: int, width: int, text: str, font: Image
     )
 
 
-def draw_overlay(image: Image.Image, title: str, tier: str, color: tuple = RECTANGLE_FILL) -> Image:
+def _draw_overlay(image: Image.Image, title: str, tier: str, color: tuple = RECTANGLE_FILL) -> Image:
     """
     Draws text over an image.
 
@@ -120,19 +106,19 @@ def draw_overlay(image: Image.Image, title: str, tier: str, color: tuple = RECTA
 
     # Draw top
     top_width, top_height = draw.textsize(top_half, font)
-    draw_rectangle(draw, TOP_RECTANGLE_Y, top_width, tier, color)
-    draw_text(draw, TOP_TEXT_Y, top_width, top_half, font)
+    _draw_rectangle(draw, TOP_RECTANGLE_Y, top_width, tier, color)
+    _draw_text(draw, TOP_TEXT_Y, top_width, top_half, font)
 
     # Draw bottom
     if bottom_half:
         bottom_width, bottom_height = draw.textsize(bottom_half, font)
-        draw_rectangle(draw, BOTTOM_RECTANGLE_Y, bottom_width, tier, color)
-        draw_text(draw, BOTTOM_TEXT_Y, bottom_width, bottom_half, font)
+        _draw_rectangle(draw, BOTTOM_RECTANGLE_Y, bottom_width, tier, color)
+        _draw_text(draw, BOTTOM_TEXT_Y, bottom_width, bottom_half, font)
 
     return image
 
 
-def draw_logo(img: Image.Image, logo: Image.Image):
+def _draw_logo(img: Image.Image, logo: Image.Image):
     """
     Adds a logo to the image if a path is provided.
 
@@ -145,7 +131,87 @@ def draw_logo(img: Image.Image, logo: Image.Image):
     img.paste(logo, (LOGO_PADDING, height - LOGO_SIZE[1] - LOGO_PADDING), logo)
 
 
-def save_copy(og_image: Image, edited_image: Image, title: str, output_path: str = None):
+def _request_input_path(path: str, batch: bool) -> Optional[str]:
+    """
+    A helper function which asks the user for an input path
+    if one is not supplied on the command line. In this implementation,
+    the type of request we make (e.g. file vs. folder) depends on the state of batch.
+
+    :param path: a folder or file path
+    :param batch: tells us if we are in batch mode or not
+    :return: the input path after the request or None if the user does not select one
+    """
+    input_path = path
+    if not path:
+        tkinter.Tk().withdraw()
+        if not batch:
+            input_path = askopenfilename(
+                title="Select an Image File",
+                filetypes=FILE_TYPES
+            )
+        else:
+            input_path = askdirectory(
+                title="Select a Folder of Images"
+            )
+    return input_path
+
+
+def _add_version_to_exif(image: Image.Image, version: str) -> bytes:
+    """
+    Given an image and version, this function will place that vision in the EXIF data of the file.
+
+    Currently, this function is limited to files that already have EXIF data. Naturally, not
+    all files have EXIF data, so I'm not sure how useful this feature is. That said, it's
+    a nice start!
+
+    :param image: an image file
+    :param version: the software version (e.g. 1.9.0)
+    :return: the exif data as a byte string (empty string for images that didn't already have data)
+    """
+    if exif := image.info.get('exif'):
+        exif_dict = piexif.load(exif)
+        exif_dict['Exif'][piexif.ExifIFD.UserComment] = piexif.helper.UserComment.dump(f'image-titler-v{version}')
+        return piexif.dump(exif_dict)
+    else:
+        return b""
+
+
+def _generate_image_output_path(extension: str, output_path: Optional[str], title: str, version: str) -> str:
+    """
+    A helper function which generates image output paths from a series of strings.
+
+    :param extension: the file extension (e.g. png, jpg, etc.)
+    :param output_path: the directory where the file is to be stored (e.g. path/to/folder)
+    :param title: the title given to the image (e.g. How to Write a Loop in Python)
+    :param version: the software version (e.g. 1.9.0)
+    :return: the path of the file to be created
+    """
+    tag = "featured-image"
+    file_name = pathvalidate.sanitize_filename(title.lower().replace(" ", SEPARATOR))
+    storage_path = f'{file_name}-{tag}-v{version}.{extension}'
+    if output_path:
+        storage_path = f'{output_path}{os.sep}{storage_path}'
+    return storage_path
+
+
+def split_string_by_nearest_middle_space(input_string: str) -> tuple:
+    """
+    Splits a string by the nearest middle space. Assumes space is in string.
+
+    :param input_string: some string
+    :return: a pair of strings
+    """
+    index = len(input_string) // 2
+    curr_char = input_string[index]
+    n = 1
+    while not curr_char.isspace():
+        index += (-1) ** (n + 1) * n  # thanks wolfram alpha (1, -2, 3, -4, ...)
+        curr_char = input_string[index]
+        n += 1
+    return input_string[:index], input_string[index + 1:]
+
+
+def save_copy(og_image: Image.Image, edited_image: Image.Image, title: str, output_path: str = None):
     """
     A helper function for saving a copy of the image.
 
@@ -155,15 +221,11 @@ def save_copy(og_image: Image, edited_image: Image, title: str, output_path: str
     :param output_path: the path to dump the picture
     :return: nothing
     """
-    file_name = pathvalidate.sanitize_filename(title.lower().replace(" ", SEPARATOR))
-    tag = "featured-image"
     version: str = pkg_resources.require("image-titler")[0].version
     version = version.replace(".", SEPARATOR)
-    if output_path is None:
-        storage_path = f'{file_name}-{tag}-v{version}.{og_image.format}'
-    else:
-        storage_path = f'{output_path}{os.sep}{file_name}-{tag}-v{version}.{og_image.format}'
-    edited_image.save(storage_path, subsampling=0, quality=100)  # Improved quality
+    storage_path = _generate_image_output_path(og_image.format, output_path, title, version)
+    exif = _add_version_to_exif(og_image, version)
+    edited_image.save(storage_path, subsampling=0, quality=100, exif=exif)
 
 
 def parse_input() -> argparse.Namespace:
@@ -184,32 +246,7 @@ def parse_input() -> argparse.Namespace:
     return args
 
 
-def request_input_path(path: str, batch: bool) -> str:
-    """
-    A helper function which asks the user for an input path
-    if one is not supplied on the command line. In this implementation,
-    the type of request we make (e.g. file vs. folder) depends on the state of batch.
-
-    :param path: a folder or file path
-    :param batch: tells us if we are in batch mode or not
-    :return: the input path after the request
-    """
-    input_path = path
-    if not path:
-        tkinter.Tk().withdraw()
-        if not batch:
-            input_path = askopenfilename(
-                title="Select an Image File",
-                filetypes=FILE_TYPES
-            )
-        else:
-            input_path = askdirectory(
-                title="Select a Folder of Images"
-            )
-    return input_path
-
-
-def process_batch(input_path: str, tier: str = None, logo_path: str = None, output_path: str = None):
+def process_batch(input_path: str, tier: str = None, logo_path: str = None, output_path: str = None) -> None:
     """
     Processes a batch of images.
 
@@ -235,8 +272,8 @@ def convert_file_name_to_title(file_name: str, separator: str = SEPARATOR) -> st
     return titlecase(file_name.replace(separator, ' '))
 
 
-def process_image(input_path: str, tier: str = "", logo_path: str = None, output_path: str = None,
-                  title: str = None) -> Image.Image:
+def process_image(input_path: str, tier: str = "", logo_path: Optional[str] = None, output_path: Optional[str] = None,
+                  title: Optional[str] = None) -> Image.Image:
     """
     Processes a single image.
 
@@ -256,8 +293,8 @@ def process_image(input_path: str, tier: str = "", logo_path: str = None, output
     if logo_path:
         logo: Image.Image = Image.open(logo_path)
         color = get_best_top_color(logo)
-        draw_logo(cropped_img, logo)
-    edited_image = draw_overlay(cropped_img, title, tier, color)
+        _draw_logo(cropped_img, logo)
+    edited_image = _draw_overlay(cropped_img, title, tier, color)
     save_copy(img, edited_image, title, output_path)
     return edited_image
 
@@ -276,20 +313,35 @@ def get_best_top_color(image: Image.Image) -> tuple:
     return color
 
 
-def main():
-    args = parse_input()
+def title_image(args: argparse.Namespace) -> None:
+    """
+    Titles an image based on a set of arguments.
+
+    :param args: a set of arguments
+    :return: None
+    """
     path: str = args.path
     batch: bool = args.batch
     tier: str = args.tier
     logo_path: str = args.logo_path
     output_path: str = args.output_path
     title: str = args.title
-    input_path = request_input_path(path, batch)
+    input_path = _request_input_path(path, batch)
     if input_path:
         if args.batch:
             process_batch(input_path, tier, logo_path, output_path)
         else:
             process_image(input_path, tier, logo_path, output_path, title).show()
+
+
+def main() -> None:
+    """
+    The main function.
+
+    :return: None
+    """
+    args = parse_input()
+    title_image(args)
 
 
 if __name__ == '__main__':

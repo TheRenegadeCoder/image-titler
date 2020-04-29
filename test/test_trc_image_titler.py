@@ -3,6 +3,7 @@ import shutil
 import sys
 from unittest import TestCase
 
+import pkg_resources
 from PIL import Image
 
 from image_titler import trc_image_titler
@@ -13,9 +14,15 @@ TRC_RED = (201, 2, 41, 255)
 VF_ICON_PATH = "icons/virtual-flat-sample-icon.png"
 VF_BLUE = (0, 164, 246, 255)
 
-SAMPLE_IMAGE = "assets/23-tech-topics-to-tackle.jpg"
+DEFAULT_IMAGE = "assets/23-tech-topics-to-tackle.jpg"
+LOGO_RED_IMAGE = "assets/3-ways-to-check-if-a-list-is-empty-in-python.jpg"
+LOGO_BLUE_IMAGE = "assets/hello-world-in-matlab.jpg"
+FREE_IMAGE = "assets/columbus-drivers-are-among-the-worst.jpg"
+PREMIUM_IMAGE = "assets/the-guide-to-causing-mass-panic.jpg"
+SPECIAL_IMAGE = "assets/happy-new-year.jpg"
 
 TEST_DUMP = "test/dump"
+SAMPLE_DUMP = "samples/v" + pkg_resources.require("image-titler")[0].version
 
 
 class TestImageTitler(TestCase):
@@ -30,30 +37,51 @@ class TestProcessImage(TestImageTitler):
             shutil.rmtree(TEST_DUMP)
         except FileNotFoundError:
             pass
+
+        try:
+            shutil.rmtree(SAMPLE_DUMP)
+        except FileNotFoundError:
+            pass
+        
         os.mkdir(TEST_DUMP)
+        os.mkdir(SAMPLE_DUMP)
+
+    @staticmethod
+    def generate_image(input_path, title=None, logo_path=None, tier=""):
+        trc_image_titler.process_image(
+            input_path=input_path,
+            output_path=TEST_DUMP,
+            title=title,
+            logo_path=logo_path,
+            tier=tier
+        )
+        trc_image_titler.process_image(
+            input_path=input_path,
+            output_path=SAMPLE_DUMP,
+            logo_path=logo_path,
+            tier=tier
+        )
 
     def test_default(self):
-        trc_image_titler.process_image(SAMPLE_IMAGE, output_path=TEST_DUMP)
+        TestProcessImage.generate_image(DEFAULT_IMAGE)
 
     def test_title(self):
-        trc_image_titler.process_image(SAMPLE_IMAGE, output_path=TEST_DUMP, title="Test Title")
+        TestProcessImage.generate_image(DEFAULT_IMAGE, title="Test Title")
 
     def test_logo_red(self):
-        trc_image_titler.process_image(SAMPLE_IMAGE, output_path=TEST_DUMP, title="Test Red Logo",
-                                       logo_path=TRC_ICON_PATH)
+        TestProcessImage.generate_image(LOGO_RED_IMAGE, title="Test Red Logo", logo_path=TRC_ICON_PATH)
 
     def test_logo_blue(self):
-        trc_image_titler.process_image(SAMPLE_IMAGE, output_path=TEST_DUMP, title="Test Blue Logo",
-                                       logo_path=VF_ICON_PATH)
+        TestProcessImage.generate_image(LOGO_BLUE_IMAGE, title="Test Blue Logo", logo_path=VF_ICON_PATH)
 
     def test_free_tier(self):
-        trc_image_titler.process_image(SAMPLE_IMAGE, output_path=TEST_DUMP, title="Test Free Tier", tier="free")
+        TestProcessImage.generate_image(FREE_IMAGE, title="Test Free Tier", tier="free")
 
     def test_premium_tier(self):
-        trc_image_titler.process_image(SAMPLE_IMAGE, output_path=TEST_DUMP, title="Test Premium Tier", tier="premium")
+        TestProcessImage.generate_image(PREMIUM_IMAGE, title="Test Premium Tier", tier="premium")
 
     def test_special_chars_in_title(self):
-        trc_image_titler.process_image(SAMPLE_IMAGE, output_path=TEST_DUMP, title="Test Special Chars?", tier="premium")
+        trc_image_titler.process_image(SPECIAL_IMAGE, output_path=TEST_DUMP, title="Test Special Chars?")
 
 
 class TestConvertFileNameToTitle(TestImageTitler):
