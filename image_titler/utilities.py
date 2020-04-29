@@ -182,7 +182,8 @@ def split_string_by_nearest_middle_space(input_string: str) -> tuple:
     return input_string[:index], input_string[index + 1:]
 
 
-def save_copy(input_path: str, edited_image: Image.Image, title: Optional[str] = None, output_path: Optional[str] = None):
+def save_copy(input_path: str, edited_image: Image.Image, title: Optional[str] = None,
+              output_path: Optional[str] = None):
     """
     A helper function for saving a copy of the image.
 

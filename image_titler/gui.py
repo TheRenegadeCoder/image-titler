@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter.filedialog import askopenfilename, asksaveasfilename
+import tkinter.filedialog
 from PIL import ImageTk
 
 from image_titler.utilities import process_image, convert_file_name_to_title, save_copy
@@ -40,7 +40,7 @@ class ImageTitlerMenuBar(tk.Menu):
         menu.add_cascade(label="File", menu=file_menu)
 
     def new_image(self):
-        self.image_path = askopenfilename()
+        self.image_path = tk.filedialog.askopenfilename()
         title = convert_file_name_to_title(self.image_path)
         self.current_edit = process_image(self.image_path, title)
         image = ImageTk.PhotoImage(self.current_edit)
