@@ -8,8 +8,16 @@ from image_titler.utilities import process_image, convert_file_name_to_title
 class ImageTitlerGUI(tk.Tk):
 
     def __init__(self, **kw):
-        super().__init__()
+        super().__init__(**kw)
         self.menu = ImageTitlerMenuBar(self)
+        self.preview = ImageTitlerPreviewPane(self)
+        self.geometry("1920x960+0+0")
+
+
+class ImageTitlerPreviewPane(tk.Label):
+
+    def __init__(self, parent, **kw):
+        super().__init__(parent, **kw)
 
 
 class ImageTitlerMenuBar(tk.Menu):
@@ -32,8 +40,9 @@ class ImageTitlerMenuBar(tk.Menu):
         image_path = askopenfilename()
         title = convert_file_name_to_title(image_path)
         image = ImageTk.PhotoImage(process_image(image_path, title))
-        panel = tk.Label(self.parent, image=image)
-        panel.pack(side="bottom", fill="both", expand="yes")
+        self.parent.preview.config(image=image)
+        self.parent.preview.image = image
+        self.parent.preview.pack(side="bottom", fill="both", expand="yes")
 
 
 if __name__ == '__main__':
