@@ -5,13 +5,25 @@ from PIL import ImageTk
 from image_titler.utilities import process_image, convert_file_name_to_title, save_copy
 
 
-class ImageTitlerGUI(tk.Tk):
-
-    def __init__(self, **kw):
-        super().__init__(**kw)
+class ImageTitlerMain(tk.Tk):
+    def __init__(self):
+        super().__init__()
         self.menu = ImageTitlerMenuBar(self)
-        self.preview = ImageTitlerPreviewPane(self)
+        self.gui = ImageTitlerGUI(self)
         self.geometry("1920x960+0+0")
+
+
+class ImageTitlerGUI(tk.Frame):
+
+    def __init__(self, parent, **kw):
+        super().__init__(parent, **kw)
+        self.preview = ImageTitlerPreviewPane(self)
+        self.option_pane = ImageTitlerOptionPane(self)
+        self.pack()
+
+    def set_layout(self):
+        #self.preview.pack(side)
+        pass
 
 
 class ImageTitlerPreviewPane(tk.Label):
@@ -20,9 +32,15 @@ class ImageTitlerPreviewPane(tk.Label):
         super().__init__(parent, **kw)
 
 
+class ImageTitlerOptionPane(tk.Frame):
+
+    def __init__(self, parent, **kw):
+        super().__init__(parent, **kw)
+
+
 class ImageTitlerMenuBar(tk.Menu):
 
-    def __init__(self, parent: ImageTitlerGUI):
+    def __init__(self, parent: ImageTitlerMain):
         super().__init__(parent)
         self.parent = parent
         self.image_path = None
@@ -46,9 +64,9 @@ class ImageTitlerMenuBar(tk.Menu):
             title = convert_file_name_to_title(self.image_path)
             self.current_edit = process_image(self.image_path, title)
             image = ImageTk.PhotoImage(self.current_edit)
-            self.parent.preview.config(image=image)
-            self.parent.preview.image = image
-            self.parent.preview.pack(side="bottom", fill="both", expand="yes")
+            self.parent.gui.preview.config(image=image)
+            self.parent.gui.preview.image = image
+            self.parent.gui.preview.pack(side="bottom", fill="both", expand="yes")
 
     def save_as(self):
         output_path = tk.filedialog.askdirectory()
@@ -62,7 +80,7 @@ class ImageTitlerMenuBar(tk.Menu):
 
 
 def main():
-    ImageTitlerGUI().mainloop()
+    ImageTitlerMain().mainloop()
 
 
 if __name__ == '__main__':
