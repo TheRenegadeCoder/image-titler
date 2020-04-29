@@ -202,7 +202,7 @@ def save_copy(input_path: str, edited_image: Image.Image, title: Optional[str] =
     edited_image.save(storage_path, subsampling=0, quality=100, exif=exif)
 
 
-def process_batch(input_path: str, tier: str = None, logo_path: str = None, output_path: str = None) -> None:
+def process_batch(input_path: str, tier: str = "", logo_path: str = None, output_path: str = None) -> None:
     """
     Processes a batch of images.
 

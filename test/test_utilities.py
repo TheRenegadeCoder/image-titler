@@ -14,6 +14,7 @@ TRC_RED = (201, 2, 41, 255)
 VF_ICON_PATH = "icons/virtual-flat-sample-icon.png"
 VF_BLUE = (0, 164, 246, 255)
 
+ASSETS = "assets/"
 DEFAULT_IMAGE = "assets/23-tech-topics-to-tackle.jpg"
 LOGO_RED_IMAGE = "assets/3-ways-to-check-if-a-list-is-empty-in-python.jpg"
 LOGO_BLUE_IMAGE = "assets/hello-world-in-matlab.jpg"
@@ -21,7 +22,8 @@ FREE_IMAGE = "assets/columbus-drivers-are-among-the-worst.jpg"
 PREMIUM_IMAGE = "assets/the-guide-to-causing-mass-panic.jpg"
 SPECIAL_IMAGE = "assets/happy-new-year.jpg"
 
-TEST_DUMP = "test/dump"
+TEST_SOLO_DUMP = "test/solo-dump"
+TEST_BATCH_DUMP = "test/batch-dump"
 SAMPLE_DUMP = "samples/v" + pkg_resources.require("image-titler")[0].version
 
 
@@ -34,7 +36,7 @@ class TestProcessImage(TestUtilities):
     @classmethod
     def setUpClass(cls) -> None:
         try:
-            shutil.rmtree(TEST_DUMP)
+            shutil.rmtree(TEST_SOLO_DUMP)
         except FileNotFoundError:
             pass
 
@@ -43,7 +45,7 @@ class TestProcessImage(TestUtilities):
         except FileNotFoundError:
             pass
         
-        os.mkdir(TEST_DUMP)
+        os.mkdir(TEST_SOLO_DUMP)
         os.mkdir(SAMPLE_DUMP)
 
     @staticmethod
@@ -54,7 +56,7 @@ class TestProcessImage(TestUtilities):
             logo_path=logo_path,
             tier=tier
         )
-        save_copy(input_path, test_image, output_path=TEST_DUMP, title=title)
+        save_copy(input_path, test_image, output_path=TEST_SOLO_DUMP, title=title)
 
         title = utilities.convert_file_name_to_title(input_path)
         sample_image = utilities.process_image(
@@ -82,7 +84,22 @@ class TestProcessImage(TestUtilities):
 
     def test_special_chars_in_title(self):
         test_image = utilities.process_image(SPECIAL_IMAGE, title="Test Special Chars?")
-        save_copy(SPECIAL_IMAGE, test_image, output_path=TEST_DUMP, title="Test Special Chars?")
+        save_copy(SPECIAL_IMAGE, test_image, output_path=TEST_SOLO_DUMP, title="Test Special Chars?")
+
+
+class TestProcessBatch(TestUtilities):
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        try:
+            shutil.rmtree(TEST_BATCH_DUMP)
+        except FileNotFoundError:
+            pass
+
+        os.mkdir(TEST_BATCH_DUMP)
+
+    def test_batch(self):
+        utilities.process_batch(ASSETS, output_path=TEST_BATCH_DUMP)
 
 
 class TestConvertFileNameToTitle(TestUtilities):
