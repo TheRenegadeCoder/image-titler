@@ -22,13 +22,13 @@ The following code snippet demonstrates a few ways you might use the script:
 ```shell
 pip install image-titler # Installs the script
 
-image_titler # Runs as default
-image_titler --title "Hello, World!"  # Adds a custom title
-image_titler --output_path "path/to/output"  # Sets the output path
-image_titler --path "path/to/image"  # Sets the image path
-image_titler --tier "free"  # Sets the membership tier which changes the rectangle borders
-image_titler --logo_path "path/to/logo"  # Adds a 145x145 logo to the lower left corner of the image
-image_titler --batch # Runs the program in batch mode on a directory
+image-titler # Runs as default
+image-titler --title "Hello, World!"  # Adds a custom title
+image-titler --output_path "path/to/output"  # Sets the output path
+image-titler --path "path/to/image"  # Sets the image path
+image-titler --tier "free"  # Sets the membership tier which changes the rectangle borders
+image-titler --logo_path "path/to/logo"  # Adds a 145x145 logo to the lower left corner of the image
+image-titler --batch # Runs the program in batch mode on a directory
 ```
 
 ## Default Behavior

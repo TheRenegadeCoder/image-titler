@@ -11,7 +11,7 @@ The following image is an example of the default behavior of this program as of 
 Here's the command that would generate this image:
 
 ```shell script
-image_titler
+image-titler
 ```
 
 ## Logo Behavior
@@ -27,7 +27,7 @@ When using a logo, title background color is generated automatically. Here's ano
 Here's the command that would generate these images:
 
 ```shell script
-image_titler -l "path/to/logo"
+image-titler -l "path/to/logo"
 ```
 
 # Tier Behavior
@@ -39,7 +39,7 @@ The following image is an example of the behavior when the premium subscription 
 To generate an image like this, use the following command:
 
 ```shell script
-image_titler -r premium
+image-titler -r premium
 ```
 
 In addition, the script supports a free tier as well:
@@ -49,5 +49,5 @@ In addition, the script supports a free tier as well:
 To generate an image like this, use the following command:
 
 ```shell script
-image_titler -r free
+image-titler -r free
 ```
