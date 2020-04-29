@@ -4,6 +4,7 @@ import tkinter
 from pathlib import Path
 from tkinter.filedialog import askdirectory
 from tkinter.filedialog import askopenfilename
+from typing import Union, Optional
 
 import pathvalidate
 import pkg_resources
@@ -39,25 +40,7 @@ TIER_MAP = {
 
 FILE_TYPES = [('image files', ('.png', '.jpg', '.jpeg'))]
 
-
-def split_string_by_nearest_middle_space(input_string: str) -> tuple:
-    """
-    Splits a string by the nearest middle space. Assumes space is in string.
-
-    :param input_string: some string
-    :return: a pair of strings
-    """
-    index = len(input_string) // 2
-    curr_char = input_string[index]
-    n = 1
-    while not curr_char.isspace():
-        index += (-1) ** (n + 1) * n  # thanks wolfram alpha (1, -2, 3, -4, ...)
-        curr_char = input_string[index]
-        n += 1
-    return input_string[:index], input_string[index + 1:]
-
-
-def draw_rectangle(draw: ImageDraw, position: int, width: int, tier: str, color: tuple = RECTANGLE_FILL):
+def _draw_rectangle(draw: ImageDraw, position: int, width: int, tier: str, color: tuple = RECTANGLE_FILL):
     """
     Draws a rectangle over the image given a ImageDraw object and the intended
     position, width, and tier.
@@ -80,7 +63,7 @@ def draw_rectangle(draw: ImageDraw, position: int, width: int, tier: str, color:
     )
 
 
-def draw_text(draw: ImageDraw, position: int, width: int, text: str, font: ImageFont):
+def _draw_text(draw: ImageDraw, position: int, width: int, text: str, font: ImageFont):
     """
     Draws text on the image.
 
@@ -99,7 +82,7 @@ def draw_text(draw: ImageDraw, position: int, width: int, text: str, font: Image
     )
 
 
-def draw_overlay(image: Image.Image, title: str, tier: str, color: tuple = RECTANGLE_FILL) -> Image:
+def _draw_overlay(image: Image.Image, title: str, tier: str, color: tuple = RECTANGLE_FILL) -> Image:
     """
     Draws text over an image.
 
@@ -120,19 +103,19 @@ def draw_overlay(image: Image.Image, title: str, tier: str, color: tuple = RECTA
 
     # Draw top
     top_width, top_height = draw.textsize(top_half, font)
-    draw_rectangle(draw, TOP_RECTANGLE_Y, top_width, tier, color)
-    draw_text(draw, TOP_TEXT_Y, top_width, top_half, font)
+    _draw_rectangle(draw, TOP_RECTANGLE_Y, top_width, tier, color)
+    _draw_text(draw, TOP_TEXT_Y, top_width, top_half, font)
 
     # Draw bottom
     if bottom_half:
         bottom_width, bottom_height = draw.textsize(bottom_half, font)
-        draw_rectangle(draw, BOTTOM_RECTANGLE_Y, bottom_width, tier, color)
-        draw_text(draw, BOTTOM_TEXT_Y, bottom_width, bottom_half, font)
+        _draw_rectangle(draw, BOTTOM_RECTANGLE_Y, bottom_width, tier, color)
+        _draw_text(draw, BOTTOM_TEXT_Y, bottom_width, bottom_half, font)
 
     return image
 
 
-def draw_logo(img: Image.Image, logo: Image.Image):
+def _draw_logo(img: Image.Image, logo: Image.Image):
     """
     Adds a logo to the image if a path is provided.
 
@@ -143,6 +126,48 @@ def draw_logo(img: Image.Image, logo: Image.Image):
     logo.thumbnail(LOGO_SIZE)
     width, height = img.size
     img.paste(logo, (LOGO_PADDING, height - LOGO_SIZE[1] - LOGO_PADDING), logo)
+
+
+def _request_input_path(path: str, batch: bool) -> Optional[str]:
+    """
+    A helper function which asks the user for an input path
+    if one is not supplied on the command line. In this implementation,
+    the type of request we make (e.g. file vs. folder) depends on the state of batch.
+
+    :param path: a folder or file path
+    :param batch: tells us if we are in batch mode or not
+    :return: the input path after the request or None if the user does not select one
+    """
+    input_path = path
+    if not path:
+        tkinter.Tk().withdraw()
+        if not batch:
+            input_path = askopenfilename(
+                title="Select an Image File",
+                filetypes=FILE_TYPES
+            )
+        else:
+            input_path = askdirectory(
+                title="Select a Folder of Images"
+            )
+    return input_path
+
+
+def split_string_by_nearest_middle_space(input_string: str) -> tuple:
+    """
+    Splits a string by the nearest middle space. Assumes space is in string.
+
+    :param input_string: some string
+    :return: a pair of strings
+    """
+    index = len(input_string) // 2
+    curr_char = input_string[index]
+    n = 1
+    while not curr_char.isspace():
+        index += (-1) ** (n + 1) * n  # thanks wolfram alpha (1, -2, 3, -4, ...)
+        curr_char = input_string[index]
+        n += 1
+    return input_string[:index], input_string[index + 1:]
 
 
 def save_copy(og_image: Image, edited_image: Image, title: str, output_path: str = None):
@@ -182,31 +207,6 @@ def parse_input() -> argparse.Namespace:
     parser.add_argument('-b', '--batch', default=False, action='store_true', help="turn on batch processing")
     args = parser.parse_args()
     return args
-
-
-def request_input_path(path: str, batch: bool) -> str:
-    """
-    A helper function which asks the user for an input path
-    if one is not supplied on the command line. In this implementation,
-    the type of request we make (e.g. file vs. folder) depends on the state of batch.
-
-    :param path: a folder or file path
-    :param batch: tells us if we are in batch mode or not
-    :return: the input path after the request
-    """
-    input_path = path
-    if not path:
-        tkinter.Tk().withdraw()
-        if not batch:
-            input_path = askopenfilename(
-                title="Select an Image File",
-                filetypes=FILE_TYPES
-            )
-        else:
-            input_path = askdirectory(
-                title="Select a Folder of Images"
-            )
-    return input_path
 
 
 def process_batch(input_path: str, tier: str = None, logo_path: str = None, output_path: str = None):
@@ -256,8 +256,8 @@ def process_image(input_path: str, tier: str = "", logo_path: str = None, output
     if logo_path:
         logo: Image.Image = Image.open(logo_path)
         color = get_best_top_color(logo)
-        draw_logo(cropped_img, logo)
-    edited_image = draw_overlay(cropped_img, title, tier, color)
+        _draw_logo(cropped_img, logo)
+    edited_image = _draw_overlay(cropped_img, title, tier, color)
     save_copy(img, edited_image, title, output_path)
     return edited_image
 
@@ -284,7 +284,7 @@ def main():
     logo_path: str = args.logo_path
     output_path: str = args.output_path
     title: str = args.title
-    input_path = request_input_path(path, batch)
+    input_path = _request_input_path(path, batch)
     if input_path:
         if args.batch:
             process_batch(input_path, tier, logo_path, output_path)
