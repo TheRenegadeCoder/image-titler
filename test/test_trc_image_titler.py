@@ -6,7 +6,7 @@ from unittest import TestCase
 import pkg_resources
 from PIL import Image
 
-from image_titler import trc_image_titler
+from image_titler import cmd
 
 TRC_ICON_PATH = "icons/the-renegade-coder-sample-icon.png"
 TRC_RED = (201, 2, 41, 255)
@@ -48,14 +48,14 @@ class TestProcessImage(TestImageTitler):
 
     @staticmethod
     def generate_image(input_path, title=None, logo_path=None, tier=""):
-        trc_image_titler.process_image(
+        cmd.process_image(
             input_path=input_path,
             output_path=TEST_DUMP,
             title=title,
             logo_path=logo_path,
             tier=tier
         )
-        trc_image_titler.process_image(
+        cmd.process_image(
             input_path=input_path,
             output_path=SAMPLE_DUMP,
             logo_path=logo_path,
@@ -81,17 +81,17 @@ class TestProcessImage(TestImageTitler):
         TestProcessImage.generate_image(PREMIUM_IMAGE, title="Test Premium Tier", tier="premium")
 
     def test_special_chars_in_title(self):
-        trc_image_titler.process_image(SPECIAL_IMAGE, output_path=TEST_DUMP, title="Test Special Chars?")
+        cmd.process_image(SPECIAL_IMAGE, output_path=TEST_DUMP, title="Test Special Chars?")
 
 
 class TestConvertFileNameToTitle(TestImageTitler):
 
     def test_default(self):
-        title = trc_image_titler.convert_file_name_to_title("how-to-loop-in-python")
+        title = cmd.convert_file_name_to_title("how-to-loop-in-python")
         self.assertEqual(title, "How to Loop in Python")
 
     def test_custom_sep(self):
-        title = trc_image_titler.convert_file_name_to_title("how.to.loop.in.python", ".")
+        title = cmd.convert_file_name_to_title("how.to.loop.in.python", ".")
         self.assertEqual(title, "How to Loop in Python")
 
 
@@ -99,13 +99,13 @@ class TestGetBestTopColor(TestImageTitler):
 
     def test_renegade_coder_icon(self):
         img: Image.Image = Image.open(TRC_ICON_PATH)
-        color = trc_image_titler.get_best_top_color(img)
+        color = cmd.get_best_top_color(img)
         self.assertEqual(color, TRC_RED)
         img.close()
 
     def test_virtual_flat_icon(self):
         img: Image.Image = Image.open(VF_ICON_PATH)
-        color = trc_image_titler.get_best_top_color(img)
+        color = cmd.get_best_top_color(img)
         self.assertEqual(color, VF_BLUE)
         img.close()
 
@@ -113,17 +113,17 @@ class TestGetBestTopColor(TestImageTitler):
 class TestSplitString(TestImageTitler):
 
     def test_first_space(self):
-        top, bottom = trc_image_titler.split_string_by_nearest_middle_space("Split first one")
+        top, bottom = cmd.split_string_by_nearest_middle_space("Split first one")
         self.assertEqual(top, "Split")
         self.assertEqual(bottom, "first one")
 
     def test_middle_space(self):
-        top, bottom = trc_image_titler.split_string_by_nearest_middle_space("Hello World")
+        top, bottom = cmd.split_string_by_nearest_middle_space("Hello World")
         self.assertEqual(top, "Hello")
         self.assertEqual(bottom, "World")
 
     def test_last_space(self):
-        top, bottom = trc_image_titler.split_string_by_nearest_middle_space("Split last opening")
+        top, bottom = cmd.split_string_by_nearest_middle_space("Split last opening")
         self.assertEqual(top, "Split last")
         self.assertEqual(bottom, "opening")
 
@@ -134,7 +134,7 @@ class TestParseInput(TestImageTitler):
         sys.argv = sys.argv[:1]  # clears args for each test
 
     def test_default(self):
-        args = trc_image_titler.parse_input()
+        args = cmd.parse_input()
         self.assertEqual(args.batch, False)
         self.assertEqual(args.path, None)
         self.assertEqual(args.tier, "")
@@ -145,7 +145,7 @@ class TestParseInput(TestImageTitler):
     def test_title(self):
         sys.argv.append("-t")
         sys.argv.append("Hello World")
-        args = trc_image_titler.parse_input()
+        args = cmd.parse_input()
         self.assertEqual(args.batch, False)
         self.assertEqual(args.path, None)
         self.assertEqual(args.tier, "")
@@ -156,7 +156,7 @@ class TestParseInput(TestImageTitler):
     def test_path(self):
         sys.argv.append("-p")
         sys.argv.append("path/to/stuff")
-        args = trc_image_titler.parse_input()
+        args = cmd.parse_input()
         self.assertEqual(args.batch, False)
         self.assertEqual(args.path, "path/to/stuff")
         self.assertEqual(args.tier, "")
@@ -167,7 +167,7 @@ class TestParseInput(TestImageTitler):
     def test_output_path(self):
         sys.argv.append("-o")
         sys.argv.append("path/to/stuff")
-        args = trc_image_titler.parse_input()
+        args = cmd.parse_input()
         self.assertEqual(args.batch, False)
         self.assertEqual(args.path, None)
         self.assertEqual(args.tier, "")
@@ -178,7 +178,7 @@ class TestParseInput(TestImageTitler):
     def test_logo_path(self):
         sys.argv.append("-l")
         sys.argv.append("path/to/stuff")
-        args = trc_image_titler.parse_input()
+        args = cmd.parse_input()
         self.assertEqual(args.batch, False)
         self.assertEqual(args.path, None)
         self.assertEqual(args.tier, "")
@@ -188,7 +188,7 @@ class TestParseInput(TestImageTitler):
 
     def test_batch(self):
         sys.argv.append("-b")
-        args = trc_image_titler.parse_input()
+        args = cmd.parse_input()
         self.assertEqual(args.batch, True)
         self.assertEqual(args.path, None)
         self.assertEqual(args.tier, "")
@@ -199,7 +199,7 @@ class TestParseInput(TestImageTitler):
     def test_tier_premium(self):
         sys.argv.append("-r")
         sys.argv.append("premium")
-        args = trc_image_titler.parse_input()
+        args = cmd.parse_input()
         self.assertEqual(args.batch, False)
         self.assertEqual(args.path, None)
         self.assertEqual(args.tier, "premium")
@@ -210,7 +210,7 @@ class TestParseInput(TestImageTitler):
     def test_tier_free(self):
         sys.argv.append("-r")
         sys.argv.append("free")
-        args = trc_image_titler.parse_input()
+        args = cmd.parse_input()
         self.assertEqual(args.batch, False)
         self.assertEqual(args.path, None)
         self.assertEqual(args.tier, "free")
