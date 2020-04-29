@@ -36,8 +36,8 @@ class TestProcessImage(TestImageTitler):
         try:
             shutil.rmtree(TEST_DUMP)
             shutil.rmtree(SAMPLE_DUMP)
-        except FileNotFoundError:
-            pass
+        except FileNotFoundError as e:
+            print(e)
         os.mkdir(TEST_DUMP)
         os.mkdir(SAMPLE_DUMP)
 
