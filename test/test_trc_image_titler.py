@@ -35,9 +35,14 @@ class TestProcessImage(TestImageTitler):
     def setUpClass(cls) -> None:
         try:
             shutil.rmtree(TEST_DUMP)
+        except FileNotFoundError:
+            pass
+
+        try:
             shutil.rmtree(SAMPLE_DUMP)
-        except FileNotFoundError as e:
-            print(e)
+        except FileNotFoundError:
+            pass
+        
         os.mkdir(TEST_DUMP)
         os.mkdir(SAMPLE_DUMP)
 
