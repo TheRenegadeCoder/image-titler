@@ -16,6 +16,8 @@ VF_BLUE = (0, 164, 246, 255)
 
 SAMPLE_IMAGE = "assets/23-tech-topics-to-tackle.jpg"
 DEFAULT_IMAGE = "assets/23-tech-topics-to-tackle.jpg"
+LOGO_RED_IMAGE = "assets/3-ways-to-check-if-a-list-is-empty-in-python.jpg"
+LOGO_BLUE_IMAGE = "assets/hello-world-in-matlab.jpg"
 
 TEST_DUMP = "test/dump"
 SAMPLE_DUMP = "samples/v" + pkg_resources.require("image-titler")[0].version
@@ -34,7 +36,8 @@ class TestSampleDump(TestImageTitler):
         if not os.path.exists(SAMPLE_DUMP):
             os.mkdir(SAMPLE_DUMP)
         trc_image_titler.process_image(DEFAULT_IMAGE, output_path=SAMPLE_DUMP)  # default
-        trc_image_titler.process_image(DEFAULT_IMAGE, output_path=SAMPLE_DUMP, logo_path=TRC_ICON_PATH)  # -l
+        trc_image_titler.process_image(LOGO_RED_IMAGE, output_path=SAMPLE_DUMP, logo_path=TRC_ICON_PATH)  # -l
+        trc_image_titler.process_image(LOGO_BLUE_IMAGE, output_path=SAMPLE_DUMP, logo_path=VF_ICON_PATH)  # -l
 
 
 class TestProcessImage(TestImageTitler):
