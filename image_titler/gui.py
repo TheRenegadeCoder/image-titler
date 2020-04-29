@@ -15,13 +15,17 @@ class ImageTitlerMain(tk.Tk):
     def __init__(self):
         super().__init__()
         self.menu = ImageTitlerMenuBar(self)
-        self.gui = ImageTitlerGUI(self)
+        self.gui = ImageTitlerGUI(self, self.menu)
+
+    def update_view(self):
+        self.gui.update_view()
 
 
 class ImageTitlerGUI(tk.Frame):
 
-    def __init__(self, parent, **kw):
+    def __init__(self, parent, menu, **kw):
         super().__init__(parent, **kw)
+        self.menu = menu
         self.preview = ImageTitlerPreviewPane(self)
         self.option_pane = ImageTitlerOptionPane(self)
         self.set_layout()
@@ -30,6 +34,24 @@ class ImageTitlerGUI(tk.Frame):
     def set_layout(self):
         self.option_pane.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.YES, padx=10, pady=5, anchor=tk.W)
         self.preview.pack(side=tk.RIGHT, fill=tk.BOTH, expand=tk.YES)
+
+    def update_view(self):
+        if self.menu.image_path:
+            title = None
+            if self.option_pane.title_state.get() == 1:
+                title = self.option_pane.title_value.get()
+            self._render_preview(title=title)
+
+    def _render_preview(self, title=None):
+        title = convert_file_name_to_title(self.menu.image_path, title=title)
+        self.menu.current_edit = process_image(self.menu.image_path, title)
+        maxsize = (1028, 1028)
+        small_image = self.menu.current_edit.copy()
+        small_image.thumbnail(maxsize, Image.ANTIALIAS)
+        image = ImageTk.PhotoImage(small_image)
+        self.preview.config(image=image)
+        self.preview.image = image
+        self.set_layout()
 
 
 class ImageTitlerPreviewPane(tk.Label):
@@ -40,15 +62,19 @@ class ImageTitlerPreviewPane(tk.Label):
 
 class ImageTitlerOptionPane(tk.Frame):
 
-    def __init__(self, parent, **kw):
+    def __init__(self, parent: ImageTitlerGUI, **kw):
         super().__init__(parent, **kw)
+        self.parent = parent
+        self.title_state: tk.IntVar = tk.IntVar()
+        self.title_value: tk.StringVar = tk.StringVar()
         self.init_option_pane()
 
     def init_option_pane(self):
-        title_label = tk.Checkbutton(self, text="Title:")
+        title_label = tk.Checkbutton(self, text="Title:", variable=self.title_state, command=self.parent.update_view)
         title_label.pack(side=tk.LEFT, anchor=tk.N)
 
-        title_entry = tk.Entry(self)
+        self.title_value.trace("w", lambda name, index, mode, sv=self.title_value: self.parent.update_view())
+        title_entry = tk.Entry(self, textvariable=self.title_value)
         title_entry.pack(side=tk.LEFT, anchor=tk.N)
 
 
@@ -74,16 +100,7 @@ class ImageTitlerMenuBar(tk.Menu):
 
     def new_image(self):
         self.image_path = tk.filedialog.askopenfilename()
-        if self.image_path:
-            title = convert_file_name_to_title(self.image_path)
-            self.current_edit = process_image(self.image_path, title)
-            maxsize = (1028, 1028)
-            small_image = self.current_edit.copy()
-            small_image.thumbnail(maxsize, Image.ANTIALIAS)
-            image = ImageTk.PhotoImage(small_image)
-            self.parent.gui.preview.config(image=image)
-            self.parent.gui.preview.image = image
-            self.parent.gui.set_layout()
+        self.parent.update_view()
 
     def save_as(self):
         output_path = tk.filedialog.askdirectory()
