@@ -2,9 +2,9 @@ import os
 from pathlib import Path
 from typing import Optional
 
+import pathvalidate
 import piexif
 import piexif.helper
-import pathvalidate
 import pkg_resources
 from PIL import Image
 from PIL import ImageDraw
