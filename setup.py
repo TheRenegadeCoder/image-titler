@@ -28,6 +28,7 @@ setuptools.setup(
     install_requires=[
         'titlecase',
         'pillow>=6.0.0',
-        'pathvalidate'
+        'pathvalidate',
+        'piexif'
     ],
 )
