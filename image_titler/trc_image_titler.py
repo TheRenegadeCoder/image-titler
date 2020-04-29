@@ -6,6 +6,8 @@ from tkinter.filedialog import askdirectory
 from tkinter.filedialog import askopenfilename
 from typing import Optional
 
+import piexif
+import piexif.helper
 import pathvalidate
 import pkg_resources
 from PIL import Image
@@ -154,6 +156,44 @@ def _request_input_path(path: str, batch: bool) -> Optional[str]:
     return input_path
 
 
+def _add_version_to_exif(image: Image.Image, version: str) -> bytes:
+    """
+    Given an image and version, this function will place that vision in the EXIF data of the file.
+
+    Currently, this function is limited to files that already have EXIF data. Naturally, not
+    all files have EXIF data, so I'm not sure how useful this feature is. That said, it's
+    a nice start!
+
+    :param image: an image file
+    :param version: the software version (e.g. 1.9.0)
+    :return: the exif data as a byte string (empty string for images that didn't already have data)
+    """
+    if exif := image.info.get('exif'):
+        exif_dict = piexif.load(exif)
+        exif_dict['Exif'][piexif.ExifIFD.UserComment] = piexif.helper.UserComment.dump(f'image-titler-v{version}')
+        return piexif.dump(exif_dict)
+    else:
+        return b""
+
+
+def _generate_image_output_path(extension: str, output_path: Optional[str], title: str, version: str) -> str:
+    """
+    A helper function which generates image output paths from a series of strings.
+
+    :param extension: the file extension (e.g. png, jpg, etc.)
+    :param output_path: the directory where the file is to be stored (e.g. path/to/folder)
+    :param title: the title given to the image (e.g. How to Write a Loop in Python)
+    :param version: the software version (e.g. 1.9.0)
+    :return: the path of the file to be created
+    """
+    tag = "featured-image"
+    file_name = pathvalidate.sanitize_filename(title.lower().replace(" ", SEPARATOR))
+    storage_path = f'{file_name}-{tag}-v{version}.{extension}'
+    if output_path:
+        storage_path = f'{output_path}{os.sep}{storage_path}'
+    return storage_path
+
+
 def split_string_by_nearest_middle_space(input_string: str) -> tuple:
     """
     Splits a string by the nearest middle space. Assumes space is in string.
@@ -171,7 +211,7 @@ def split_string_by_nearest_middle_space(input_string: str) -> tuple:
     return input_string[:index], input_string[index + 1:]
 
 
-def save_copy(og_image: Image, edited_image: Image, title: str, output_path: str = None):
+def save_copy(og_image: Image.Image, edited_image: Image.Image, title: str, output_path: str = None):
     """
     A helper function for saving a copy of the image.
 
@@ -181,15 +221,11 @@ def save_copy(og_image: Image, edited_image: Image, title: str, output_path: str
     :param output_path: the path to dump the picture
     :return: nothing
     """
-    file_name = pathvalidate.sanitize_filename(title.lower().replace(" ", SEPARATOR))
-    tag = "featured-image"
     version: str = pkg_resources.require("image-titler")[0].version
     version = version.replace(".", SEPARATOR)
-    if output_path is None:
-        storage_path = f'{file_name}-{tag}-v{version}.{og_image.format}'
-    else:
-        storage_path = f'{output_path}{os.sep}{file_name}-{tag}-v{version}.{og_image.format}'
-    edited_image.save(storage_path, subsampling=0, quality=100)  # Improved quality
+    storage_path = _generate_image_output_path(og_image.format, output_path, title, version)
+    exif = _add_version_to_exif(og_image, version)
+    edited_image.save(storage_path, subsampling=0, quality=100, exif=exif)
 
 
 def parse_input() -> argparse.Namespace:
