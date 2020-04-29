@@ -209,7 +209,7 @@ def parse_input() -> argparse.Namespace:
     return args
 
 
-def process_batch(input_path: str, tier: str = None, logo_path: str = None, output_path: str = None):
+def process_batch(input_path: str, tier: str = None, logo_path: str = None, output_path: str = None) -> None:
     """
     Processes a batch of images.
 
@@ -235,8 +235,8 @@ def convert_file_name_to_title(file_name: str, separator: str = SEPARATOR) -> st
     return titlecase(file_name.replace(separator, ' '))
 
 
-def process_image(input_path: str, tier: str = "", logo_path: str = None, output_path: str = None,
-                  title: str = None) -> Image.Image:
+def process_image(input_path: str, tier: str = "", logo_path: Optional[str] = None, output_path: Optional[str] = None,
+                  title: Optional[str] = None) -> Image.Image:
     """
     Processes a single image.
 
@@ -276,8 +276,13 @@ def get_best_top_color(image: Image.Image) -> tuple:
     return color
 
 
-def main():
-    args = parse_input()
+def title_image(args: argparse.Namespace) -> None:
+    """
+    Titles an image based on a set of arguments.
+
+    :param args: a set of arguments
+    :return: None
+    """
     path: str = args.path
     batch: bool = args.batch
     tier: str = args.tier
@@ -290,6 +295,16 @@ def main():
             process_batch(input_path, tier, logo_path, output_path)
         else:
             process_image(input_path, tier, logo_path, output_path, title).show()
+
+
+def main() -> None:
+    """
+    The main function.
+
+    :return: None
+    """
+    args = parse_input()
+    title_image(args)
 
 
 if __name__ == '__main__':
