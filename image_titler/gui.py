@@ -10,7 +10,6 @@ class ImageTitlerMain(tk.Tk):
         super().__init__()
         self.menu = ImageTitlerMenuBar(self)
         self.gui = ImageTitlerGUI(self)
-        #self.geometry("1920x960+0+0")
 
 
 class ImageTitlerGUI(tk.Frame):
@@ -41,8 +40,13 @@ class ImageTitlerOptionPane(tk.Frame):
         self.pack()
 
     def init_option_pane(self):
-        label = tk.Label(self, text="Title")
-        label.pack()
+        title_label = tk.Label(self, text="Title")
+        title_label.pack(side=tk.LEFT, anchor="n")
+
+        title_entry = tk.Entry(self)
+        title_entry.pack(side=tk.LEFT, anchor="n")
+
+
 
 
 class ImageTitlerMenuBar(tk.Menu):
@@ -87,7 +91,9 @@ class ImageTitlerMenuBar(tk.Menu):
 
 
 def main():
-    ImageTitlerMain().mainloop()
+    root = ImageTitlerMain()
+    root.iconphoto(False, tk.PhotoImage(file='../icons/the-renegade-coder-sample-icon.png'))
+    root.mainloop()
 
 
 if __name__ == '__main__':
