@@ -182,16 +182,18 @@ def split_string_by_nearest_middle_space(input_string: str) -> tuple:
     return input_string[:index], input_string[index + 1:]
 
 
-def save_copy(og_image: Image.Image, edited_image: Image.Image, title: str, output_path: str = None):
+def save_copy(input_path: str, edited_image: Image.Image, title: str = None, output_path: str = None):
     """
     A helper function for saving a copy of the image.
 
-    :param og_image: the original image
+    :param input_path: the path to the original image
     :param edited_image: the edited image
     :param title: the title of the image
     :param output_path: the path to dump the picture
     :return: nothing
     """
+    og_image = Image.open(input_path)
+    title = convert_file_name_to_title(input_path, title)
     version: str = pkg_resources.require("image-titler")[0].version
     version = version.replace(".", SEPARATOR)
     storage_path = _generate_image_output_path(og_image.format, output_path, title, version)
@@ -211,35 +213,35 @@ def process_batch(input_path: str, tier: str = None, logo_path: str = None, outp
     """
     for path in os.listdir(input_path):
         absolute_path = os.path.join(input_path, path)
-        process_image(absolute_path, tier, logo_path, output_path)
+        edited_image = process_image(absolute_path, tier, logo_path, output_path)
+        save_copy(absolute_path, edited_image, output_path=output_path)
 
 
-def convert_file_name_to_title(file_name: str, separator: str = SEPARATOR) -> str:
+def convert_file_name_to_title(file_path: str, separator: str = SEPARATOR, title: Optional[str] = None) -> str:
     """
     A helper method which converts file names into titles.
 
+    :param title: the requested title of the image, if provided
     :param separator: the word separator (default "-")
-    :param file_name: the name of a file without the extension or path information
+    :param file_path: the path to an image file
     :return: a title string
     """
-    return titlecase(file_name.replace(separator, ' '))
+    if not title:
+        file_path = Path(file_path).resolve().stem
+        title = titlecase(file_path.replace(separator, ' '))
+    return title
 
 
-def process_image(input_path: str, tier: str = "", logo_path: Optional[str] = None, output_path: Optional[str] = None,
-                  title: Optional[str] = None) -> Image.Image:
+def process_image(input_path: str, title: str, tier: str = "", logo_path: Optional[str] = None) -> Image.Image:
     """
     Processes a single image.
 
     :param input_path: the path of an image
     :param tier: the image tier (free or premium)
     :param logo_path: the path to a logo
-    :param output_path: the output path of the processed image
     :param title: the title of the processed image
     :return: the edited image
     """
-    if not title:
-        file_name = Path(input_path).resolve().stem
-        title = convert_file_name_to_title(file_name)
     img = Image.open(input_path)
     cropped_img: Image = img.crop((0, 0, IMAGE_WIDTH, IMAGE_HEIGHT))
     color = RECTANGLE_FILL
@@ -248,7 +250,6 @@ def process_image(input_path: str, tier: str = "", logo_path: Optional[str] = No
         color = get_best_top_color(logo)
         _draw_logo(cropped_img, logo)
     edited_image = _draw_overlay(cropped_img, title, tier, color)
-    save_copy(img, edited_image, title, output_path)
     return edited_image
 
 
