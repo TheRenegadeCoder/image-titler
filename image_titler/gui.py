@@ -1,5 +1,7 @@
 import tkinter as tk
 import tkinter.filedialog
+
+import pkg_resources
 from PIL import ImageTk
 
 from image_titler.utilities import process_image, convert_file_name_to_title, save_copy
@@ -22,8 +24,8 @@ class ImageTitlerGUI(tk.Frame):
         self.pack()
 
     def set_layout(self):
-        self.option_pane.pack(side="left", fill="both", expand="yes")
-        self.preview.pack(side="right", fill="both", expand="yes")
+        self.option_pane.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.YES, padx=10, pady=5, anchor=tk.W)
+        self.preview.pack(side=tk.RIGHT, fill=tk.BOTH, expand=tk.YES)
 
 
 class ImageTitlerPreviewPane(tk.Label):
@@ -37,16 +39,13 @@ class ImageTitlerOptionPane(tk.Frame):
     def __init__(self, parent, **kw):
         super().__init__(parent, **kw)
         self.init_option_pane()
-        self.pack()
 
     def init_option_pane(self):
-        title_label = tk.Label(self, text="Title")
-        title_label.pack(side=tk.LEFT, anchor="n")
+        title_label = tk.Checkbutton(self, text="Title:")
+        title_label.pack(side=tk.LEFT, anchor=tk.N)
 
         title_entry = tk.Entry(self)
-        title_entry.pack(side=tk.LEFT, anchor="n")
-
-
+        title_entry.pack(side=tk.LEFT, anchor=tk.N)
 
 
 class ImageTitlerMenuBar(tk.Menu):
@@ -92,6 +91,8 @@ class ImageTitlerMenuBar(tk.Menu):
 
 def main():
     root = ImageTitlerMain()
+    version = pkg_resources.require("image-titler")[0].version
+    root.title(f"The Renegade Coder Image Titler {version}")
     root.iconphoto(False, tk.PhotoImage(file='../icons/the-renegade-coder-sample-icon.png'))
     root.mainloop()
 
