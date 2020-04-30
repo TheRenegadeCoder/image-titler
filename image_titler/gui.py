@@ -171,7 +171,7 @@ class ImageTitlerOptionPane(tk.Frame):
             variable=self.title_state,
             command=self.parent.update_view
         )
-        self.title_value.trace("w", self.parent.update_view)
+        self.title_value.trace(tk.W, self.parent.update_view)
         title_entry = tk.Entry(title_frame, textvariable=self.title_value)
         return title_frame, title_label, title_entry
 
