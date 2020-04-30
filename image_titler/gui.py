@@ -137,7 +137,12 @@ class ImageTitlerOptionPane(tk.Frame):
         self.logo_value: Optional[tk.Label] = None
         self.init_option_pane()
 
-    def init_option_pane(self):
+    def init_option_pane(self) -> None:
+        """
+        Initializes the option pane by generating rows of settings.
+
+        :return: None
+        """
         rows = list()
         rows.append(self.init_title_frame())
         rows.append(self.init_tier_frame())
@@ -146,6 +151,11 @@ class ImageTitlerOptionPane(tk.Frame):
             self.layout_option_row(*row)
 
     def init_title_frame(self) -> tuple:
+        """
+        Initializes the row for title information.
+
+        :return: a tuple containing the title container and its two children (see layout_option_row for order)
+        """
         title_frame = tk.Frame(self)
         title_label = tk.Checkbutton(title_frame, text="Title:", variable=self.title_state,
                                      command=self.parent.update_view)
@@ -154,6 +164,11 @@ class ImageTitlerOptionPane(tk.Frame):
         return title_frame, title_label, title_entry
 
     def init_tier_frame(self) -> tuple:
+        """
+        Initializes the row for tier information.
+
+        :return: a tuple containing the tier container and its two children (see layout_option_row for order)
+        """
         tier_frame = tk.Frame(self)
         tier_label = tk.Checkbutton(tier_frame, text="Tier:", variable=self.tier_state,
                                     command=self.parent.update_view)
@@ -162,6 +177,11 @@ class ImageTitlerOptionPane(tk.Frame):
         return tier_frame, tier_label, tier_option_menu
 
     def init_logo_frame(self) -> tuple:
+        """
+        Initializes the for logo information.
+
+        :return: a tuple containing the logo container and its two children (see layout_option_row for order)
+        """
         logo_frame = tk.Frame(self)
         logo_label = tk.Checkbutton(logo_frame, text="Logo:", variable=self.logo_state, command=self.parent.update_view)
         self.logo_value = tk.Label(logo_frame, text="Select a logo using 'File' > 'New Logo'")
