@@ -96,7 +96,7 @@ class ImageTitlerGUI(tk.Frame):
     def _render_logo(self, logo_path: Optional[str]) -> None:
         """
         Renders a preview of the logo in the options pane.
-        
+
         :param logo_path: the path to a logo
         :return: None
         """
@@ -138,27 +138,34 @@ class ImageTitlerOptionPane(tk.Frame):
         self.init_option_pane()
 
     def init_option_pane(self):
-        # Title UI
+        rows = list()
+        rows.append(self.init_title_frame())
+        rows.append(self.init_tier_frame())
+        rows.append(self.init_logo_frame())
+        for row in rows:
+            self.layout_option_row(*row)
+
+    def init_title_frame(self) -> tuple:
         title_frame = tk.Frame(self)
         title_label = tk.Checkbutton(title_frame, text="Title:", variable=self.title_state,
                                      command=self.parent.update_view)
         self.title_value.trace("w", self.parent.update_view)
         title_entry = tk.Entry(title_frame, textvariable=self.title_value)
-        self.layout_option_row(title_frame, title_label, title_entry)
+        return title_frame, title_label, title_entry
 
-        # Tier UI
+    def init_tier_frame(self) -> tuple:
         tier_frame = tk.Frame(self)
         tier_label = tk.Checkbutton(tier_frame, text="Tier:", variable=self.tier_state,
-                                     command=self.parent.update_view)
+                                    command=self.parent.update_view)
         self.tier_value.set(list(TIER_MAP.keys())[0])
         tier_option_menu = tk.OptionMenu(tier_frame, self.tier_value, *TIER_MAP.keys(), command=self.parent.update_view)
-        self.layout_option_row(tier_frame, tier_label, tier_option_menu)
+        return tier_frame, tier_label, tier_option_menu
 
-        # Logo UI
+    def init_logo_frame(self) -> tuple:
         logo_frame = tk.Frame(self)
         logo_label = tk.Checkbutton(logo_frame, text="Logo:", variable=self.logo_state, command=self.parent.update_view)
         self.logo_value = tk.Label(logo_frame, text="Select a logo using 'File' > 'New Logo'")
-        self.layout_option_row(logo_frame, logo_label, self.logo_value)
+        return logo_frame, logo_label, self.logo_value
 
     @staticmethod
     def layout_option_row(frame, label, value):
