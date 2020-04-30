@@ -1,6 +1,7 @@
 import os
 import tkinter as tk
 import tkinter.filedialog
+from typing import Optional
 
 import pkg_resources
 from PIL import ImageTk, Image
@@ -28,6 +29,7 @@ class ImageTitlerGUI(tk.Frame):
         self.menu = menu
         self.preview = ImageTitlerPreviewPane(self)
         self.option_pane = ImageTitlerOptionPane(self)
+        self.logo_path = None
         self.set_layout()
 
     def set_layout(self):
@@ -46,6 +48,7 @@ class ImageTitlerGUI(tk.Frame):
             if self.option_pane.logo_state.get() == 1:
                 logo_path = self.menu.logo_path
             self._render_preview(title=title, tier=tier, logo_path=logo_path)
+        self._render_logo(self.menu.logo_path)
 
     def _render_preview(self, title=None, tier="", logo_path=None):
         title = convert_file_name_to_title(self.menu.image_path, title=title)
@@ -57,6 +60,16 @@ class ImageTitlerGUI(tk.Frame):
         self.preview.config(image=image)
         self.preview.image = image
         self.set_layout()
+
+    def _render_logo(self, logo_path):
+        if logo_path and logo_path != self.logo_path:
+            self.logo_path = logo_path
+            maxsize = (50, 50)
+            small_image = Image.open(logo_path)
+            small_image.thumbnail(maxsize, Image.ANTIALIAS)
+            image = ImageTk.PhotoImage(small_image)
+            self.option_pane.logo_value.config(image=image)
+            self.option_pane.logo_value.image = image
 
 
 class ImageTitlerPreviewPane(tk.Label):
@@ -75,6 +88,7 @@ class ImageTitlerOptionPane(tk.Frame):
         self.tier_state: tk.IntVar = tk.IntVar()
         self.tier_value: tk.StringVar = tk.StringVar()
         self.logo_state: tk.IntVar = tk.IntVar()
+        self.logo_value: Optional[tk.Label] = None
         self.init_option_pane()
 
     def init_option_pane(self):
@@ -97,8 +111,8 @@ class ImageTitlerOptionPane(tk.Frame):
         # Logo UI
         logo_frame = tk.Frame(self)
         logo_label = tk.Checkbutton(logo_frame, text="Logo:", variable=self.logo_state, command=self.parent.update_view)
-        logo_image = tk.Label(logo_frame, text="Select a logo using 'File' > 'New Logo'")
-        self.layout_option_row(logo_frame, logo_label, logo_image)
+        self.logo_value = tk.Label(logo_frame, text="Select a logo using 'File' > 'New Logo'")
+        self.layout_option_row(logo_frame, logo_label, self.logo_value)
 
     @staticmethod
     def layout_option_row(frame, label, value):
