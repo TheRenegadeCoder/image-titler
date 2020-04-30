@@ -1,6 +1,9 @@
 # Sample Image Titles
 
-In this archive, I'll share a series of samples that are output by this program.
+In this archive, I'll share a series of samples that are output by this program. That said,
+here's a quick video overview:
+
+![Image Titler 2.0.0 GIF](v2.0.0/image-titler.gif)
 
 ## Default Behavior
 
