@@ -10,6 +10,14 @@ from image_titler.utilities import process_image, convert_file_name_to_title, sa
 
 TRC_ICON = os.path.join(os.path.dirname(__file__), '../icons/the-renegade-coder-sample-icon.png')
 
+FILE_TAB_LABEL = "File"
+NEW_IMAGE_LABEL = "New Image"
+NEW_LOGO_LABEL = "New Logo"
+SAVE_AS_LABEL = "Save As"
+TITLE_OPTION_LABEL = "Title:"
+TIER_OPTION_LABEL = "Tier:"
+LOGO_OPTION_LABEL = "Logo:"
+
 
 class ImageTitlerMain(tk.Tk):
     """
@@ -50,7 +58,7 @@ class ImageTitlerGUI(tk.Frame):
         Sets the layout of the window. Specifically, this function places the option pane
         on the left and the preview pane on the right.
 
-        :return:
+        :return: None
         """
         self.preview.pack(side=tk.RIGHT, expand=tk.YES, fill=tk.BOTH)
         self.option_pane.pack(side=tk.LEFT, anchor=tk.NW)
@@ -157,8 +165,12 @@ class ImageTitlerOptionPane(tk.Frame):
         :return: a tuple containing the title container and its two children (see layout_option_row for order)
         """
         title_frame = tk.Frame(self)
-        title_label = tk.Checkbutton(title_frame, text="Title:", variable=self.title_state,
-                                     command=self.parent.update_view)
+        title_label = tk.Checkbutton(
+            title_frame,
+            text=TITLE_OPTION_LABEL,
+            variable=self.title_state,
+            command=self.parent.update_view
+        )
         self.title_value.trace("w", self.parent.update_view)
         title_entry = tk.Entry(title_frame, textvariable=self.title_value)
         return title_frame, title_label, title_entry
@@ -170,8 +182,12 @@ class ImageTitlerOptionPane(tk.Frame):
         :return: a tuple containing the tier container and its two children (see layout_option_row for order)
         """
         tier_frame = tk.Frame(self)
-        tier_label = tk.Checkbutton(tier_frame, text="Tier:", variable=self.tier_state,
-                                    command=self.parent.update_view)
+        tier_label = tk.Checkbutton(
+            tier_frame,
+            text=TIER_OPTION_LABEL,
+            variable=self.tier_state,
+            command=self.parent.update_view
+        )
         self.tier_value.set(list(TIER_MAP.keys())[0])
         tier_option_menu = tk.OptionMenu(tier_frame, self.tier_value, *TIER_MAP.keys(), command=self.parent.update_view)
         return tier_frame, tier_label, tier_option_menu
@@ -183,7 +199,12 @@ class ImageTitlerOptionPane(tk.Frame):
         :return: a tuple containing the logo container and its two children (see layout_option_row for order)
         """
         logo_frame = tk.Frame(self)
-        logo_label = tk.Checkbutton(logo_frame, text="Logo:", variable=self.logo_state, command=self.parent.update_view)
+        logo_label = tk.Checkbutton(
+            logo_frame,
+            text=LOGO_OPTION_LABEL,
+            variable=self.logo_state,
+            command=self.parent.update_view
+        )
         self.logo_value = tk.Label(logo_frame, text="Select a logo using 'File' > 'New Logo'")
         return logo_frame, logo_label, self.logo_value
 
@@ -226,11 +247,10 @@ class ImageTitlerMenuBar(tk.Menu):
         self.parent.config(menu=menu)
 
         self.file_menu = tk.Menu(menu, tearoff=0, postcommand=self.save_as_enabled)
-        self.file_menu.add_command(label="New Image", command=self.new_image)
-        self.file_menu.add_command(label="New Logo", command=self.new_logo)
-        self.file_menu.add_command(label="Save As", command=self.save_as)
-
-        menu.add_cascade(label="File", menu=self.file_menu)
+        self.file_menu.add_command(label=NEW_IMAGE_LABEL, command=self.new_image)
+        self.file_menu.add_command(label=NEW_LOGO_LABEL, command=self.new_logo)
+        self.file_menu.add_command(label=SAVE_AS_LABEL, command=self.save_as)
+        menu.add_cascade(label=FILE_TAB_LABEL, menu=self.file_menu)
 
     def new_image(self) -> None:
         """
