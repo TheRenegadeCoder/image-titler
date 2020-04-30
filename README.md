@@ -31,6 +31,14 @@ image-titler --logo_path "path/to/logo"  # Adds a 145x145 logo to the lower left
 image-titler --batch # Runs the program in batch mode on a directory
 ```
 
+Alternatively, you can spin up the GUI version of the software as of 2.0.0 as follows:
+
+```shell
+image-titler-gui
+```
+
+At this time, the GUI does not feature the same command line interface. 
+
 ## Default Behavior
 
 Currently, the image-titler script makes a few assumptions about the images it 
