@@ -5,8 +5,7 @@ import tkinter.filedialog
 import pkg_resources
 from PIL import ImageTk, Image
 
-from image_titler.utilities import process_image, convert_file_name_to_title, save_copy
-
+from image_titler.utilities import process_image, convert_file_name_to_title, save_copy, TIER_MAP
 
 TRC_ICON = os.path.join(os.path.dirname(__file__), '../icons/the-renegade-coder-sample-icon.png')
 
@@ -16,6 +15,7 @@ class ImageTitlerMain(tk.Tk):
         super().__init__()
         self.menu = ImageTitlerMenuBar(self)
         self.gui = ImageTitlerGUI(self, self.menu)
+        self.gui.pack(anchor=tk.W)
 
     def update_view(self):
         self.gui.update_view()
@@ -29,11 +29,10 @@ class ImageTitlerGUI(tk.Frame):
         self.preview = ImageTitlerPreviewPane(self)
         self.option_pane = ImageTitlerOptionPane(self)
         self.set_layout()
-        self.pack(anchor=tk.W)
 
     def set_layout(self):
-        self.option_pane.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.YES, padx=10, pady=5, anchor=tk.W)
-        self.preview.pack(side=tk.RIGHT, fill=tk.BOTH, expand=tk.YES)
+        self.preview.pack(side=tk.RIGHT, expand=tk.YES, fill=tk.BOTH)
+        self.option_pane.pack(side=tk.LEFT, anchor=tk.NW, expand=tk.YES, fill=tk.BOTH)
 
     def update_view(self):
         if self.menu.image_path:
@@ -67,15 +66,32 @@ class ImageTitlerOptionPane(tk.Frame):
         self.parent = parent
         self.title_state: tk.IntVar = tk.IntVar()
         self.title_value: tk.StringVar = tk.StringVar()
+        self.tier_value: tk.StringVar = tk.StringVar()
         self.init_option_pane()
 
     def init_option_pane(self):
-        title_label = tk.Checkbutton(self, text="Title:", variable=self.title_state, command=self.parent.update_view)
+        # Title UI
+        title_frame = tk.Frame(self)
+        title_frame.pack(anchor=tk.NW, padx=10, pady=5)
+
+        title_label = tk.Checkbutton(title_frame, text="Title:", variable=self.title_state,
+                                     command=self.parent.update_view)
         title_label.pack(side=tk.LEFT, anchor=tk.N)
 
         self.title_value.trace("w", lambda name, index, mode, sv=self.title_value: self.parent.update_view())
-        title_entry = tk.Entry(self, textvariable=self.title_value)
+        title_entry = tk.Entry(title_frame, textvariable=self.title_value)
         title_entry.pack(side=tk.LEFT, anchor=tk.N)
+
+        # Tier UI
+        tier_frame = tk.Frame(self)
+        tier_frame.pack(anchor=tk.NW, padx=10, pady=5)
+
+        tier_label = tk.Checkbutton(tier_frame, text="Tier:")
+        tier_label.pack(side=tk.LEFT)
+
+        self.tier_value.set(list(TIER_MAP.keys())[0])
+        tier_option_menu = tk.OptionMenu(tier_frame, self.tier_value, *TIER_MAP.keys())
+        tier_option_menu.pack(side=tk.LEFT)
 
 
 class ImageTitlerMenuBar(tk.Menu):
