@@ -75,7 +75,15 @@ class ImageTitlerGUI(tk.Frame):
             self._render_preview(title=title, tier=tier, logo_path=logo_path)
         self._render_logo(self.menu.logo_path)
 
-    def _render_preview(self, title=None, tier="", logo_path=None):
+    def _render_preview(self, title=None, tier="", logo_path=None) -> None:
+        """
+        Renders a preview of the edited image in the child preview pane.
+
+        :param title: the title of the image
+        :param tier: the tier of the image
+        :param logo_path: the path to the logo for the image
+        :return: None
+        """
         title = convert_file_name_to_title(self.menu.image_path, title=title)
         self.menu.current_edit = process_image(self.menu.image_path, title, tier=tier, logo_path=logo_path)
         maxsize = (1028, 1028)
@@ -85,7 +93,13 @@ class ImageTitlerGUI(tk.Frame):
         self.preview.config(image=image)
         self.preview.image = image
 
-    def _render_logo(self, logo_path):
+    def _render_logo(self, logo_path: Optional[str]) -> None:
+        """
+        Renders a preview of the logo in the options pane.
+        
+        :param logo_path: the path to a logo
+        :return: None
+        """
         if logo_path and logo_path != self.logo_path:
             self.logo_path = logo_path
             maxsize = (50, 50)
