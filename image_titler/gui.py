@@ -23,7 +23,12 @@ class ImageTitlerMain(tk.Tk):
         self.gui = ImageTitlerGUI(self, self.menu)
         self.gui.pack(anchor=tk.W)
 
-    def update_view(self):
+    def update_view(self) -> None:
+        """
+        Updates what's happening visually in the app.
+
+        :return: None
+        """
         self.gui.update_view()
 
 
@@ -40,11 +45,23 @@ class ImageTitlerGUI(tk.Frame):
         self.logo_path = None
         self.set_layout()
 
-    def set_layout(self):
+    def set_layout(self) -> None:
+        """
+        Sets the layout of the window. Specifically, this function places the option pane
+        on the left and the preview pane on the right.
+
+        :return:
+        """
         self.preview.pack(side=tk.RIGHT, expand=tk.YES, fill=tk.BOTH)
         self.option_pane.pack(side=tk.LEFT, anchor=tk.NW)
 
-    def update_view(self, *args):
+    def update_view(self, *args) -> None:
+        """
+        Updates this frame visually by controlling what is happening in children components.
+
+        :param args: a set of arguments (not currently used--just satisfies some of the callers)
+        :return: None
+        """
         if self.menu.image_path:
             title = None
             tier = ""
@@ -67,7 +84,6 @@ class ImageTitlerGUI(tk.Frame):
         image = ImageTk.PhotoImage(small_image)
         self.preview.config(image=image)
         self.preview.image = image
-        self.set_layout()
 
     def _render_logo(self, logo_path):
         if logo_path and logo_path != self.logo_path:
@@ -139,7 +155,7 @@ class ImageTitlerOptionPane(tk.Frame):
 
 class ImageTitlerMenuBar(tk.Menu):
     """
-    The menu bar for interactions like loading files and logos. 
+    The menu bar for interactions like loading files and logos.
     """
 
     def __init__(self, parent: ImageTitlerMain):
