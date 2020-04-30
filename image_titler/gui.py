@@ -72,7 +72,7 @@ class ImageTitlerOptionPane(tk.Frame):
     def init_option_pane(self):
         # Title UI
         title_frame = tk.Frame(self)
-        title_frame.pack(anchor=tk.NW, padx=10, pady=5)
+        title_frame.pack(anchor=tk.NW, padx=10, pady=5, expand=tk.YES, fill=tk.BOTH)
 
         title_label = tk.Checkbutton(title_frame, text="Title:", variable=self.title_state,
                                      command=self.parent.update_view)
@@ -84,14 +84,14 @@ class ImageTitlerOptionPane(tk.Frame):
 
         # Tier UI
         tier_frame = tk.Frame(self)
-        tier_frame.pack(anchor=tk.NW, padx=10, pady=5)
+        tier_frame.pack(anchor=tk.NW, padx=10, pady=5, expand=tk.YES, fill=tk.BOTH)
 
         tier_label = tk.Checkbutton(tier_frame, text="Tier:")
         tier_label.pack(side=tk.LEFT)
 
         self.tier_value.set(list(TIER_MAP.keys())[0])
         tier_option_menu = tk.OptionMenu(tier_frame, self.tier_value, *TIER_MAP.keys())
-        tier_option_menu.pack(side=tk.LEFT)
+        tier_option_menu.pack(side=tk.LEFT, expand=tk.YES, fill=tk.BOTH)
 
 
 class ImageTitlerMenuBar(tk.Menu):
