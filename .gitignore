@@ -106,4 +106,5 @@ ENV/
 .history/
 
 # Remove file dump
-/test/dump
+/test/solo-dump
+/test/batch-dump
