@@ -188,7 +188,15 @@ class ImageTitlerOptionPane(tk.Frame):
         return logo_frame, logo_label, self.logo_value
 
     @staticmethod
-    def layout_option_row(frame, label, value):
+    def layout_option_row(frame, label, value) -> None:
+        """
+        Sets up consistent packing for a row of the option pane.
+
+        :param frame: a row object
+        :param label: a row label
+        :param value: a row value
+        :return: None
+        """
         frame.pack(side=tk.TOP, anchor=tk.NW, padx=10, pady=5, expand=tk.YES, fill=tk.X)
         label.pack(side=tk.LEFT)
         value.pack(side=tk.LEFT, expand=tk.YES, fill=tk.X)
@@ -208,7 +216,12 @@ class ImageTitlerMenuBar(tk.Menu):
         self.file_menu = None
         self.init_menu()
 
-    def init_menu(self):
+    def init_menu(self) -> None:
+        """
+        Sets up the menu items.
+
+        :return: None
+        """
         menu = tk.Menu(self.parent)
         self.parent.config(menu=menu)
 
@@ -219,21 +232,41 @@ class ImageTitlerMenuBar(tk.Menu):
 
         menu.add_cascade(label="File", menu=self.file_menu)
 
-    def new_image(self):
+    def new_image(self) -> None:
+        """
+        Specifies behavior for when a user selects the "New Image" option.
+
+        :return: None
+        """
         self.image_path = tk.filedialog.askopenfilename()
         self.parent.update_view()
 
-    def new_logo(self):
+    def new_logo(self) -> None:
+        """
+        Specifies the behavior when a user selects the "New Logo" option.
+
+        :return: None
+        """
         self.logo_path = tk.filedialog.askopenfilename()
         self.parent.update_view()
 
-    def save_as(self):
+    def save_as(self) -> None:
+        """
+        Specifies the behavior when a user selects the "Save As" option.
+
+        :return: None
+        """
         output_path = tk.filedialog.askdirectory()
         save_copy(self.image_path, self.current_edit, output_path=output_path)
 
-    def save_as_enabled(self):
+    def save_as_enabled(self) -> None:
+        """
+        Enables/disables the "Save As" option.
+
+        :return: None
+        """
         if self.current_edit:
-            self.file_menu.entryconfig(2, state=tk.NORMAL)
+            self.file_menu.entryconfig(2, state=tk.NORMAL)  # TODO: make this not hardcoded
         else:
             self.file_menu.entryconfig(2, state=tk.DISABLED)
 
