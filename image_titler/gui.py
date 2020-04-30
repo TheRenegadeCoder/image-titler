@@ -12,6 +12,11 @@ TRC_ICON = os.path.join(os.path.dirname(__file__), '../icons/the-renegade-coder-
 
 
 class ImageTitlerMain(tk.Tk):
+    """
+    The main window. This overrides the root class of tk, so we can make a menu.
+    The remainder of the GUI is contained within a frame.
+    """
+
     def __init__(self):
         super().__init__()
         self.menu = ImageTitlerMenuBar(self)
@@ -23,6 +28,9 @@ class ImageTitlerMain(tk.Tk):
 
 
 class ImageTitlerGUI(tk.Frame):
+    """
+    The main content of the GUI. This contains the preview pane and the option pane.
+    """
 
     def __init__(self, parent, menu, **kw):
         super().__init__(parent, **kw)
@@ -73,12 +81,20 @@ class ImageTitlerGUI(tk.Frame):
 
 
 class ImageTitlerPreviewPane(tk.Label):
+    """
+    The preview pane is a simple label which contains a preview of the
+    image currently being edited.
+    """
 
     def __init__(self, parent, **kw):
         super().__init__(parent, **kw)
 
 
 class ImageTitlerOptionPane(tk.Frame):
+    """
+    The option pane contains a set of options that can be controlled when editing the image.
+    Changes are reflected in the preview pane.
+    """
 
     def __init__(self, parent: ImageTitlerGUI, **kw):
         super().__init__(parent, **kw)
@@ -122,6 +138,9 @@ class ImageTitlerOptionPane(tk.Frame):
 
 
 class ImageTitlerMenuBar(tk.Menu):
+    """
+    The menu bar for interactions like loading files and logos. 
+    """
 
     def __init__(self, parent: ImageTitlerMain):
         super().__init__(parent)
