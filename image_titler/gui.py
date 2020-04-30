@@ -32,18 +32,21 @@ class ImageTitlerGUI(tk.Frame):
 
     def set_layout(self):
         self.preview.pack(side=tk.RIGHT, expand=tk.YES, fill=tk.BOTH)
-        self.option_pane.pack(side=tk.LEFT, anchor=tk.NW, expand=tk.YES, fill=tk.BOTH)
+        self.option_pane.pack(side=tk.LEFT, anchor=tk.NW)
 
-    def update_view(self):
+    def update_view(self, *args):
         if self.menu.image_path:
             title = None
+            tier = ""
             if self.option_pane.title_state.get() == 1:
                 title = self.option_pane.title_value.get()
-            self._render_preview(title=title)
+            if self.option_pane.tier_state.get() == 1:
+                tier = self.option_pane.tier_value.get()
+            self._render_preview(title=title, tier=tier)
 
-    def _render_preview(self, title=None):
+    def _render_preview(self, title=None, tier=""):
         title = convert_file_name_to_title(self.menu.image_path, title=title)
-        self.menu.current_edit = process_image(self.menu.image_path, title)
+        self.menu.current_edit = process_image(self.menu.image_path, title, tier=tier)
         maxsize = (1028, 1028)
         small_image = self.menu.current_edit.copy()
         small_image.thumbnail(maxsize, Image.ANTIALIAS)
@@ -66,32 +69,34 @@ class ImageTitlerOptionPane(tk.Frame):
         self.parent = parent
         self.title_state: tk.IntVar = tk.IntVar()
         self.title_value: tk.StringVar = tk.StringVar()
+        self.tier_state: tk.IntVar = tk.IntVar()
         self.tier_value: tk.StringVar = tk.StringVar()
         self.init_option_pane()
 
     def init_option_pane(self):
         # Title UI
         title_frame = tk.Frame(self)
-        title_frame.pack(anchor=tk.NW, padx=10, pady=5, expand=tk.YES, fill=tk.BOTH)
+        title_frame.pack(side=tk.TOP, anchor=tk.NW, padx=10, pady=5, expand=tk.YES, fill=tk.X)
 
         title_label = tk.Checkbutton(title_frame, text="Title:", variable=self.title_state,
                                      command=self.parent.update_view)
         title_label.pack(side=tk.LEFT, anchor=tk.N)
 
-        self.title_value.trace("w", lambda name, index, mode, sv=self.title_value: self.parent.update_view())
+        self.title_value.trace("w", self.parent.update_view)
         title_entry = tk.Entry(title_frame, textvariable=self.title_value)
         title_entry.pack(side=tk.LEFT, anchor=tk.N)
 
         # Tier UI
         tier_frame = tk.Frame(self)
-        tier_frame.pack(anchor=tk.NW, padx=10, pady=5, expand=tk.YES, fill=tk.BOTH)
+        tier_frame.pack(side=tk.TOP, anchor=tk.NW, padx=10, pady=5, expand=tk.YES, fill=tk.X)
 
-        tier_label = tk.Checkbutton(tier_frame, text="Tier:")
-        tier_label.pack(side=tk.LEFT)
+        tier_label = tk.Checkbutton(tier_frame, text="Tier:", variable=self.tier_state,
+                                     command=self.parent.update_view)
+        tier_label.pack(side=tk.LEFT, anchor=tk.N)
 
         self.tier_value.set(list(TIER_MAP.keys())[0])
-        tier_option_menu = tk.OptionMenu(tier_frame, self.tier_value, *TIER_MAP.keys())
-        tier_option_menu.pack(side=tk.LEFT, expand=tk.YES, fill=tk.BOTH)
+        tier_option_menu = tk.OptionMenu(tier_frame, self.tier_value, *TIER_MAP.keys(), command=self.parent.update_view)
+        tier_option_menu.pack(side=tk.LEFT, anchor=tk.N, expand=tk.YES, fill=tk.X)
 
 
 class ImageTitlerMenuBar(tk.Menu):
