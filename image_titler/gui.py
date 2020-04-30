@@ -6,7 +6,7 @@ from typing import Optional
 import pkg_resources
 from PIL import ImageTk, Image
 
-from image_titler.utilities import process_image, convert_file_name_to_title, save_copy, TIER_MAP
+from image_titler.utilities import process_image, convert_file_name_to_title, save_copy, TIER_MAP, FILE_TYPES
 
 TRC_ICON = os.path.join(os.path.dirname(__file__), '../icons/the-renegade-coder-sample-icon.png')
 
@@ -258,7 +258,7 @@ class ImageTitlerMenuBar(tk.Menu):
 
         :return: None
         """
-        self.image_path = tk.filedialog.askopenfilename()
+        self.image_path = tk.filedialog.askopenfilename(filetypes=FILE_TYPES)
         self.parent.update_view()
 
     def new_logo(self) -> None:
@@ -267,7 +267,7 @@ class ImageTitlerMenuBar(tk.Menu):
 
         :return: None
         """
-        self.logo_path = tk.filedialog.askopenfilename()
+        self.logo_path = tk.filedialog.askopenfilename(filetypes=FILE_TYPES)
         self.parent.update_view()
 
     def save_as(self) -> None:
