@@ -5,10 +5,13 @@ from typing import Optional
 
 import pkg_resources
 from PIL import ImageTk, Image
+from matplotlib import font_manager
 
-from image_titler.utilities import process_image, convert_file_name_to_title, save_copy, TIER_MAP, FILE_TYPES
+from image_titler.utilities import process_image, convert_file_name_to_title, save_copy, TIER_MAP, FILE_TYPES, FONT
 
 TRC_ICON = os.path.join(os.path.dirname(__file__), '../icons/the-renegade-coder-sample-icon.png')
+
+FONTS = {f.name: f.fname for f in font_manager.fontManager.ttflist}
 
 FILE_TAB_LABEL = "File"
 NEW_IMAGE_LABEL = "New Image"
@@ -85,16 +88,19 @@ class ImageTitlerGUI(tk.Frame):
             title = None
             tier = ""
             logo_path = None
+            text_font = FONT
             if self.option_pane.title_state.get() == 1:
                 title = self.option_pane.title_value.get()
             if self.option_pane.tier_state.get() == 1:
                 tier = self.option_pane.tier_value.get()
             if self.option_pane.logo_state.get() == 1:
                 logo_path = self.menu.logo_path
-            self._render_preview(title=title, tier=tier, logo_path=logo_path)
+            if self.option_pane.font_state.get() == 1:
+                text_font = FONTS.get(self.option_pane.font_value.get())
+            self._render_preview(title, tier=tier, logo_path=logo_path, text_font=text_font)
         self._render_logo(self.menu.logo_path)
 
-    def _render_preview(self, title=None, tier="", logo_path=None) -> None:
+    def _render_preview(self, title, tier="", logo_path=None, text_font=FONT) -> None:
         """
         Renders a preview of the edited image in the child preview pane.
 
@@ -104,7 +110,7 @@ class ImageTitlerGUI(tk.Frame):
         :return: None
         """
         title = convert_file_name_to_title(self.menu.image_path, title=title)
-        self.menu.current_edit = process_image(self.menu.image_path, title, tier=tier, logo_path=logo_path)
+        self.menu.current_edit = process_image(self.menu.image_path, title, tier=tier, logo_path=logo_path, font=text_font)
         maxsize = (1028, 1028)
         small_image = self.menu.current_edit.copy()
         small_image.thumbnail(maxsize, Image.ANTIALIAS)
@@ -154,6 +160,8 @@ class ImageTitlerOptionPane(tk.Frame):
         self.tier_value: tk.StringVar = tk.StringVar()
         self.logo_state: tk.IntVar = tk.IntVar()
         self.logo_value: Optional[tk.Label] = None
+        self.font_state: tk.IntVar = tk.IntVar()
+        self.font_value: tk.StringVar = tk.StringVar()
         self.init_option_pane()
 
     def init_option_pane(self) -> None:
@@ -166,6 +174,7 @@ class ImageTitlerOptionPane(tk.Frame):
         rows.append(self.init_title_frame())
         rows.append(self.init_tier_frame())
         rows.append(self.init_logo_frame())
+        rows.append(self.init_font_frame())
         for row in rows:
             self.layout_option_row(*row)
 
@@ -218,6 +227,19 @@ class ImageTitlerOptionPane(tk.Frame):
         )
         self.logo_value = tk.Label(logo_frame, text="Select a logo using 'File' > 'New Logo'")
         return logo_frame, logo_label, self.logo_value
+
+    def init_font_frame(self) -> tuple:
+        font_frame = tk.Frame(self)
+        font_label = tk.Checkbutton(
+            font_frame,
+            text="Font:",
+            variable=self.font_state,
+            command=self.parent.update_view
+        )
+        font_list = sorted(FONTS.keys())
+        self.font_value.set(font_list[0])
+        font_menu = tk.OptionMenu(font_frame, self.font_value, *font_list, command=self.parent.update_view)
+        return font_frame, font_label, font_menu
 
     @staticmethod
     def layout_option_row(frame, label, value) -> None:
