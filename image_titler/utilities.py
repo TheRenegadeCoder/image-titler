@@ -81,7 +81,7 @@ def _draw_text(draw: ImageDraw, position: int, width: int, text: str, font: Imag
     )
 
 
-def _draw_overlay(image: Image.Image, title: str, tier: str, color: tuple = RECTANGLE_FILL) -> Image:
+def _draw_overlay(image: Image.Image, title: str, tier: str, color: tuple = RECTANGLE_FILL, font: str = FONT) -> Image:
     """
     Draws text over an image.
 
@@ -92,7 +92,7 @@ def _draw_overlay(image: Image.Image, title: str, tier: str, color: tuple = RECT
     :return: the updated image
     """
     draw = ImageDraw.Draw(image)
-    font = ImageFont.truetype(FONT, FONT_SIZE)
+    font = ImageFont.truetype(font, FONT_SIZE)
 
     # Detect space (precondition for split)
     if len(title.split()) > 1:
@@ -239,10 +239,16 @@ def convert_file_name_to_title(file_path: str, separator: str = SEPARATOR, title
     return title
 
 
-def process_image(input_path: str, title: str, tier: str = "", logo_path: Optional[str] = None) -> Image.Image:
+def process_image(
+        input_path: str,
+        title: str, tier: str = "",
+        logo_path: Optional[str] = None,
+        font: Optional[str] = FONT
+) -> Image.Image:
     """
     Processes a single image.
 
+    :param font: the font of the text for the image
     :param input_path: the path of an image
     :param tier: the image tier (free or premium)
     :param logo_path: the path to a logo
@@ -256,7 +262,13 @@ def process_image(input_path: str, title: str, tier: str = "", logo_path: Option
         logo: Image.Image = Image.open(logo_path)
         color = get_best_top_color(logo)
         _draw_logo(cropped_img, logo)
-    edited_image = _draw_overlay(cropped_img, title, tier, color)
+    edited_image = _draw_overlay(
+        cropped_img,
+        title=title,
+        tier=tier,
+        color=color,
+        font=font
+    )
     return edited_image
 
 
