@@ -39,6 +39,17 @@ class ImageTitlerMain(tk.Tk):
         """
         self.gui.update_view()
 
+    def save_as(self) -> None:
+        """
+        A save method which saves our preview. This has to exist because the menu has no concept of title.
+        As a result, this method needed to be pulled up into main window. That way, we at least decouple
+        the child to parent relationship (i.e. children have to concept of siblings, etc.).
+
+        :return: None
+        """
+        title = convert_file_name_to_title(self.menu.image_path, title=self.gui.option_pane.title_value.get())
+        save_copy(self.menu.image_path, self.menu.current_edit, output_path=self.menu.output_path, title=title)
+
 
 class ImageTitlerGUI(tk.Frame):
     """
@@ -233,6 +244,7 @@ class ImageTitlerMenuBar(tk.Menu):
         self.parent = parent
         self.image_path = None
         self.logo_path = None
+        self.output_path = None
         self.current_edit = None
         self.file_menu = None
         self.init_menu()
@@ -276,8 +288,8 @@ class ImageTitlerMenuBar(tk.Menu):
 
         :return: None
         """
-        output_path = tk.filedialog.askdirectory()
-        save_copy(self.image_path, self.current_edit, output_path=output_path)
+        self.output_path = tk.filedialog.askdirectory()
+        self.parent.save_as()
 
     def save_as_enabled(self) -> None:
         """

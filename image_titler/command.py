@@ -76,7 +76,7 @@ def title_image(args: argparse.Namespace) -> None:
                 logo_path=logo_path,
             )
             edited_image.show()
-            save_copy(input_path, edited_image, output_path=output_path)
+            save_copy(input_path, edited_image, output_path=output_path, title=title)
 
 
 def main() -> None:
