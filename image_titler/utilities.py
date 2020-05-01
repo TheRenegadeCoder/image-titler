@@ -241,7 +241,8 @@ def convert_file_name_to_title(file_path: str, separator: str = SEPARATOR, title
 
 def process_image(
         input_path: str,
-        title: str, tier: str = "",
+        title: str,
+        tier: str = "",
         logo_path: Optional[str] = None,
         font: Optional[str] = FONT
 ) -> Image.Image:

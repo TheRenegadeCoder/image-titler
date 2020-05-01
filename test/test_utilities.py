@@ -6,7 +6,7 @@ import pkg_resources
 from PIL import Image
 
 from image_titler import utilities
-from image_titler.utilities import save_copy
+from image_titler.utilities import save_copy, FONT
 
 TRC_ICON_PATH = "icons/the-renegade-coder-sample-icon.png"
 TRC_RED = (201, 2, 41, 255)
@@ -49,12 +49,13 @@ class TestProcessImage(TestUtilities):
         os.mkdir(SAMPLE_DUMP)
 
     @staticmethod
-    def generate_image(input_path, title=None, logo_path=None, tier=""):
+    def generate_image(input_path, title, logo_path=None, tier="", font=FONT):
         test_image = utilities.process_image(
             input_path=input_path,
             title=title,
             logo_path=logo_path,
-            tier=tier
+            tier=tier,
+            font=font
         )
         save_copy(input_path, test_image, output_path=TEST_SOLO_DUMP, title=title)
 
@@ -63,7 +64,8 @@ class TestProcessImage(TestUtilities):
             input_path=input_path,
             title=title,
             logo_path=logo_path,
-            tier=tier
+            tier=tier,
+            font=font
         )
         save_copy(input_path, sample_image, output_path=SAMPLE_DUMP)
 
@@ -81,6 +83,9 @@ class TestProcessImage(TestUtilities):
 
     def test_premium_tier(self):
         TestProcessImage.generate_image(PREMIUM_IMAGE, title="Test Premium Tier", tier="premium")
+
+    def test_custom_font(self):
+        TestProcessImage.generate_image(PREMIUM_IMAGE, title="Test Custom Font", font="arial.ttf")
 
     def test_special_chars_in_title(self):
         test_image = utilities.process_image(SPECIAL_IMAGE, title="Test Special Chars?")
