@@ -87,6 +87,9 @@ class TestProcessImage(TestUtilities):
     def test_custom_font(self):
         TestProcessImage.generate_image(PREMIUM_IMAGE, title="Test Custom Font", font="arial.ttf")
 
+    def test_custom_font_strange_height(self):
+        TestProcessImage.generate_image(PREMIUM_IMAGE, title="Test Custom Font Strange Height", font="gadugi.ttf")
+
     def test_special_chars_in_title(self):
         test_image = utilities.process_image(SPECIAL_IMAGE, title="Test Special Chars?")
         save_copy(SPECIAL_IMAGE, test_image, output_path=TEST_SOLO_DUMP, title="Test Special Chars?")

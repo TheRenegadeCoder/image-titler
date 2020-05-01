@@ -62,19 +62,18 @@ def _draw_rectangle(draw: ImageDraw, position: int, width: int, tier: str, color
     )
 
 
-def _draw_text(draw: ImageDraw, position: int, width: int, text: str, font: ImageFont):
+def _draw_text(draw: ImageDraw, position: tuple, text: str, font: ImageFont):
     """
     Draws text on the image.
 
     :param draw: the picture to edit
-    :param position: the position of the text
-    :param width: the width of the text
+    :param position: the position of the text as an (x, y) tuple
     :param text: the text
     :param font: the font of the text
     :return: nothing
     """
     draw.text(
-        (IMAGE_WIDTH - width - X_OFFSET, position),
+        position,
         text,
         fill=TEXT_FILL,
         font=font
@@ -102,14 +101,16 @@ def _draw_overlay(image: Image.Image, title: str, tier: str, color: tuple = RECT
 
     # Draw top
     top_width, top_height = draw.textsize(top_half, font)
+    top_position = (IMAGE_WIDTH - top_width - X_OFFSET, TOP_TEXT_Y)
     _draw_rectangle(draw, TOP_RECTANGLE_Y, top_width, tier, color)
-    _draw_text(draw, TOP_TEXT_Y, top_width, top_half, font)
+    _draw_text(draw, top_position, top_half, font)
 
     # Draw bottom
     if bottom_half:
         bottom_width, bottom_height = draw.textsize(bottom_half, font)
+        bottom_position = (IMAGE_WIDTH - bottom_width - X_OFFSET, BOTTOM_TEXT_Y)
         _draw_rectangle(draw, BOTTOM_RECTANGLE_Y, bottom_width, tier, color)
-        _draw_text(draw, BOTTOM_TEXT_Y, bottom_width, bottom_half, font)
+        _draw_text(draw, bottom_position, bottom_half, font)
 
     return image
 
