@@ -65,7 +65,7 @@ class ImageTitlerGUI(ttk.Frame):
     def __init__(self, parent, menu, **kw):
         super().__init__(parent, **kw)
         self.menu = menu
-        self.preview = ImageTitlerPreviewPane(self)
+        self.preview = ImageTitlerPreviewPane(self, text="Select a file using 'File' > 'New File'")
         self.option_pane = ImageTitlerOptionPane(self)
         self.logo_path = None
         self.set_layout()
@@ -77,8 +77,8 @@ class ImageTitlerGUI(ttk.Frame):
 
         :return: None
         """
-        self.preview.pack(side=tk.RIGHT, expand=tk.YES, fill=tk.BOTH)
-        self.option_pane.pack(side=tk.LEFT, anchor=tk.NW)
+        self.preview.pack(side=tk.RIGHT, expand=tk.YES, fill=tk.BOTH, padx=5, pady=5)
+        self.option_pane.pack(side=tk.LEFT, anchor=tk.NW, padx=5, pady=5)
 
     def update_view(self, *args) -> None:
         """
