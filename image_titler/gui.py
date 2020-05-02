@@ -22,6 +22,8 @@ TITLE_OPTION_LABEL = "Title:"
 TIER_OPTION_LABEL = "Tier:"
 LOGO_OPTION_LABEL = "Logo:"
 
+COLUMN_WIDTH = 8
+
 
 class ImageTitlerMain(tk.Tk):
     """
@@ -55,7 +57,7 @@ class ImageTitlerMain(tk.Tk):
         save_copy(self.menu.image_path, self.menu.current_edit, output_path=self.menu.output_path, title=title)
 
 
-class ImageTitlerGUI(tk.Frame):
+class ImageTitlerGUI(ttk.Frame):
     """
     The main content of the GUI. This contains the preview pane and the option pane.
     """
@@ -136,7 +138,7 @@ class ImageTitlerGUI(tk.Frame):
             self.option_pane.logo_value.image = image
 
 
-class ImageTitlerPreviewPane(tk.Label):
+class ImageTitlerPreviewPane(ttk.Label):
     """
     The preview pane is a simple label which contains a preview of the
     image currently being edited.
@@ -146,7 +148,7 @@ class ImageTitlerPreviewPane(tk.Label):
         super().__init__(parent, **kw)
 
 
-class ImageTitlerOptionPane(tk.Frame):
+class ImageTitlerOptionPane(ttk.Frame):
     """
     The option pane contains a set of options that can be controlled when editing the image.
     Changes are reflected in the preview pane.
@@ -160,7 +162,7 @@ class ImageTitlerOptionPane(tk.Frame):
         self.tier_state: tk.IntVar = tk.IntVar()
         self.tier_value: tk.StringVar = tk.StringVar()
         self.logo_state: tk.IntVar = tk.IntVar()
-        self.logo_value: Optional[tk.Label] = None
+        self.logo_value: Optional[ttk.Label] = None
         self.font_state: tk.IntVar = tk.IntVar()
         self.font_value: tk.StringVar = tk.StringVar()
         self.init_option_pane()
@@ -190,7 +192,8 @@ class ImageTitlerOptionPane(tk.Frame):
             title_frame,
             text=TITLE_OPTION_LABEL,
             variable=self.title_state,
-            command=self.parent.update_view
+            command=self.parent.update_view,
+            width=COLUMN_WIDTH
         )
         self.title_value.trace(tk.W, self.parent.update_view)
         title_entry = tk.Entry(title_frame, textvariable=self.title_value)
@@ -207,7 +210,8 @@ class ImageTitlerOptionPane(tk.Frame):
             tier_frame,
             text=TIER_OPTION_LABEL,
             variable=self.tier_state,
-            command=self.parent.update_view
+            command=self.parent.update_view,
+            width=COLUMN_WIDTH
         )
         self.tier_value.set(list(TIER_MAP.keys())[0])
         tier_option_menu = ttk.Combobox(tier_frame, textvariable=self.tier_value, values=list(TIER_MAP.keys()), state="readonly")
@@ -225,7 +229,8 @@ class ImageTitlerOptionPane(tk.Frame):
             logo_frame,
             text=LOGO_OPTION_LABEL,
             variable=self.logo_state,
-            command=self.parent.update_view
+            command=self.parent.update_view,
+            width=COLUMN_WIDTH
         )
         self.logo_value = ttk.Label(logo_frame, text="Select a logo using 'File' > 'New Logo'")
         return logo_frame, logo_label, self.logo_value
@@ -236,7 +241,8 @@ class ImageTitlerOptionPane(tk.Frame):
             font_frame,
             text="Font:",
             variable=self.font_state,
-            command=self.parent.update_view
+            command=self.parent.update_view,
+            width=COLUMN_WIDTH
         )
         font_list = sorted(FONTS.keys())
         self.font_value.set(font_list[0])
