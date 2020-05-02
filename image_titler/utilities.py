@@ -19,7 +19,7 @@ WHITE = (255, 255, 255, 0)
 FONT_SIZE = 114
 TOP_RECTANGLE_Y = 30
 BOTTOM_RECTANGLE_Y = TOP_RECTANGLE_Y + 180
-TOP_TEXT_Y = TOP_RECTANGLE_Y + 5
+#TOP_TEXT_Y = TOP_RECTANGLE_Y + 5
 BOTTOM_TEXT_Y = BOTTOM_RECTANGLE_Y + 5
 RECTANGLE_HEIGHT = 145
 IMAGE_WIDTH = 1920
@@ -80,6 +80,37 @@ def _draw_text(draw: ImageDraw, position: tuple, text: str, font: ImageFont):
     )
 
 
+def _get_text_position(text_width, text_height, text_ascent, y_offset) -> tuple:
+    """
+    A helper function which places the text safely within the title block.
+
+    A lot of work went into making sure this function behaved properly.
+
+    :param text_width: the width of the text bounding box
+    :param text_height: the height of the text without the ascent
+    :param text_ascent: the height of the ascent
+    :param y_offset: the y location of the title block
+    :return: a tuple containing the x, y pixel coordinates of the text
+    """
+    return (
+        IMAGE_WIDTH - text_width - X_OFFSET,
+        y_offset - text_ascent + (RECTANGLE_HEIGHT - text_height) / 2
+    )
+
+
+def _get_text_metrics(text: str, font: ImageFont):
+    """
+    Returns some useful metrics about the font.
+
+    :param text: the text to be displayed
+    :param font: the font object
+    :return: a tuple consisting of four sections of the text (top offset, text, bottom offset)
+    """
+    ascent, descent = font.getmetrics()
+    (width, _), (offset_x, offset_y) = font.font.getsize(text)
+    return width, offset_y, ascent - offset_y, descent
+
+
 def _draw_overlay(image: Image.Image, title: str, tier: str, color: tuple = RECTANGLE_FILL, font: str = FONT) -> Image:
     """
     Draws text over an image.
@@ -95,22 +126,22 @@ def _draw_overlay(image: Image.Image, title: str, tier: str, color: tuple = RECT
 
     # Detect space (precondition for split)
     if len(title.split()) > 1:
-        top_half, bottom_half = split_string_by_nearest_middle_space(title)
+        top_half_text, bottom_half_text = split_string_by_nearest_middle_space(title)
     else:
-        top_half, bottom_half = title, None
+        top_half_text, bottom_half_text = title, None
 
     # Draw top
-    top_width, top_height = draw.textsize(top_half, font)
-    top_position = (IMAGE_WIDTH - top_width - X_OFFSET, TOP_TEXT_Y)
-    _draw_rectangle(draw, TOP_RECTANGLE_Y, top_width, tier, color)
-    _draw_text(draw, top_position, top_half, font)
+    width, top_offset, height, bottom_offset = _get_text_metrics(top_half_text, font)
+    top_position = _get_text_position(width, height,top_offset, TOP_RECTANGLE_Y)
+    _draw_rectangle(draw, TOP_RECTANGLE_Y, width, tier, color)
+    _draw_text(draw, top_position, top_half_text, font)
 
     # Draw bottom
-    if bottom_half:
-        bottom_width, bottom_height = draw.textsize(bottom_half, font)
-        bottom_position = (IMAGE_WIDTH - bottom_width - X_OFFSET, BOTTOM_TEXT_Y)
-        _draw_rectangle(draw, BOTTOM_RECTANGLE_Y, bottom_width, tier, color)
-        _draw_text(draw, bottom_position, bottom_half, font)
+    if bottom_half_text:
+        width, top_offset, height, bottom_offset = _get_text_metrics(bottom_half_text, font)
+        bottom_position = _get_text_position(width, height, top_offset, BOTTOM_RECTANGLE_Y)
+        _draw_rectangle(draw, BOTTOM_RECTANGLE_Y, width, tier, color)
+        _draw_text(draw, bottom_position, bottom_half_text, font)
 
     return image
 
