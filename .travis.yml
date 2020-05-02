@@ -4,9 +4,14 @@ python:
 
 install:
   - pip install .
+  - pip install codecov
+  - pip install coverage
 
 script:
-  - pytest
+  - coverage run -m pytest
+
+after_success:
+  - codecov
 
 deploy:
   provider: pypi
