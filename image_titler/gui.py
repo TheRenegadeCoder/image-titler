@@ -1,5 +1,6 @@
 import os
 import tkinter as tk
+import tkinter.ttk as ttk
 import tkinter.filedialog
 from typing import Optional
 
@@ -238,7 +239,7 @@ class ImageTitlerOptionPane(tk.Frame):
         )
         font_list = sorted(FONTS.keys())
         self.font_value.set(font_list[0])
-        font_menu = tk.OptionMenu(font_frame, self.font_value, *font_list, command=self.parent.update_view)
+        font_menu = ttk.Combobox(font_frame, textvariable=self.font_value, values=font_list, state="readonly")
         return font_frame, font_label, font_menu
 
     @staticmethod
