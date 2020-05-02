@@ -78,7 +78,7 @@ class ImageTitlerGUI(ttk.Frame):
     def __init__(self, parent, menu, **kw):
         super().__init__(parent, **kw)
         self.menu = menu
-        self.preview = ImageTitlerPreviewPane(self, text="Select a file using 'File' > 'New File'")
+        self.preview = ImageTitlerPreviewPane(self, text=f"Select a file using '{FILE_TAB_LABEL}' > '{NEW_IMAGE_LABEL}'")
         self.option_pane = ImageTitlerOptionPane(self)
         self.logo_path = None
         self.set_layout()
@@ -255,7 +255,7 @@ class ImageTitlerOptionPane(ttk.Frame):
             command=self.parent.update_view,
             width=COLUMN_WIDTH
         )
-        self.logo_value = ttk.Label(logo_frame, text="Select a logo using 'File' > 'New Logo'")
+        self.logo_value = ttk.Label(logo_frame, text=f"Select a logo using '{FILE_TAB_LABEL}' > '{NEW_LOGO_LABEL}'")
         return logo_frame, logo_label, self.logo_value
 
     def init_font_frame(self) -> tuple:
