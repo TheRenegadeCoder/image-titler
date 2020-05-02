@@ -1,10 +1,14 @@
+"""
+The commandline interface for the image-titler script.
+"""
+
 import argparse
 import tkinter
 from tkinter.filedialog import askopenfilename, askdirectory
 from typing import Optional
 
-from image_titler.utilities import process_batch, process_image, TIER_MAP, FILE_TYPES, save_copy, \
-    convert_file_name_to_title, FONT, parse_input
+from image_titler.utilities import process_batch, process_image, FILE_TYPES, save_copy, \
+    convert_file_name_to_title, parse_input
 
 
 def _request_input_path(path: str, batch: bool) -> Optional[str]:

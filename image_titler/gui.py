@@ -1,3 +1,7 @@
+"""
+The GUI interface for the image-titler script.
+"""
+
 import os
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -47,14 +51,23 @@ class ImageTitlerMain(tk.Tk):
 
     def save_as(self) -> None:
         """
-        A save method which saves our preview. This has to exist because the menu has no concept of title.
-        As a result, this method needed to be pulled up into main window. That way, we at least decouple
-        the child to parent relationship (i.e. children have to concept of siblings, etc.).
+        A save method which saves our preview. This has to exist because the menu
+        has no concept of title. As a result, this method needed to be pulled up
+        into main window. That way, we at least decouple the child to parent
+        relationship (i.e. children have to concept of siblings, etc.).
 
         :return: None
         """
-        title = convert_file_name_to_title(self.menu.image_path, title=self.gui.option_pane.title_value.get())
-        save_copy(self.menu.image_path, self.menu.current_edit, output_path=self.menu.output_path, title=title)
+        title = convert_file_name_to_title(
+            self.menu.image_path,
+            title=self.gui.option_pane.title_value.get()
+        )
+        save_copy(
+            self.menu.image_path,
+            self.menu.current_edit,
+            output_path=self.menu.output_path,
+            title=title
+        )
 
 
 class ImageTitlerGUI(ttk.Frame):
@@ -184,7 +197,7 @@ class ImageTitlerOptionPane(ttk.Frame):
         rows.append(self.init_logo_frame())
         rows.append(self.init_font_frame())
         for row in rows:
-            self.layout_option_row(*row)
+            self._layout_option_row(*row)
 
     def init_title_frame(self) -> tuple:
         """
@@ -230,7 +243,7 @@ class ImageTitlerOptionPane(ttk.Frame):
 
     def init_logo_frame(self) -> tuple:
         """
-        Initializes the for logo information.
+        Initializes the row for logo information.
 
         :return: a tuple containing the logo container and its two children (see layout_option_row for order)
         """
@@ -246,6 +259,11 @@ class ImageTitlerOptionPane(ttk.Frame):
         return logo_frame, logo_label, self.logo_value
 
     def init_font_frame(self) -> tuple:
+        """
+        Initializes the row for font information.
+
+        :return: a tuple containing the font container and its two children (see layout_option_row for order)
+        """
         font_frame = ttk.Frame(self)
         font_label = ttk.Checkbutton(
             font_frame,
@@ -256,12 +274,17 @@ class ImageTitlerOptionPane(ttk.Frame):
         )
         font_list = sorted(FONTS.keys())
         self.font_value.set(font_list[0])
-        font_menu = ttk.Combobox(font_frame, textvariable=self.font_value, values=font_list, state="readonly")
+        font_menu = ttk.Combobox(
+            font_frame,
+            textvariable=self.font_value,
+            values=font_list,
+            state="readonly"
+        )
         font_menu.bind("<<ComboboxSelected>>", self.parent.update_view)
         return font_frame, font_label, font_menu
 
     @staticmethod
-    def layout_option_row(frame, label, value) -> None:
+    def _layout_option_row(frame, label, value) -> None:
         """
         Sets up consistent packing for a row of the option pane.
 
