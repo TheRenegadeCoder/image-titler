@@ -59,7 +59,7 @@ class TestProcessImage(TestUtilities):
             tier=tier,
             font=font
         )
-        save_copy(input_path, test_image, output_path=TEST_SOLO_DUMP, title=title)
+        test_file = save_copy(input_path, test_image, output_path=TEST_SOLO_DUMP, title=title)
 
         title = utilities.convert_file_name_to_title(input_path)
         sample_image = utilities.process_image(
@@ -70,12 +70,15 @@ class TestProcessImage(TestUtilities):
             font=font
         )
         save_copy(input_path, sample_image, output_path=SAMPLE_DUMP)
+        return test_file
 
     def test_default(self):
-        TestProcessImage.generate_image(DEFAULT_IMAGE, title="Test Default")
+        test_file = TestProcessImage.generate_image(DEFAULT_IMAGE, title="Test Default")
+        self.assertTrue(Path(test_file).exists())
 
     def test_logo_red(self):
-        TestProcessImage.generate_image(LOGO_RED_IMAGE, title="Test Red Logo", logo_path=TRC_ICON_PATH)
+        test_file = TestProcessImage.generate_image(LOGO_RED_IMAGE, title="Test Red Logo", logo_path=TRC_ICON_PATH)
+        self.assertTrue(Path(test_file).exists())
 
     def test_logo_blue(self):
         TestProcessImage.generate_image(LOGO_BLUE_IMAGE, title="Test Blue Logo", logo_path=VF_ICON_PATH)

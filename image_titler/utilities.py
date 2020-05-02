@@ -216,7 +216,7 @@ def split_string_by_nearest_middle_space(input_string: str) -> tuple:
 
 
 def save_copy(input_path: str, edited_image: Image.Image, title: Optional[str] = None,
-              output_path: Optional[str] = None):
+              output_path: Optional[str] = None) -> str:
     """
     A helper function for saving a copy of the image.
 
@@ -224,7 +224,7 @@ def save_copy(input_path: str, edited_image: Image.Image, title: Optional[str] =
     :param edited_image: the edited image
     :param title: the title of the image
     :param output_path: the path to dump the picture
-    :return: nothing
+    :return: the path to the saved image
     """
     og_image = Image.open(input_path)
     title = convert_file_name_to_title(input_path, title=title)
@@ -233,6 +233,7 @@ def save_copy(input_path: str, edited_image: Image.Image, title: Optional[str] =
     storage_path = _generate_image_output_path(og_image.format, output_path, title, version)
     exif = _add_version_to_exif(og_image, version)
     edited_image.save(storage_path, subsampling=0, quality=100, exif=exif)
+    return storage_path
 
 
 def process_batch(input_path: str, tier: str = "", logo_path: str = None, output_path: str = None, font: str = FONT) -> None:
