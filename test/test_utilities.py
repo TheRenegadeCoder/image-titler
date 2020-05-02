@@ -96,6 +96,9 @@ class TestProcessImage(TestUtilities):
         test_image = utilities.process_image(SPECIAL_IMAGE, title="Test Special Chars?")
         save_copy(SPECIAL_IMAGE, test_image, output_path=TEST_SOLO_DUMP, title="Test Special Chars?")
 
+    def test_one_line_title(self):
+        TestProcessImage.generate_image(PREMIUM_IMAGE, title="TestSingleLineFile")
+
 
 class TestProcessBatch(TestUtilities):
 
