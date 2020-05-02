@@ -33,6 +33,7 @@ setuptools.setup(
         'titlecase',
         'pillow>=6.0.0',
         'pathvalidate',
-        'piexif'
+        'piexif',
+        'matplotlib'
     ],
 )
