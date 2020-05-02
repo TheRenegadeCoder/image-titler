@@ -4,7 +4,7 @@ from tkinter.filedialog import askopenfilename, askdirectory
 from typing import Optional
 
 from image_titler.utilities import process_batch, process_image, TIER_MAP, FILE_TYPES, save_copy, \
-    convert_file_name_to_title
+    convert_file_name_to_title, FONT
 
 
 def _request_input_path(path: str, batch: bool) -> Optional[str]:
@@ -46,6 +46,7 @@ def parse_input() -> argparse.Namespace:
                         help="select an image tier")
     parser.add_argument('-l', '--logo_path', help="select a logo file for addition to the processed image")
     parser.add_argument('-b', '--batch', default=False, action='store_true', help="turn on batch processing")
+    parser.add_argument('-f', "--font", default=FONT, help="add a custom font by path (e.g. 'arial.ttf')")
     args = parser.parse_args()
     return args
 
@@ -63,10 +64,17 @@ def title_image(args: argparse.Namespace) -> None:
     logo_path: str = args.logo_path
     output_path: str = args.output_path
     title: str = args.title
+    font: str = args.font
     input_path = _request_input_path(path, batch)
     if input_path:
         if args.batch:
-            process_batch(input_path, tier, logo_path, output_path)
+            process_batch(
+                input_path,
+                tier=tier,
+                logo_path=logo_path,
+                output_path=output_path,
+                font=font
+            )
         else:
             title = convert_file_name_to_title(input_path, title=title)
             edited_image = process_image(
@@ -74,6 +82,7 @@ def title_image(args: argparse.Namespace) -> None:
                 title,
                 tier=tier,
                 logo_path=logo_path,
+                font=font
             )
             edited_image.show()
             save_copy(input_path, edited_image, output_path=output_path, title=title)

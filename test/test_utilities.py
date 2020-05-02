@@ -106,7 +106,7 @@ class TestProcessBatch(TestUtilities):
 
         os.mkdir(TEST_BATCH_DUMP)
 
-    def test_batch(self):
+    def test_batch_default(self):
         utilities.process_batch(ASSETS, output_path=TEST_BATCH_DUMP)
 
 

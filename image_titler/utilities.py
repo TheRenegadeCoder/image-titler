@@ -234,10 +234,11 @@ def save_copy(input_path: str, edited_image: Image.Image, title: Optional[str] =
     edited_image.save(storage_path, subsampling=0, quality=100, exif=exif)
 
 
-def process_batch(input_path: str, tier: str = "", logo_path: str = None, output_path: str = None) -> None:
+def process_batch(input_path: str, tier: str = "", logo_path: str = None, output_path: str = None, font: str = FONT) -> None:
     """
     Processes a batch of images.
 
+    :param font: the text font
     :param input_path: the path to a folder of images
     :param tier: the image tier (free or premium)
     :param logo_path: the path to a logo
@@ -251,7 +252,8 @@ def process_batch(input_path: str, tier: str = "", logo_path: str = None, output
             absolute_path,
             title,
             tier=tier,
-            logo_path=logo_path
+            logo_path=logo_path,
+            font=font
         )
         save_copy(absolute_path, edited_image, output_path=output_path)
 
