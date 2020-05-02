@@ -28,7 +28,8 @@ image-titler --output_path "path/to/output"  # Sets the output path
 image-titler --path "path/to/image"  # Sets the image path
 image-titler --tier "free"  # Sets the membership tier which changes the rectangle borders
 image-titler --logo_path "path/to/logo"  # Adds a 145x145 logo to the lower left corner of the image
-image-titler --batch # Runs the program in batch mode on a directory
+image-titler --batch  # Runs the program in batch mode on a directory
+image-titler --font "path/to/font"  # Changes the default title font
 ```
 
 Alternatively, you can spin up the GUI version of the software as of 2.0.0 as follows:

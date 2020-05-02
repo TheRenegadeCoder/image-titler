@@ -367,6 +367,6 @@ def parse_input() -> argparse.Namespace:
                         help="select an image tier")
     parser.add_argument('-l', '--logo_path', help="select a logo file for addition to the processed image")
     parser.add_argument('-b', '--batch', default=False, action='store_true', help="turn on batch processing")
-    parser.add_argument('-f', "--font", default=FONT, help="add a custom font by path (e.g. 'arial.ttf')")
+    parser.add_argument('-f', "--font", default=FONT, help="change the default font by path (e.g. 'arial.ttf')")
     args = parser.parse_args()
     return args
