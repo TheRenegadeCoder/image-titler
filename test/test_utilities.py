@@ -4,7 +4,7 @@ from pathlib import Path
 from unittest import TestCase
 
 import pkg_resources
-from PIL import Image
+from PIL import Image, ImageChops
 
 from image_titler import utilities
 from image_titler.utilities import save_copy, FONT
@@ -106,9 +106,26 @@ class TestSaveCopy(TestUtilities):
 
 class TestProcessImage(TestUtilities):
 
+    def setUp(self) -> None:
+        self.size = (1920, 960)
+        self.input_image = Image.open(DEFAULT_IMAGE)
+        self.default_image = utilities.process_image(DEFAULT_IMAGE, title="Test Default Image")
+        self.different_title_image = utilities.process_image(DEFAULT_IMAGE, title="Test Different Logo Image")
+
     def test_default(self):
-        image = utilities.process_image(DEFAULT_IMAGE, title="Test Default Image")
-        self.assertEqual((1920, 960), image.size)
+        self.assertEqual(self.size, self.default_image.size)
+        self.assertIsNone(ImageChops.difference(self.default_image, self.default_image).getbbox())
+        self.assertIsNotNone(ImageChops.difference(self.input_image, self.default_image).getbbox())
+
+    def test_compare_all(self):
+        images = [
+            self.default_image,
+            self.different_title_image
+        ]
+        for i1 in images:
+            for i2 in images:
+                if i1 is not i2:
+                    self.assertIsNotNone(ImageChops.difference(i1, i2).getbbox())
 
 
 class TestProcessBatch(TestUtilities):
