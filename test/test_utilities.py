@@ -22,6 +22,8 @@ LOGO_BLUE_IMAGE = "assets/hello-world-in-matlab.jpg"
 FREE_IMAGE = "assets/columbus-drivers-are-among-the-worst.jpg"
 PREMIUM_IMAGE = "assets/the-guide-to-causing-mass-panic.jpg"
 SPECIAL_IMAGE = "assets/happy-new-year.jpg"
+CUSTOM_FONT_IMAGE = "assets/reflecting-on-my-third-semester-of-teaching.jpg"
+ONE_LINE_TITLE_IMAGE = "assets/minimalism.jpg"
 
 TEST_DUMP = "test/dump"
 TEST_SOLO_DUMP = TEST_DUMP + "/solo"
@@ -90,11 +92,11 @@ class TestSaveCopy(TestUtilities):
         self.generate_image(PREMIUM_IMAGE, title="Test Premium Tier", tier="premium")
 
     def test_custom_font(self):
-        self.generate_image(PREMIUM_IMAGE, title="Test Custom Font", font="test/fonts/arial.ttf")
+        self.generate_image(CUSTOM_FONT_IMAGE, title="Test Custom Font", font="test/fonts/arial.ttf")
 
     def test_custom_font_strange_height(self):
         self.generate_image(
-            PREMIUM_IMAGE,
+            CUSTOM_FONT_IMAGE,
             title="Test Custom Font Strange Height",
             font="test/fonts/gadugi.ttf"
         )
@@ -104,7 +106,7 @@ class TestSaveCopy(TestUtilities):
         save_copy(SPECIAL_IMAGE, test_image, output_path=TEST_SOLO_DUMP, title="Test Special Chars?")
 
     def test_one_line_title(self):
-        self.generate_image(PREMIUM_IMAGE, title="TestSingleLineFile")
+        self.generate_image(ONE_LINE_TITLE_IMAGE, title="TestSingleLineFile")
 
 
 class TestProcessImage(TestUtilities):
