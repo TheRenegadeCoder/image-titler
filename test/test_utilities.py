@@ -33,7 +33,7 @@ class TestUtilities(TestCase):
     pass
 
 
-class TestProcessImage(TestUtilities):
+class TestSaveCopy(TestUtilities):
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -73,27 +73,27 @@ class TestProcessImage(TestUtilities):
         return test_file
 
     def test_default(self):
-        test_file = TestProcessImage.generate_image(DEFAULT_IMAGE, title="Test Default")
+        test_file = self.generate_image(DEFAULT_IMAGE, title="Test Default")
         self.assertTrue(Path(test_file).exists())
 
     def test_logo_red(self):
-        test_file = TestProcessImage.generate_image(LOGO_RED_IMAGE, title="Test Red Logo", logo_path=TRC_ICON_PATH)
+        test_file = self.generate_image(LOGO_RED_IMAGE, title="Test Red Logo", logo_path=TRC_ICON_PATH)
         self.assertTrue(Path(test_file).exists())
 
     def test_logo_blue(self):
-        TestProcessImage.generate_image(LOGO_BLUE_IMAGE, title="Test Blue Logo", logo_path=VF_ICON_PATH)
+        self.generate_image(LOGO_BLUE_IMAGE, title="Test Blue Logo", logo_path=VF_ICON_PATH)
 
     def test_free_tier(self):
-        TestProcessImage.generate_image(FREE_IMAGE, title="Test Free Tier", tier="free")
+        self.generate_image(FREE_IMAGE, title="Test Free Tier", tier="free")
 
     def test_premium_tier(self):
-        TestProcessImage.generate_image(PREMIUM_IMAGE, title="Test Premium Tier", tier="premium")
+        self.generate_image(PREMIUM_IMAGE, title="Test Premium Tier", tier="premium")
 
     def test_custom_font(self):
-        TestProcessImage.generate_image(PREMIUM_IMAGE, title="Test Custom Font", font="test/fonts/arial.ttf")
+        self.generate_image(PREMIUM_IMAGE, title="Test Custom Font", font="test/fonts/arial.ttf")
 
     def test_custom_font_strange_height(self):
-        TestProcessImage.generate_image(PREMIUM_IMAGE, title="Test Custom Font Strange Height",
+        self.generate_image(PREMIUM_IMAGE, title="Test Custom Font Strange Height",
                                         font="test/fonts/gadugi.ttf")
 
     def test_special_chars_in_title(self):
@@ -101,7 +101,14 @@ class TestProcessImage(TestUtilities):
         save_copy(SPECIAL_IMAGE, test_image, output_path=TEST_SOLO_DUMP, title="Test Special Chars?")
 
     def test_one_line_title(self):
-        TestProcessImage.generate_image(PREMIUM_IMAGE, title="TestSingleLineFile")
+        self.generate_image(PREMIUM_IMAGE, title="TestSingleLineFile")
+
+
+class TestProcessImage(TestUtilities):
+
+    def test_default(self):
+        image = utilities.process_image(DEFAULT_IMAGE, title="Test Default Image")
+        self.assertEqual((1920, 960), image.size)
 
 
 class TestProcessBatch(TestUtilities):
