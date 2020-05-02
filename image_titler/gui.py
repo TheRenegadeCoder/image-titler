@@ -80,11 +80,10 @@ class ImageTitlerGUI(ttk.Frame):
         self.preview.pack(side=tk.RIGHT, expand=tk.YES, fill=tk.BOTH, padx=5, pady=5)
         self.option_pane.pack(side=tk.LEFT, anchor=tk.NW, padx=5, pady=5)
 
-    def update_view(self, *args) -> None:
+    def update_view(self, *_) -> None:
         """
         Updates this frame visually by controlling what is happening in children components.
 
-        :param args: a set of arguments (not currently used--just satisfies some of the callers)
         :return: None
         """
         if self.menu.image_path:
@@ -113,7 +112,13 @@ class ImageTitlerGUI(ttk.Frame):
         :return: None
         """
         title = convert_file_name_to_title(self.menu.image_path, title=title)
-        self.menu.current_edit = process_image(self.menu.image_path, title, tier=tier, logo_path=logo_path, font=text_font)
+        self.menu.current_edit = process_image(
+            self.menu.image_path,
+            title,
+            tier=tier,
+            logo_path=logo_path,
+            font=text_font
+        )
         maxsize = (1028, 1028)
         small_image = self.menu.current_edit.copy()
         small_image.thumbnail(maxsize, Image.ANTIALIAS)
@@ -214,7 +219,12 @@ class ImageTitlerOptionPane(ttk.Frame):
             width=COLUMN_WIDTH
         )
         self.tier_value.set(list(TIER_MAP.keys())[0])
-        tier_option_menu = ttk.Combobox(tier_frame, textvariable=self.tier_value, values=list(TIER_MAP.keys()), state="readonly")
+        tier_option_menu = ttk.Combobox(
+            tier_frame,
+            textvariable=self.tier_value,
+            values=list(TIER_MAP.keys()),
+            state="readonly"
+        )
         tier_option_menu.bind("<<ComboboxSelected>>", self.parent.update_view)
         return tier_frame, tier_label, tier_option_menu
 
