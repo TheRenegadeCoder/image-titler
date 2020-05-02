@@ -185,8 +185,8 @@ class ImageTitlerOptionPane(tk.Frame):
 
         :return: a tuple containing the title container and its two children (see layout_option_row for order)
         """
-        title_frame = tk.Frame(self)
-        title_label = tk.Checkbutton(
+        title_frame = ttk.Frame(self)
+        title_label = ttk.Checkbutton(
             title_frame,
             text=TITLE_OPTION_LABEL,
             variable=self.title_state,
@@ -202,15 +202,16 @@ class ImageTitlerOptionPane(tk.Frame):
 
         :return: a tuple containing the tier container and its two children (see layout_option_row for order)
         """
-        tier_frame = tk.Frame(self)
-        tier_label = tk.Checkbutton(
+        tier_frame = ttk.Frame(self)
+        tier_label = ttk.Checkbutton(
             tier_frame,
             text=TIER_OPTION_LABEL,
             variable=self.tier_state,
             command=self.parent.update_view
         )
         self.tier_value.set(list(TIER_MAP.keys())[0])
-        tier_option_menu = tk.OptionMenu(tier_frame, self.tier_value, *TIER_MAP.keys(), command=self.parent.update_view)
+        tier_option_menu = ttk.Combobox(tier_frame, textvariable=self.tier_value, values=list(TIER_MAP.keys()), state="readonly")
+        tier_option_menu.bind("<<ComboboxSelected>>", self.parent.update_view)
         return tier_frame, tier_label, tier_option_menu
 
     def init_logo_frame(self) -> tuple:
@@ -219,19 +220,19 @@ class ImageTitlerOptionPane(tk.Frame):
 
         :return: a tuple containing the logo container and its two children (see layout_option_row for order)
         """
-        logo_frame = tk.Frame(self)
-        logo_label = tk.Checkbutton(
+        logo_frame = ttk.Frame(self)
+        logo_label = ttk.Checkbutton(
             logo_frame,
             text=LOGO_OPTION_LABEL,
             variable=self.logo_state,
             command=self.parent.update_view
         )
-        self.logo_value = tk.Label(logo_frame, text="Select a logo using 'File' > 'New Logo'")
+        self.logo_value = ttk.Label(logo_frame, text="Select a logo using 'File' > 'New Logo'")
         return logo_frame, logo_label, self.logo_value
 
     def init_font_frame(self) -> tuple:
-        font_frame = tk.Frame(self)
-        font_label = tk.Checkbutton(
+        font_frame = ttk.Frame(self)
+        font_label = ttk.Checkbutton(
             font_frame,
             text="Font:",
             variable=self.font_state,
@@ -240,6 +241,7 @@ class ImageTitlerOptionPane(tk.Frame):
         font_list = sorted(FONTS.keys())
         self.font_value.set(font_list[0])
         font_menu = ttk.Combobox(font_frame, textvariable=self.font_value, values=font_list, state="readonly")
+        font_menu.bind("<<ComboboxSelected>>", self.parent.update_view)
         return font_frame, font_label, font_menu
 
     @staticmethod
