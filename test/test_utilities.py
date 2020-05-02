@@ -4,6 +4,7 @@ from unittest import TestCase
 
 import pkg_resources
 from PIL import Image
+from pathlib import Path
 
 from image_titler import utilities
 from image_titler.utilities import save_copy, FONT
@@ -22,8 +23,9 @@ FREE_IMAGE = "assets/columbus-drivers-are-among-the-worst.jpg"
 PREMIUM_IMAGE = "assets/the-guide-to-causing-mass-panic.jpg"
 SPECIAL_IMAGE = "assets/happy-new-year.jpg"
 
-TEST_SOLO_DUMP = "test/solo-dump"
-TEST_BATCH_DUMP = "test/batch-dump"
+TEST_DUMP = "test/dump"
+TEST_SOLO_DUMP = TEST_DUMP + "/solo"
+TEST_BATCH_DUMP = TEST_DUMP + "/batch"
 SAMPLE_DUMP = "samples/v" + pkg_resources.require("image-titler")[0].version
 
 
@@ -45,8 +47,8 @@ class TestProcessImage(TestUtilities):
         except FileNotFoundError:
             pass
         
-        os.mkdir(TEST_SOLO_DUMP)
-        os.mkdir(SAMPLE_DUMP)
+        Path(TEST_SOLO_DUMP).mkdir(parents=True, exist_ok=True)
+        Path(SAMPLE_DUMP).mkdir(parents=True, exist_ok=True)
 
     @staticmethod
     def generate_image(input_path, title, logo_path=None, tier="", font=FONT):
@@ -104,10 +106,18 @@ class TestProcessBatch(TestUtilities):
         except FileNotFoundError:
             pass
 
-        os.mkdir(TEST_BATCH_DUMP)
+        Path(TEST_BATCH_DUMP + "/default").mkdir(parents=True, exist_ok=True)
+        Path(TEST_BATCH_DUMP + "/free-tier").mkdir(parents=True, exist_ok=True)
+        Path(TEST_BATCH_DUMP + "/premium-tier").mkdir(parents=True, exist_ok=True)
 
     def test_batch_default(self):
-        utilities.process_batch(ASSETS, output_path=TEST_BATCH_DUMP)
+        utilities.process_batch(ASSETS, output_path=TEST_BATCH_DUMP + "/default")
+
+    def test_batch_free_tier(self):
+        utilities.process_batch(ASSETS, tier="free", output_path=TEST_BATCH_DUMP + "/free-tier")
+
+    def test_batch_premium_tier(self):
+        utilities.process_batch(ASSETS, tier="premium", output_path=TEST_BATCH_DUMP + "/premium-tier")
 
 
 class TestConvertFileNameToTitle(TestUtilities):
