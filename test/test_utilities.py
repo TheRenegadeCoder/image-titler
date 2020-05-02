@@ -87,7 +87,10 @@ class TestProcessImage(TestUtilities):
         TestProcessImage.generate_image(PREMIUM_IMAGE, title="Test Premium Tier", tier="premium")
 
     def test_custom_font(self):
-        TestProcessImage.generate_image(PREMIUM_IMAGE, title="Test Custom Font", font="arial.ttf")
+        TestProcessImage.generate_image(PREMIUM_IMAGE, title="Test Custom Font", font="test/fonts/arial.ttf")
+
+    def test_custom_font_strange_height(self):
+        TestProcessImage.generate_image(PREMIUM_IMAGE, title="Test Custom Font Strange Height", font="test/fonts/gadugi.ttf")
 
     def test_special_chars_in_title(self):
         test_image = utilities.process_image(SPECIAL_IMAGE, title="Test Special Chars?")
