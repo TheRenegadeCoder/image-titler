@@ -1,10 +1,10 @@
-import os
 import shutil
+import sys
+from pathlib import Path
 from unittest import TestCase
 
 import pkg_resources
 from PIL import Image
-from pathlib import Path
 
 from image_titler import utilities
 from image_titler.utilities import save_copy, FONT
@@ -46,7 +46,7 @@ class TestProcessImage(TestUtilities):
             shutil.rmtree(SAMPLE_DUMP)
         except FileNotFoundError:
             pass
-        
+
         Path(TEST_SOLO_DUMP).mkdir(parents=True, exist_ok=True)
         Path(SAMPLE_DUMP).mkdir(parents=True, exist_ok=True)
 
@@ -90,7 +90,8 @@ class TestProcessImage(TestUtilities):
         TestProcessImage.generate_image(PREMIUM_IMAGE, title="Test Custom Font", font="test/fonts/arial.ttf")
 
     def test_custom_font_strange_height(self):
-        TestProcessImage.generate_image(PREMIUM_IMAGE, title="Test Custom Font Strange Height", font="test/fonts/gadugi.ttf")
+        TestProcessImage.generate_image(PREMIUM_IMAGE, title="Test Custom Font Strange Height",
+                                        font="test/fonts/gadugi.ttf")
 
     def test_special_chars_in_title(self):
         test_image = utilities.process_image(SPECIAL_IMAGE, title="Test Special Chars?")
@@ -165,3 +166,94 @@ class TestSplitString(TestUtilities):
         top, bottom = utilities.split_string_by_nearest_middle_space("Split last opening")
         self.assertEqual(top, "Split last")
         self.assertEqual(bottom, "opening")
+
+
+class TestParseInput(TestUtilities):
+
+    def setUp(self) -> None:
+        sys.argv = sys.argv[:1]  # clears args for each test
+
+    def test_default(self):
+        args = utilities.parse_input()
+        self.assertEqual(args.batch, False)
+        self.assertEqual(args.path, None)
+        self.assertEqual(args.tier, "")
+        self.assertEqual(args.output_path, None)
+        self.assertEqual(args.logo_path, None)
+        self.assertEqual(args.title, None)
+
+    def test_title(self):
+        sys.argv.append("-t")
+        sys.argv.append("Hello World")
+        args = utilities.parse_input()
+        self.assertEqual(args.batch, False)
+        self.assertEqual(args.path, None)
+        self.assertEqual(args.tier, "")
+        self.assertEqual(args.output_path, None)
+        self.assertEqual(args.logo_path, None)
+        self.assertEqual(args.title, "Hello World")
+
+    def test_path(self):
+        sys.argv.append("-p")
+        sys.argv.append("path/to/stuff")
+        args = utilities.parse_input()
+        self.assertEqual(args.batch, False)
+        self.assertEqual(args.path, "path/to/stuff")
+        self.assertEqual(args.tier, "")
+        self.assertEqual(args.output_path, None)
+        self.assertEqual(args.logo_path, None)
+        self.assertEqual(args.title, None)
+
+    def test_output_path(self):
+        sys.argv.append("-o")
+        sys.argv.append("path/to/stuff")
+        args = utilities.parse_input()
+        self.assertEqual(args.batch, False)
+        self.assertEqual(args.path, None)
+        self.assertEqual(args.tier, "")
+        self.assertEqual(args.output_path, "path/to/stuff")
+        self.assertEqual(args.logo_path, None)
+        self.assertEqual(args.title, None)
+
+    def test_logo_path(self):
+        sys.argv.append("-l")
+        sys.argv.append("path/to/stuff")
+        args = utilities.parse_input()
+        self.assertEqual(args.batch, False)
+        self.assertEqual(args.path, None)
+        self.assertEqual(args.tier, "")
+        self.assertEqual(args.output_path, None)
+        self.assertEqual(args.logo_path, "path/to/stuff")
+        self.assertEqual(args.title, None)
+
+    def test_batch(self):
+        sys.argv.append("-b")
+        args = utilities.parse_input()
+        self.assertEqual(args.batch, True)
+        self.assertEqual(args.path, None)
+        self.assertEqual(args.tier, "")
+        self.assertEqual(args.output_path, None)
+        self.assertEqual(args.logo_path, None)
+        self.assertEqual(args.title, None)
+
+    def test_tier_premium(self):
+        sys.argv.append("-r")
+        sys.argv.append("premium")
+        args = utilities.parse_input()
+        self.assertEqual(args.batch, False)
+        self.assertEqual(args.path, None)
+        self.assertEqual(args.tier, "premium")
+        self.assertEqual(args.output_path, None)
+        self.assertEqual(args.logo_path, None)
+        self.assertEqual(args.title, None)
+
+    def test_tier_free(self):
+        sys.argv.append("-r")
+        sys.argv.append("free")
+        args = utilities.parse_input()
+        self.assertEqual(args.batch, False)
+        self.assertEqual(args.path, None)
+        self.assertEqual(args.tier, "free")
+        self.assertEqual(args.output_path, None)
+        self.assertEqual(args.logo_path, None)
+        self.assertEqual(args.title, None)

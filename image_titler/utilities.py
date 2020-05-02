@@ -1,3 +1,4 @@
+import argparse
 import os
 from pathlib import Path
 from typing import Optional
@@ -319,3 +320,22 @@ def get_best_top_color(image: Image.Image) -> tuple:
     while (color := next(curr_color)[1]) == WHITE:
         pass
     return color
+
+
+def parse_input() -> argparse.Namespace:
+    """
+    Creates and executes a parser on the command line inputs.
+
+    :return: the processed command line arguments
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-t', '--title', help="add a custom title to the image (no effect when batch processing)")
+    parser.add_argument('-p', '--path', help="select an image file")
+    parser.add_argument('-o', '--output_path', help="select an output path for the processed image")
+    parser.add_argument('-r', '--tier', default="", choices=TIER_MAP.keys(),
+                        help="select an image tier")
+    parser.add_argument('-l', '--logo_path', help="select a logo file for addition to the processed image")
+    parser.add_argument('-b', '--batch', default=False, action='store_true', help="turn on batch processing")
+    parser.add_argument('-f', "--font", default=FONT, help="add a custom font by path (e.g. 'arial.ttf')")
+    args = parser.parse_args()
+    return args
