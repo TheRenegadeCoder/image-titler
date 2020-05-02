@@ -20,7 +20,6 @@ WHITE = (255, 255, 255, 0)
 FONT_SIZE = 114
 TOP_RECTANGLE_Y = 30
 BOTTOM_RECTANGLE_Y = TOP_RECTANGLE_Y + 180
-#TOP_TEXT_Y = TOP_RECTANGLE_Y + 5
 BOTTOM_TEXT_Y = BOTTOM_RECTANGLE_Y + 5
 RECTANGLE_HEIGHT = 145
 IMAGE_WIDTH = 1920
@@ -133,7 +132,7 @@ def _draw_overlay(image: Image.Image, title: str, tier: str, color: tuple = RECT
 
     # Draw top
     width, top_offset, height, bottom_offset = _get_text_metrics(top_half_text, font)
-    top_position = _get_text_position(width, height,top_offset, TOP_RECTANGLE_Y)
+    top_position = _get_text_position(width, height, top_offset, TOP_RECTANGLE_Y)
     _draw_rectangle(draw, TOP_RECTANGLE_Y, width, tier, color)
     _draw_text(draw, top_position, top_half_text, font)
 
@@ -236,7 +235,13 @@ def save_copy(input_path: str, edited_image: Image.Image, title: Optional[str] =
     return storage_path
 
 
-def process_batch(input_path: str, tier: str = "", logo_path: str = None, output_path: str = None, font: str = FONT) -> None:
+def process_batch(
+        input_path: str,
+        tier: str = "",
+        logo_path: str = None,
+        output_path: str = None,
+        font: str = FONT
+) -> None:
     """
     Processes a batch of images.
 
