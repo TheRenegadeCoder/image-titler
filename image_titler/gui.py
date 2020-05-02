@@ -5,7 +5,7 @@ The GUI interface for the image-titler script.
 import os
 import tkinter as tk
 import tkinter.ttk as ttk
-import tkinter.filedialog
+from tkinter import filedialog
 from typing import Optional
 
 import pkg_resources
@@ -334,7 +334,7 @@ class ImageTitlerMenuBar(tk.Menu):
 
         :return: None
         """
-        self.image_path = tk.filedialog.askopenfilename(filetypes=FILE_TYPES)
+        self.image_path = filedialog.askopenfilename(filetypes=FILE_TYPES)
         self.parent.update_view()
 
     def new_logo(self) -> None:
@@ -343,7 +343,7 @@ class ImageTitlerMenuBar(tk.Menu):
 
         :return: None
         """
-        self.logo_path = tk.filedialog.askopenfilename(filetypes=FILE_TYPES)
+        self.logo_path = filedialog.askopenfilename(filetypes=FILE_TYPES)
         self.parent.update_view()
 
     def save_as(self) -> None:
@@ -352,7 +352,7 @@ class ImageTitlerMenuBar(tk.Menu):
 
         :return: None
         """
-        self.output_path = tk.filedialog.askdirectory()
+        self.output_path = filedialog.askdirectory()
         self.parent.save_as()
 
     def save_as_enabled(self) -> None:
@@ -368,6 +368,11 @@ class ImageTitlerMenuBar(tk.Menu):
 
 
 def main():
+    """
+    The GUI main function.
+
+    :return: None
+    """
     root = ImageTitlerMain()
     version = pkg_resources.require("image-titler")[0].version
     root.title(f"The Renegade Coder Image Titler {version}")

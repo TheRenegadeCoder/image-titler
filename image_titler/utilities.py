@@ -1,3 +1,7 @@
+"""
+The functional backend to the image-titler script.
+"""
+
 import argparse
 import os
 from pathlib import Path
@@ -39,7 +43,13 @@ TIER_MAP = {
 FILE_TYPES = [('image files', ('.png', '.jpg', '.jpeg'))]
 
 
-def _draw_rectangle(draw: ImageDraw, position: int, width: int, tier: str, color: tuple = RECTANGLE_FILL):
+def _draw_rectangle(
+        draw: ImageDraw,
+        position: int,
+        width: int,
+        tier: str,
+        color: tuple = RECTANGLE_FILL
+):
     """
     Draws a rectangle over the image given a ImageDraw object and the intended
     position, width, and tier.
@@ -107,11 +117,17 @@ def _get_text_metrics(text: str, font: ImageFont):
     :return: a tuple consisting of four sections of the text (top offset, text, bottom offset)
     """
     ascent, descent = font.getmetrics()
-    (width, _), (offset_x, offset_y) = font.font.getsize(text)
+    (width, _), (_, offset_y) = font.font.getsize(text)
     return width, offset_y, ascent - offset_y, descent
 
 
-def _draw_overlay(image: Image.Image, title: str, tier: str, color: tuple = RECTANGLE_FILL, font: str = FONT) -> Image:
+def _draw_overlay(
+        image: Image.Image,
+        title: str,
+        tier: str,
+        color: tuple = RECTANGLE_FILL,
+        font: str = FONT
+) -> Image:
     """
     Draws text over an image.
 
@@ -131,14 +147,14 @@ def _draw_overlay(image: Image.Image, title: str, tier: str, color: tuple = RECT
         top_half_text, bottom_half_text = title, None
 
     # Draw top
-    width, top_offset, height, bottom_offset = _get_text_metrics(top_half_text, font)
+    width, top_offset, height, _ = _get_text_metrics(top_half_text, font)
     top_position = _get_text_position(width, height, top_offset, TOP_RECTANGLE_Y)
     _draw_rectangle(draw, TOP_RECTANGLE_Y, width, tier, color)
     _draw_text(draw, top_position, top_half_text, font)
 
     # Draw bottom
     if bottom_half_text:
-        width, top_offset, height, bottom_offset = _get_text_metrics(bottom_half_text, font)
+        width, top_offset, height, _ = _get_text_metrics(bottom_half_text, font)
         bottom_position = _get_text_position(width, height, top_offset, BOTTOM_RECTANGLE_Y)
         _draw_rectangle(draw, BOTTOM_RECTANGLE_Y, width, tier, color)
         _draw_text(draw, bottom_position, bottom_half_text, font)
@@ -155,7 +171,7 @@ def _draw_logo(img: Image.Image, logo: Image.Image):
     :return: nothing
     """
     logo.thumbnail(LOGO_SIZE)
-    width, height = img.size
+    _, height = img.size
     img.paste(logo, (LOGO_PADDING, height - LOGO_SIZE[1] - LOGO_PADDING), logo)
 
 
@@ -171,15 +187,20 @@ def _add_version_to_exif(image: Image.Image, version: str) -> bytes:
     :param version: the software version (e.g. 1.9.0)
     :return: the exif data as a byte string (empty string for images that didn't already have data)
     """
+    exif_data = b""
     if exif := image.info.get('exif'):
         exif_dict = piexif.load(exif)
         exif_dict['Exif'][piexif.ExifIFD.UserComment] = piexif.helper.UserComment.dump(f'image-titler-v{version}')
-        return piexif.dump(exif_dict)
-    else:
-        return b""
+        exif_data = piexif.dump(exif_dict)
+    return exif_data
 
 
-def _generate_image_output_path(extension: str, output_path: Optional[str], title: str, version: str) -> str:
+def _generate_image_output_path(
+        extension: str,
+        output_path: Optional[str],
+        title: str,
+        version: str
+) -> str:
     """
     A helper function which generates image output paths from a series of strings.
 
@@ -206,11 +227,11 @@ def split_string_by_nearest_middle_space(input_string: str) -> tuple:
     """
     index = len(input_string) // 2
     curr_char = input_string[index]
-    n = 1
+    count = 1
     while not curr_char.isspace():
-        index += (-1) ** (n + 1) * n  # thanks wolfram alpha (1, -2, 3, -4, ...)
+        index += (-1) ** (count + 1) * count  # thanks wolfram alpha (1, -2, 3, -4, ...)
         curr_char = input_string[index]
-        n += 1
+        count += 1
     return input_string[:index], input_string[index + 1:]
 
 
@@ -265,7 +286,11 @@ def process_batch(
         save_copy(absolute_path, edited_image, output_path=output_path)
 
 
-def convert_file_name_to_title(file_path: str, separator: str = SEPARATOR, title: Optional[str] = None) -> str:
+def convert_file_name_to_title(
+        file_path: str,
+        separator: str = SEPARATOR,
+        title: Optional[str] = None
+) -> str:
     """
     A helper method which converts file names into titles.
 
