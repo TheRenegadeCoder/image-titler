@@ -5,7 +5,6 @@ The functional backend to the image-titler script.
 import argparse
 import os
 from pathlib import Path
-from typing import Optional
 
 import pathvalidate
 import piexif
@@ -169,7 +168,7 @@ def _draw_logo(img: Image.Image, logo: Image.Image):
     img.paste(logo, (LOGO_PADDING, height - LOGO_SIZE[1] - LOGO_PADDING), logo)
 
 
-def _add_version_to_exif(image: Image.Image, version: str) -> bytes:
+def _generate_version_exif(image: Image.Image) -> bytes:
     """
     Given an image and version, this function will place that vision in the EXIF data of the file.
 
@@ -178,10 +177,11 @@ def _add_version_to_exif(image: Image.Image, version: str) -> bytes:
     a nice start!
 
     :param image: an image file
-    :param version: the software version (e.g. 1.9.0)
     :return: the exif data as a byte string (empty string for images that didn't already have data)
     """
     exif_data = b""
+    version: str = pkg_resources.require("image-titler")[0].version
+    version = version.replace(".", SEPARATOR)
     if exif := image.info.get('exif'):
         exif_dict = piexif.load(exif)
         exif_dict['Exif'][piexif.ExifIFD.UserComment] = piexif.helper.UserComment.dump(f'image-titler-v{version}')
@@ -189,25 +189,20 @@ def _add_version_to_exif(image: Image.Image, version: str) -> bytes:
     return exif_data
 
 
-def _generate_image_output_path(
-        extension: str,
-        output_path: Optional[str],
-        title: str,
-        version: str
-) -> str:
+def _generate_image_output_path(**kwargs) -> str:
     """
     A helper function which generates image output paths from a series of strings.
 
-    :param extension: the file extension (e.g. png, jpg, etc.)
-    :param output_path: the directory where the file is to be stored (e.g. path/to/folder)
-    :param title: the title given to the image (e.g. How to Write a Loop in Python)
-    :param version: the software version (e.g. 1.9.0)
     :return: the path of the file to be created
     """
     tag = "featured-image"
+    version: str = pkg_resources.require("image-titler")[0].version
+    version = version.replace(".", SEPARATOR)
+    title = convert_file_name_to_title(**kwargs)
     file_name = pathvalidate.sanitize_filename(title.lower().replace(" ", SEPARATOR))
+    extension = Path(kwargs.get("path")).suffix
     storage_path = f'{file_name}-{tag}-v{version}.{extension}'
-    if output_path:
+    if output_path := kwargs.get("output_path"):
         storage_path = f'{output_path}{os.sep}{storage_path}'
     return storage_path
 
@@ -229,23 +224,15 @@ def split_string_by_nearest_middle_space(input_string: str) -> tuple:
     return input_string[:index], input_string[index + 1:]
 
 
-def save_copy(input_path: str, edited_image: Image.Image, title: Optional[str] = None,
-              output_path: Optional[str] = None) -> str:
+def save_copy(edited_image: Image.Image, **kwargs) -> str:
     """
     A helper function for saving a copy of the image.
 
-    :param input_path: the path to the original image
     :param edited_image: the edited image
-    :param title: the title of the image
-    :param output_path: the path to dump the picture
     :return: the path to the saved image
     """
-    og_image = Image.open(input_path)
-    title = convert_file_name_to_title(input_path, title=title)
-    version: str = pkg_resources.require("image-titler")[0].version
-    version = version.replace(".", SEPARATOR)
-    storage_path = _generate_image_output_path(og_image.format, output_path, title, version)
-    exif = _add_version_to_exif(og_image, version)
+    storage_path = _generate_image_output_path(**kwargs)
+    exif = _generate_version_exif(edited_image)
     edited_image.save(storage_path, subsampling=0, quality=100, exif=exif)
     return storage_path
 
@@ -259,31 +246,26 @@ def process_batch(input_path: str, **kwargs) -> None:
     """
     for path in os.listdir(input_path):
         absolute_path = os.path.join(input_path, path)
-        title = convert_file_name_to_title(absolute_path)
+        image_kwargs = kwargs.copy()
+        image_kwargs["path"] = absolute_path
+        title = convert_file_name_to_title(**image_kwargs)
         edited_image = process_image(
             absolute_path,
             title,
             **kwargs
         )
-        save_copy(absolute_path, edited_image, output_path=kwargs.get("output_path"))
+        save_copy(edited_image, **image_kwargs)
 
 
-def convert_file_name_to_title(
-        file_path: str,
-        separator: str = SEPARATOR,
-        title: Optional[str] = None
-) -> str:
+def convert_file_name_to_title(**kwargs) -> str:
     """
     A helper method which converts file names into titles.
 
-    :param title: the requested title of the image, if provided
-    :param separator: the word separator (default "-")
-    :param file_path: the path to an image file
     :return: a title string
     """
-    if not title:
-        file_path = Path(file_path).resolve().stem
-        title = titlecase(file_path.replace(separator, ' '))
+    if not (title := kwargs.get("title")):
+        file_path = Path(kwargs.get("path")).resolve().stem
+        title = titlecase(file_path.replace(kwargs.get("separator", SEPARATOR), ' '))
     return title
 
 

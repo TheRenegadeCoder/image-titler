@@ -61,9 +61,9 @@ class TestSaveCopy(TestUtilities):
             tier=tier,
             font=font
         )
-        test_file = save_copy(input_path, test_image, output_path=TEST_SOLO_DUMP, title=title)
+        test_file = save_copy(test_image, output_path=TEST_SOLO_DUMP, title=title)
 
-        title = utilities.convert_file_name_to_title(input_path)
+        title = utilities.convert_file_name_to_title(path=input_path)
         sample_image = utilities.process_image(
             input_path=input_path,
             title=title,
@@ -71,7 +71,7 @@ class TestSaveCopy(TestUtilities):
             tier=tier,
             font=font
         )
-        save_copy(input_path, sample_image, output_path=SAMPLE_DUMP)
+        save_copy(sample_image, output_path=SAMPLE_DUMP)
         return test_file
 
     def test_default(self):
@@ -103,7 +103,7 @@ class TestSaveCopy(TestUtilities):
 
     def test_special_chars_in_title(self):
         test_image = utilities.process_image(SPECIAL_IMAGE, title="Test Special Chars?")
-        save_copy(SPECIAL_IMAGE, test_image, output_path=TEST_SOLO_DUMP, title="Test Special Chars?")
+        save_copy(test_image, output_path=TEST_SOLO_DUMP, title="Test Special Chars?")
 
     def test_one_line_title(self):
         self.generate_image(ONE_LINE_TITLE_IMAGE, title="TestSingleLineFile")
@@ -159,11 +159,11 @@ class TestProcessBatch(TestUtilities):
 class TestConvertFileNameToTitle(TestUtilities):
 
     def test_default(self):
-        title = utilities.convert_file_name_to_title("how-to-loop-in-python.png")
+        title = utilities.convert_file_name_to_title(title="how-to-loop-in-python.png")
         self.assertEqual(title, "How to Loop in Python")
 
     def test_custom_sep(self):
-        title = utilities.convert_file_name_to_title("how.to.loop.in.python.png", ".")
+        title = utilities.convert_file_name_to_title(title="how.to.loop.in.python.png", separator=".")
         self.assertEqual("How to Loop in Python", title)
 
 
