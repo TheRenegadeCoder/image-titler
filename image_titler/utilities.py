@@ -121,24 +121,16 @@ def _get_text_metrics(text: str, font: ImageFont):
     return width, offset_y, ascent - offset_y, descent
 
 
-def _draw_overlay(
-        image: Image.Image,
-        title: str,
-        tier: str,
-        color: tuple = RECTANGLE_FILL,
-        font: str = FONT
-) -> Image:
+def _draw_overlay(image: Image.Image, title: str, color: tuple, **kwargs) -> Image:
     """
     Draws text over an image.
 
-    :param color: the color of the overlay bar
     :param image: an image
     :param title: the image title
-    :param tier: the image tier
     :return: the updated image
     """
     draw = ImageDraw.Draw(image)
-    font = ImageFont.truetype(font, FONT_SIZE)
+    font = ImageFont.truetype(kwargs.get("font", FONT), FONT_SIZE)
 
     # Detect space (precondition for split)
     if len(title.split()) > 1:
@@ -149,14 +141,14 @@ def _draw_overlay(
     # Draw top
     width, top_offset, height, _ = _get_text_metrics(top_half_text, font)
     top_position = _get_text_position(width, height, top_offset, TOP_RECTANGLE_Y)
-    _draw_rectangle(draw, TOP_RECTANGLE_Y, width, tier, color)
+    _draw_rectangle(draw, TOP_RECTANGLE_Y, width, kwargs.get("tier", ""), color)
     _draw_text(draw, top_position, top_half_text, font)
 
     # Draw bottom
     if bottom_half_text:
         width, top_offset, height, _ = _get_text_metrics(bottom_half_text, font)
         bottom_position = _get_text_position(width, height, top_offset, BOTTOM_RECTANGLE_Y)
-        _draw_rectangle(draw, BOTTOM_RECTANGLE_Y, width, tier, color)
+        _draw_rectangle(draw, BOTTOM_RECTANGLE_Y, width, kwargs.get("tier", ""), color)
         _draw_text(draw, bottom_position, bottom_half_text, font)
 
     return image
@@ -305,36 +297,27 @@ def convert_file_name_to_title(
     return title
 
 
-def process_image(
-        input_path: str,
-        title: str,
-        tier: str = "",
-        logo_path: Optional[str] = None,
-        font: Optional[str] = FONT
-) -> Image.Image:
+def process_image(input_path: str, title: str, **kwargs) -> Image.Image:
     """
     Processes a single image.
 
-    :param font: the font of the text for the image
     :param input_path: the path of an image
-    :param tier: the image tier (free or premium)
-    :param logo_path: the path to a logo
     :param title: the title of the processed image
+    :param kwargs: a dictionary of keyword arguments
     :return: the edited image
     """
     img = Image.open(input_path)
     cropped_img: Image = img.crop((0, 0, IMAGE_WIDTH, IMAGE_HEIGHT))
     color = RECTANGLE_FILL
-    if logo_path:
+    if logo_path := kwargs.get("logo_path"):
         logo: Image.Image = Image.open(logo_path)
         color = get_best_top_color(logo)
         _draw_logo(cropped_img, logo)
     edited_image = _draw_overlay(
         cropped_img,
-        title=title,
-        tier=tier,
-        color=color,
-        font=font
+        title,
+        color,
+        **kwargs
     )
     return edited_image
 
