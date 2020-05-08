@@ -123,35 +123,36 @@ def _get_text_metrics(text: str, font: ImageFont):
     return width, offset_y, ascent - offset_y, descent
 
 
-def _draw_overlay(image: Image.Image, title: str, color: tuple, **kwargs) -> Image:
+def _draw_overlay(image: Image.Image, color: tuple, **kwargs) -> Image:
     """
     Draws text over an image.
 
     :param image: an image
-    :param title: the image title
     :return: the updated image
     """
     draw = ImageDraw.Draw(image)
     font = ImageFont.truetype(kwargs.get("font", DEFAULT_FONT), FONT_SIZE)
 
-    # Detect space (precondition for split)
-    if len(title.split()) > 1:
-        top_half_text, bottom_half_text = split_string_by_nearest_middle_space(title)
-    else:
-        top_half_text, bottom_half_text = title, None
+    title = _convert_file_name_to_title(**kwargs)
+    if title:
+        # Detect space (precondition for split)
+        if len(title.split()) > 1:
+            top_half_text, bottom_half_text = split_string_by_nearest_middle_space(title)
+        else:
+            top_half_text, bottom_half_text = title, None
 
-    # Draw top
-    width, top_offset, height, _ = _get_text_metrics(top_half_text, font)
-    top_position = _get_text_position(width, height, top_offset, TOP_RECTANGLE_Y)
-    _draw_rectangle(draw, TOP_RECTANGLE_Y, width, kwargs.get("tier", ""), color)
-    _draw_text(draw, top_position, top_half_text, font)
+        # Draw top
+        width, top_offset, height, _ = _get_text_metrics(top_half_text, font)
+        top_position = _get_text_position(width, height, top_offset, TOP_RECTANGLE_Y)
+        _draw_rectangle(draw, TOP_RECTANGLE_Y, width, kwargs.get("tier", ""), color)
+        _draw_text(draw, top_position, top_half_text, font)
 
-    # Draw bottom
-    if bottom_half_text:
-        width, top_offset, height, _ = _get_text_metrics(bottom_half_text, font)
-        bottom_position = _get_text_position(width, height, top_offset, BOTTOM_RECTANGLE_Y)
-        _draw_rectangle(draw, BOTTOM_RECTANGLE_Y, width, kwargs.get("tier", ""), color)
-        _draw_text(draw, bottom_position, bottom_half_text, font)
+        # Draw bottom
+        if bottom_half_text:
+            width, top_offset, height, _ = _get_text_metrics(bottom_half_text, font)
+            bottom_position = _get_text_position(width, height, top_offset, BOTTOM_RECTANGLE_Y)
+            _draw_rectangle(draw, BOTTOM_RECTANGLE_Y, width, kwargs.get("tier", ""), color)
+            _draw_text(draw, bottom_position, bottom_half_text, font)
 
     return image
 
@@ -203,7 +204,7 @@ def _generate_image_output_path(**kwargs) -> str:
     path = kwargs.get("path", "example.jpg")
     extension = Path(path).suffix
 
-    title = convert_file_name_to_title(**kwargs)
+    title = _convert_file_name_to_title(**kwargs)
     if title:
         file_name = pathvalidate.sanitize_filename(title.lower().replace(" ", SEPARATOR))
     else:
@@ -213,6 +214,21 @@ def _generate_image_output_path(**kwargs) -> str:
     if output_path := kwargs.get("output_path"):
         storage_path = f'{output_path}{os.sep}{storage_path}'
     return storage_path
+
+
+def _convert_file_name_to_title(**kwargs) -> Optional[str]:
+    """
+    A helper method which converts file names into titles. If the necessary arguments aren't supplied,
+    this function returns None.
+
+    :return: a title string or None
+    """
+    title: Optional[str] = kwargs.get("title")
+    path: Optional[str] = kwargs.get("path")
+    if not title and path:
+        file_path = Path(path).resolve().stem
+        title = titlecase(file_path.replace(kwargs.get("separator", SEPARATOR), ' '))
+    return title
 
 
 def split_string_by_nearest_middle_space(input_string: str) -> tuple:
@@ -245,64 +261,43 @@ def save_copy(edited_image: Image.Image, **kwargs) -> str:
     return storage_path
 
 
-def process_batch(input_path: str, **kwargs) -> None:
+def process_batch(**kwargs) -> None:
     """
     Processes a batch of images.
 
-    :param input_path: the path to a folder of images
     :return: None
     """
+    input_path = kwargs.get("path")
     for path in os.listdir(input_path):
         absolute_path = os.path.join(input_path, path)
         image_kwargs = kwargs.copy()
         image_kwargs["path"] = absolute_path
-        title = convert_file_name_to_title(**image_kwargs)
-        edited_image = process_image(
-            absolute_path,
-            title,
-            **kwargs
-        )
+        edited_image = process_image(**image_kwargs)
         save_copy(edited_image, **image_kwargs)
 
 
-def convert_file_name_to_title(**kwargs) -> Optional[str]:
-    """
-    A helper method which converts file names into titles. If the necessary arguments aren't supplied,
-    this function returns None.
-
-    :return: a title string or None
-    """
-    title: Optional[str] = kwargs.get("title")
-    path: Optional[str] = kwargs.get("path")
-    if not title and path:
-        file_path = Path(path).resolve().stem
-        title = titlecase(file_path.replace(kwargs.get("separator", SEPARATOR), ' '))
-    return title
-
-
-def process_image(input_path: str, title: str, **kwargs) -> Image.Image:
+def process_image(**kwargs) -> Optional[Image.Image]:
     """
     Processes a single image.
 
-    :param input_path: the path of an image
-    :param title: the title of the processed image
     :param kwargs: a dictionary of keyword arguments
-    :return: the edited image
+    :return: the edited image or None
     """
-    img = Image.open(input_path)
-    cropped_img: Image = img.crop((0, 0, IMAGE_WIDTH, IMAGE_HEIGHT))
-    color = RECTANGLE_FILL
-    if logo_path := kwargs.get("logo_path"):
-        logo: Image.Image = Image.open(logo_path)
-        color = get_best_top_color(logo)
-        _draw_logo(cropped_img, logo)
-    edited_image = _draw_overlay(
-        cropped_img,
-        title,
-        color,
-        **kwargs
-    )
-    return edited_image
+    input_path = kwargs.get("path")
+    if input_path:
+        img = Image.open(input_path)
+        cropped_img: Image = img.crop((0, 0, IMAGE_WIDTH, IMAGE_HEIGHT))
+        color = RECTANGLE_FILL
+        if logo_path := kwargs.get("logo_path"):
+            logo: Image.Image = Image.open(logo_path)
+            color = get_best_top_color(logo)
+            _draw_logo(cropped_img, logo)
+        edited_image = _draw_overlay(
+            cropped_img,
+            color,
+            **kwargs
+        )
+        return edited_image
 
 
 def get_best_top_color(image: Image.Image) -> tuple:
@@ -333,6 +328,6 @@ def parse_input() -> argparse.Namespace:
                         help="select an image tier")
     parser.add_argument('-l', '--logo_path', help="select a logo file for addition to the processed image")
     parser.add_argument('-b', '--batch', default=DEFAULT_BATCH_MODE, action='store_true', help="turn on batch processing")
-    parser.add_argument('-f', "--font", help="change the default font by path (e.g. 'arial.ttf')")
+    parser.add_argument('-f', "--font", default=DEFAULT_FONT, help="change the default font by path (e.g. 'arial.ttf')")
     args = parser.parse_args()
     return args

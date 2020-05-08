@@ -6,8 +6,7 @@ import tkinter
 from tkinter.filedialog import askopenfilename, askdirectory
 from typing import Optional
 
-from image_titler.utilities import process_batch, process_image, FILE_TYPES, save_copy, \
-    convert_file_name_to_title, parse_input
+from image_titler.utilities import process_batch, process_image, FILE_TYPES, save_copy, parse_input
 
 
 def _request_input_path(path: str, batch: bool) -> Optional[str]:
@@ -43,24 +42,15 @@ def _title_image(**kwargs) -> None:
     """
     path: Optional[str] = kwargs.get("path")
     batch: bool = kwargs.get("batch")
-    title: Optional[str] = kwargs.get("title")
-    output_path: Optional[str] = kwargs.get("output_path")
     input_path = _request_input_path(path, batch)
+    kwargs["path"] = input_path
     if input_path:
         if batch:
-            process_batch(
-                input_path,
-                **kwargs
-            )
+            process_batch(**kwargs)
         else:
-            title = convert_file_name_to_title(input_path, title=title)
-            edited_image = process_image(
-                input_path,
-                title,
-                **kwargs
-            )
+            edited_image = process_image(**kwargs)
             edited_image.show()
-            save_copy(input_path, edited_image, output_path=output_path, title=title)
+            save_copy(edited_image, **kwargs)
 
 
 def main() -> None:

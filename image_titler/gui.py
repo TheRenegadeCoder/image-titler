@@ -12,7 +12,7 @@ import pkg_resources
 from PIL import ImageTk, Image
 from matplotlib import font_manager
 
-from image_titler.utilities import process_image, convert_file_name_to_title, save_copy, TIER_MAP, FILE_TYPES, DEFAULT_FONT
+from image_titler.utilities import process_image, _convert_file_name_to_title, save_copy, TIER_MAP, FILE_TYPES, DEFAULT_FONT
 
 TRC_ICON = os.path.join(os.path.dirname(__file__), '../icons/the-renegade-coder-sample-icon.png')
 
@@ -58,7 +58,7 @@ class ImageTitlerMain(tk.Tk):
 
         :return: None
         """
-        title = convert_file_name_to_title(
+        title = _convert_file_name_to_title(
             self.menu.image_path,
             title=self.gui.option_pane.title_value.get()
         )
@@ -124,7 +124,7 @@ class ImageTitlerGUI(ttk.Frame):
         :param logo_path: the path to the logo for the image
         :return: None
         """
-        title = convert_file_name_to_title(self.menu.image_path, title=title)
+        title = _convert_file_name_to_title(self.menu.image_path, title=title)
         self.menu.current_edit = process_image(
             self.menu.image_path,
             title,

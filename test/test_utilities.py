@@ -55,7 +55,7 @@ class TestIntegration(TestUtilities):
     @staticmethod
     def generate_image(input_path, title, logo_path=None, tier="", font=DEFAULT_FONT):
         test_image = utilities.process_image(
-            input_path=input_path,
+            path=input_path,
             title=title,
             logo_path=logo_path,
             tier=tier,
@@ -63,9 +63,9 @@ class TestIntegration(TestUtilities):
         )
         test_file = save_copy(test_image, output_path=TEST_SOLO_DUMP, title=title)
 
-        title = utilities.convert_file_name_to_title(path=input_path)
+        title = utilities._convert_file_name_to_title(path=input_path)
         sample_image = utilities.process_image(
-            input_path=input_path,
+            path=input_path,
             title=title,
             logo_path=logo_path,
             tier=tier,
@@ -102,7 +102,7 @@ class TestIntegration(TestUtilities):
         )
 
     def test_special_chars_in_title(self):
-        test_image = utilities.process_image(SPECIAL_IMAGE, title="Test Special Chars?")
+        test_image = utilities.process_image(path=SPECIAL_IMAGE, title="Test Special Chars?")
         save_copy(test_image, output_path=TEST_SOLO_DUMP, title="Test Special Chars?")
 
     def test_one_line_title(self):
@@ -123,8 +123,8 @@ class TestProcessImage(TestUtilities):
     def setUp(self) -> None:
         self.size = (1920, 960)
         self.input_image = Image.open(DEFAULT_IMAGE)
-        self.default_image = utilities.process_image(DEFAULT_IMAGE, title="Test Default Image")
-        self.different_title_image = utilities.process_image(DEFAULT_IMAGE, title="Test Different Logo Image")
+        self.default_image = utilities.process_image(path=DEFAULT_IMAGE, title="Test Default Image")
+        self.different_title_image = utilities.process_image(path=DEFAULT_IMAGE, title="Test Different Logo Image")
 
     def test_default(self):
         self.assertEqual(self.size, self.default_image.size)
@@ -156,31 +156,31 @@ class TestProcessBatch(TestUtilities):
         Path(TEST_BATCH_DUMP + "/premium-tier").mkdir(parents=True, exist_ok=True)
 
     def test_batch_default(self):
-        utilities.process_batch(ASSETS, output_path=TEST_BATCH_DUMP + "/default")
+        utilities.process_batch(path=ASSETS, output_path=TEST_BATCH_DUMP + "/default")
 
     def test_batch_free_tier(self):
-        utilities.process_batch(ASSETS, tier="free", output_path=TEST_BATCH_DUMP + "/free-tier")
+        utilities.process_batch(path=ASSETS, tier="free", output_path=TEST_BATCH_DUMP + "/free-tier")
 
     def test_batch_premium_tier(self):
-        utilities.process_batch(ASSETS, tier="premium", output_path=TEST_BATCH_DUMP + "/premium-tier")
+        utilities.process_batch(path=ASSETS, tier="premium", output_path=TEST_BATCH_DUMP + "/premium-tier")
 
 
 class TestConvertFileNameToTitle(TestUtilities):
 
     def test_default(self):
-        title = utilities.convert_file_name_to_title()
+        title = utilities._convert_file_name_to_title()
         self.assertEqual(None, title)
 
     def test_custom_title(self):
-        title = utilities.convert_file_name_to_title(title="How to Loop in Python")
+        title = utilities._convert_file_name_to_title(title="How to Loop in Python")
         self.assertEqual("How to Loop in Python", title)
 
     def test_custom_path(self):
-        title = utilities.convert_file_name_to_title(path="how-to-loop-in-python.png")
+        title = utilities._convert_file_name_to_title(path="how-to-loop-in-python.png")
         self.assertEqual("How to Loop in Python", title)
 
     def test_custom_separator(self):
-        title = utilities.convert_file_name_to_title(path="how.to.loop.in.python.png", separator=".")
+        title = utilities._convert_file_name_to_title(path="how.to.loop.in.python.png", separator=".")
         self.assertEqual("How to Loop in Python", title)
 
 
@@ -306,5 +306,3 @@ class TestParseInput(TestUtilities):
         self.assertEqual(args.output_path, None)
         self.assertEqual(args.logo_path, None)
         self.assertEqual(args.title, None)
-
-
