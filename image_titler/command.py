@@ -2,7 +2,6 @@
 The commandline interface for the image-titler script.
 """
 
-import argparse
 import tkinter
 from tkinter.filedialog import askopenfilename, askdirectory
 from typing import Optional
@@ -36,38 +35,29 @@ def _request_input_path(path: str, batch: bool) -> Optional[str]:
     return input_path
 
 
-def _title_image(args: argparse.Namespace) -> None:
+def _title_image(**kwargs) -> None:
     """
     Titles an image based on a set of arguments.
 
-    :param args: a set of arguments
     :return: None
     """
-    path: str = args.path
-    batch: bool = args.batch
-    tier: str = args.tier
-    logo_path: str = args.logo_path
-    output_path: str = args.output_path
-    title: str = args.title
-    font: str = args.font
+    path: Optional[str] = kwargs.get("path")
+    batch: bool = kwargs.get("batch")
+    title: Optional[str] = kwargs.get("title")
+    output_path: Optional[str] = kwargs.get("output_path")
     input_path = _request_input_path(path, batch)
     if input_path:
-        if args.batch:
+        if batch:
             process_batch(
                 input_path,
-                tier=tier,
-                logo_path=logo_path,
-                output_path=output_path,
-                font=font
+                **kwargs
             )
         else:
             title = convert_file_name_to_title(input_path, title=title)
             edited_image = process_image(
                 input_path,
                 title,
-                tier=tier,
-                logo_path=logo_path,
-                font=font
+                **kwargs
             )
             edited_image.show()
             save_copy(input_path, edited_image, output_path=output_path, title=title)
@@ -80,7 +70,7 @@ def main() -> None:
     :return: None
     """
     args = parse_input()
-    _title_image(args)
+    _title_image(**vars(args))
 
 
 if __name__ == '__main__':
