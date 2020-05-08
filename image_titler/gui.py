@@ -12,7 +12,7 @@ import pkg_resources
 from PIL import ImageTk, Image
 from matplotlib import font_manager
 
-from image_titler.utilities import process_image, convert_file_name_to_title, save_copy, TIER_MAP, FILE_TYPES, FONT
+from image_titler.utilities import process_image, convert_file_name_to_title, save_copy, TIER_MAP, FILE_TYPES, DEFAULT_FONT
 
 TRC_ICON = os.path.join(os.path.dirname(__file__), '../icons/the-renegade-coder-sample-icon.png')
 
@@ -103,7 +103,7 @@ class ImageTitlerGUI(ttk.Frame):
             title = None
             tier = ""
             logo_path = None
-            text_font = FONT
+            text_font = DEFAULT_FONT
             if self.option_pane.title_state.get() == 1:
                 title = self.option_pane.title_value.get()
             if self.option_pane.tier_state.get() == 1:
@@ -115,7 +115,7 @@ class ImageTitlerGUI(ttk.Frame):
             self._render_preview(title, tier=tier, logo_path=logo_path, text_font=text_font)
         self._render_logo(self.menu.logo_path)
 
-    def _render_preview(self, title, tier="", logo_path=None, text_font=FONT) -> None:
+    def _render_preview(self, title, tier="", logo_path=None, text_font=DEFAULT_FONT) -> None:
         """
         Renders a preview of the edited image in the child preview pane.
 

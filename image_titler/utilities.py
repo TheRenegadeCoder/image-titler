@@ -16,7 +16,9 @@ from PIL import ImageDraw
 from PIL import ImageFont
 from titlecase import titlecase
 
-FONT = os.path.join(os.path.dirname(__file__), "BERNHC.TTF")
+DEFAULT_FONT = os.path.join(os.path.dirname(__file__), "BERNHC.TTF")
+DEFAULT_BATCH_MODE = False
+
 TEXT_FILL = (255, 255, 255)
 RECTANGLE_FILL = (201, 2, 41)
 WHITE = (255, 255, 255, 0)
@@ -67,7 +69,7 @@ def _draw_rectangle(
             (IMAGE_WIDTH, position + RECTANGLE_HEIGHT)
         ),
         fill=color,
-        outline=TIER_MAP.get(tier.lower(), None),
+        outline=TIER_MAP.get(tier, None),
         width=7
     )
 
@@ -130,7 +132,7 @@ def _draw_overlay(image: Image.Image, title: str, color: tuple, **kwargs) -> Ima
     :return: the updated image
     """
     draw = ImageDraw.Draw(image)
-    font = ImageFont.truetype(kwargs.get("font", FONT), FONT_SIZE)
+    font = ImageFont.truetype(kwargs.get("font", DEFAULT_FONT), FONT_SIZE)
 
     # Detect space (precondition for split)
     if len(title.split()) > 1:
@@ -248,21 +250,11 @@ def save_copy(input_path: str, edited_image: Image.Image, title: Optional[str] =
     return storage_path
 
 
-def process_batch(
-        input_path: str,
-        tier: str = "",
-        logo_path: str = None,
-        output_path: str = None,
-        font: str = FONT
-) -> None:
+def process_batch(input_path: str, **kwargs) -> None:
     """
     Processes a batch of images.
 
-    :param font: the text font
     :param input_path: the path to a folder of images
-    :param tier: the image tier (free or premium)
-    :param logo_path: the path to a logo
-    :param output_path: the output path of the processed images
     :return: None
     """
     for path in os.listdir(input_path):
@@ -271,11 +263,9 @@ def process_batch(
         edited_image = process_image(
             absolute_path,
             title,
-            tier=tier,
-            logo_path=logo_path,
-            font=font
+            **kwargs
         )
-        save_copy(absolute_path, edited_image, output_path=output_path)
+        save_copy(absolute_path, edited_image, output_path=kwargs.get("output_path"))
 
 
 def convert_file_name_to_title(
@@ -346,10 +336,10 @@ def parse_input() -> argparse.Namespace:
     parser.add_argument('-t', '--title', help="add a custom title to the image (no effect when batch processing)")
     parser.add_argument('-p', '--path', help="select an image file")
     parser.add_argument('-o', '--output_path', help="select an output path for the processed image")
-    parser.add_argument('-r', '--tier', default="", choices=TIER_MAP.keys(),
+    parser.add_argument('-r', '--tier', choices=TIER_MAP.keys(),
                         help="select an image tier")
     parser.add_argument('-l', '--logo_path', help="select a logo file for addition to the processed image")
-    parser.add_argument('-b', '--batch', default=False, action='store_true', help="turn on batch processing")
-    parser.add_argument('-f', "--font", default=FONT, help="change the default font by path (e.g. 'arial.ttf')")
+    parser.add_argument('-b', '--batch', default=DEFAULT_BATCH_MODE, action='store_true', help="turn on batch processing")
+    parser.add_argument('-f', "--font", help="change the default font by path (e.g. 'arial.ttf')")
     args = parser.parse_args()
     return args

@@ -7,7 +7,7 @@ import pkg_resources
 from PIL import Image, ImageChops
 
 from image_titler import utilities
-from image_titler.utilities import save_copy, FONT
+from image_titler.utilities import save_copy, DEFAULT_FONT
 
 TRC_ICON_PATH = "icons/the-renegade-coder-sample-icon.png"
 TRC_RED = (201, 2, 41, 255)
@@ -53,7 +53,7 @@ class TestSaveCopy(TestUtilities):
         Path(SAMPLE_DUMP).mkdir(parents=True, exist_ok=True)
 
     @staticmethod
-    def generate_image(input_path, title, logo_path=None, tier="", font=FONT):
+    def generate_image(input_path, title, logo_path=None, tier="", font=DEFAULT_FONT):
         test_image = utilities.process_image(
             input_path=input_path,
             title=title,
@@ -209,7 +209,7 @@ class TestParseInput(TestUtilities):
         args = utilities.parse_input()
         self.assertEqual(args.batch, False)
         self.assertEqual(args.path, None)
-        self.assertEqual(args.tier, "")
+        self.assertEqual(args.tier, None)
         self.assertEqual(args.output_path, None)
         self.assertEqual(args.logo_path, None)
         self.assertEqual(args.title, None)
@@ -220,7 +220,7 @@ class TestParseInput(TestUtilities):
         args = utilities.parse_input()
         self.assertEqual(args.batch, False)
         self.assertEqual(args.path, None)
-        self.assertEqual(args.tier, "")
+        self.assertEqual(args.tier, None)
         self.assertEqual(args.output_path, None)
         self.assertEqual(args.logo_path, None)
         self.assertEqual(args.title, "Hello World")
@@ -231,7 +231,7 @@ class TestParseInput(TestUtilities):
         args = utilities.parse_input()
         self.assertEqual(args.batch, False)
         self.assertEqual(args.path, "path/to/stuff")
-        self.assertEqual(args.tier, "")
+        self.assertEqual(args.tier, None)
         self.assertEqual(args.output_path, None)
         self.assertEqual(args.logo_path, None)
         self.assertEqual(args.title, None)
@@ -242,7 +242,7 @@ class TestParseInput(TestUtilities):
         args = utilities.parse_input()
         self.assertEqual(args.batch, False)
         self.assertEqual(args.path, None)
-        self.assertEqual(args.tier, "")
+        self.assertEqual(args.tier, None)
         self.assertEqual(args.output_path, "path/to/stuff")
         self.assertEqual(args.logo_path, None)
         self.assertEqual(args.title, None)
@@ -253,7 +253,7 @@ class TestParseInput(TestUtilities):
         args = utilities.parse_input()
         self.assertEqual(args.batch, False)
         self.assertEqual(args.path, None)
-        self.assertEqual(args.tier, "")
+        self.assertEqual(args.tier, None)
         self.assertEqual(args.output_path, None)
         self.assertEqual(args.logo_path, "path/to/stuff")
         self.assertEqual(args.title, None)
@@ -263,7 +263,7 @@ class TestParseInput(TestUtilities):
         args = utilities.parse_input()
         self.assertEqual(args.batch, True)
         self.assertEqual(args.path, None)
-        self.assertEqual(args.tier, "")
+        self.assertEqual(args.tier, None)
         self.assertEqual(args.output_path, None)
         self.assertEqual(args.logo_path, None)
         self.assertEqual(args.title, None)
