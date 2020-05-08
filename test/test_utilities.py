@@ -159,11 +159,19 @@ class TestProcessBatch(TestUtilities):
 class TestConvertFileNameToTitle(TestUtilities):
 
     def test_default(self):
-        title = utilities.convert_file_name_to_title(title="how-to-loop-in-python.png")
-        self.assertEqual(title, "How to Loop in Python")
+        title = utilities.convert_file_name_to_title()
+        self.assertEqual(None, title)
 
-    def test_custom_sep(self):
-        title = utilities.convert_file_name_to_title(title="how.to.loop.in.python.png", separator=".")
+    def test_custom_title(self):
+        title = utilities.convert_file_name_to_title(title="How to Loop in Python")
+        self.assertEqual("How to Loop in Python", title)
+
+    def test_custom_path(self):
+        title = utilities.convert_file_name_to_title(path="how-to-loop-in-python.png")
+        self.assertEqual("How to Loop in Python", title)
+
+    def test_custom_separator(self):
+        title = utilities.convert_file_name_to_title(path="how.to.loop.in.python.png", separator=".")
         self.assertEqual("How to Loop in Python", title)
 
 
@@ -289,3 +297,5 @@ class TestParseInput(TestUtilities):
         self.assertEqual(args.output_path, None)
         self.assertEqual(args.logo_path, None)
         self.assertEqual(args.title, None)
+
+

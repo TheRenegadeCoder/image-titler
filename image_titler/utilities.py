@@ -5,6 +5,7 @@ The functional backend to the image-titler script.
 import argparse
 import os
 from pathlib import Path
+from typing import Optional
 
 import pathvalidate
 import piexif
@@ -198,9 +199,16 @@ def _generate_image_output_path(**kwargs) -> str:
     tag = "featured-image"
     version: str = pkg_resources.require("image-titler")[0].version
     version = version.replace(".", SEPARATOR)
+
+    path = kwargs.get("path", "example.jpg")
+    extension = Path(path).suffix
+
     title = convert_file_name_to_title(**kwargs)
-    file_name = pathvalidate.sanitize_filename(title.lower().replace(" ", SEPARATOR))
-    extension = Path(kwargs.get("path")).suffix
+    if title:
+        file_name = pathvalidate.sanitize_filename(title.lower().replace(" ", SEPARATOR))
+    else:
+        file_name = "example"
+
     storage_path = f'{file_name}-{tag}-v{version}.{extension}'
     if output_path := kwargs.get("output_path"):
         storage_path = f'{output_path}{os.sep}{storage_path}'
@@ -257,14 +265,17 @@ def process_batch(input_path: str, **kwargs) -> None:
         save_copy(edited_image, **image_kwargs)
 
 
-def convert_file_name_to_title(**kwargs) -> str:
+def convert_file_name_to_title(**kwargs) -> Optional[str]:
     """
-    A helper method which converts file names into titles.
+    A helper method which converts file names into titles. If the necessary arguments aren't supplied,
+    this function returns None.
 
-    :return: a title string
+    :return: a title string or None
     """
-    if not (title := kwargs.get("title")):
-        file_path = Path(kwargs.get("path")).resolve().stem
+    title: Optional[str] = kwargs.get("title")
+    path: Optional[str] = kwargs.get("path")
+    if not title and path:
+        file_path = Path(path).resolve().stem
         title = titlecase(file_path.replace(kwargs.get("separator", SEPARATOR), ' '))
     return title
 
