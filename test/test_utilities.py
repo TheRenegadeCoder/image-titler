@@ -35,7 +35,7 @@ class TestUtilities(TestCase):
     pass
 
 
-class TestSaveCopy(TestUtilities):
+class TestIntegration(TestUtilities):
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -74,25 +74,25 @@ class TestSaveCopy(TestUtilities):
         save_copy(sample_image, output_path=SAMPLE_DUMP)
         return test_file
 
-    def test_default(self):
-        test_file = self.generate_image(DEFAULT_IMAGE, title="Test Default")
+    def test_custom_title(self):
+        test_file = self.generate_image(DEFAULT_IMAGE, "Test Default")
         self.assertTrue(Path(test_file).exists())
 
     def test_logo_red(self):
-        test_file = self.generate_image(LOGO_RED_IMAGE, title="Test Red Logo", logo_path=TRC_ICON_PATH)
+        test_file = self.generate_image(LOGO_RED_IMAGE, "Test Red Logo", logo_path=TRC_ICON_PATH)
         self.assertTrue(Path(test_file).exists())
 
     def test_logo_blue(self):
-        self.generate_image(LOGO_BLUE_IMAGE, title="Test Blue Logo", logo_path=VF_ICON_PATH)
+        self.generate_image(LOGO_BLUE_IMAGE, "Test Blue Logo", logo_path=VF_ICON_PATH)
 
     def test_free_tier(self):
-        self.generate_image(FREE_IMAGE, title="Test Free Tier", tier="free")
+        self.generate_image(FREE_IMAGE, "Test Free Tier", tier="free")
 
     def test_premium_tier(self):
-        self.generate_image(PREMIUM_IMAGE, title="Test Premium Tier", tier="premium")
+        self.generate_image(PREMIUM_IMAGE, "Test Premium Tier", tier="premium")
 
     def test_custom_font(self):
-        self.generate_image(CUSTOM_FONT_IMAGE, title="Test Custom Font", font="test/fonts/arial.ttf")
+        self.generate_image(CUSTOM_FONT_IMAGE, "Test Custom Font", font="test/fonts/arial.ttf")
 
     def test_custom_font_strange_height(self):
         self.generate_image(
@@ -107,6 +107,15 @@ class TestSaveCopy(TestUtilities):
 
     def test_one_line_title(self):
         self.generate_image(ONE_LINE_TITLE_IMAGE, title="TestSingleLineFile")
+
+
+class TestSaveCopy(TestUtilities):
+
+    def test_default(self):
+        image = Image.open(DEFAULT_IMAGE)
+        test_file = save_copy(image)
+        self.assertTrue(Path(test_file).exists())
+        Path(test_file).unlink()
 
 
 class TestProcessImage(TestUtilities):
