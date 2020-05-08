@@ -131,7 +131,9 @@ def _draw_overlay(image: Image.Image, color: tuple, **kwargs) -> Image:
     :return: the updated image
     """
     draw = ImageDraw.Draw(image)
-    font = ImageFont.truetype(kwargs.get("font", DEFAULT_FONT), FONT_SIZE)
+    font = kwargs.get("font", DEFAULT_FONT)
+    font = font if font else DEFAULT_FONT
+    font = ImageFont.truetype(font, FONT_SIZE)
 
     title = _convert_file_name_to_title(**kwargs)
     if title:

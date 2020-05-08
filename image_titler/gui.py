@@ -12,7 +12,7 @@ import pkg_resources
 from PIL import ImageTk, Image
 from matplotlib import font_manager
 
-from image_titler.utilities import process_image, _convert_file_name_to_title, save_copy, TIER_MAP, FILE_TYPES, DEFAULT_FONT
+from image_titler.utilities import process_image, save_copy, TIER_MAP, FILE_TYPES, parse_input
 
 TRC_ICON = os.path.join(os.path.dirname(__file__), '../icons/the-renegade-coder-sample-icon.png')
 
@@ -35,10 +35,11 @@ class ImageTitlerMain(tk.Tk):
     The remainder of the GUI is contained within a frame.
     """
 
-    def __init__(self):
+    def __init__(self, options):
         super().__init__()
+        self.options = options
         self.menu = ImageTitlerMenuBar(self)
-        self.gui = ImageTitlerGUI(self, self.menu)
+        self.gui = ImageTitlerGUI(self, self.menu, self.options)
         self.gui.pack(anchor=tk.W)
 
     def update_view(self) -> None:
@@ -58,15 +59,9 @@ class ImageTitlerMain(tk.Tk):
 
         :return: None
         """
-        title = _convert_file_name_to_title(
-            self.menu.image_path,
-            title=self.gui.option_pane.title_value.get()
-        )
         save_copy(
-            self.menu.image_path,
             self.menu.current_edit,
-            output_path=self.menu.output_path,
-            title=title
+            **self.options
         )
 
 
@@ -75,9 +70,10 @@ class ImageTitlerGUI(ttk.Frame):
     The main content of the GUI. This contains the preview pane and the option pane.
     """
 
-    def __init__(self, parent, menu, **kw):
+    def __init__(self, parent, menu, options, **kw):
         super().__init__(parent, **kw)
         self.menu = menu
+        self.options = options
         self.preview = ImageTitlerPreviewPane(self, text=f"Select a file using '{FILE_TAB_LABEL}' > '{NEW_IMAGE_LABEL}'")
         self.option_pane = ImageTitlerOptionPane(self)
         self.logo_path = None
@@ -100,38 +96,27 @@ class ImageTitlerGUI(ttk.Frame):
         :return: None
         """
         if self.menu.image_path:
-            title = None
-            tier = ""
-            logo_path = None
-            text_font = DEFAULT_FONT
-            if self.option_pane.title_state.get() == 1:
-                title = self.option_pane.title_value.get()
-            if self.option_pane.tier_state.get() == 1:
-                tier = self.option_pane.tier_value.get()
-            if self.option_pane.logo_state.get() == 1:
-                logo_path = self.menu.logo_path
-            if self.option_pane.font_state.get() == 1:
-                text_font = FONTS.get(self.option_pane.font_value.get())
-            self._render_preview(title, tier=tier, logo_path=logo_path, text_font=text_font)
+            self.options["path"] = self.menu.image_path
+            for row in self.option_pane.rows:
+                if row[1].variable.get() == 1:
+                    if row[3] == "font":
+                        self.options[row[3]] = FONTS.get(row[2].get())
+                    elif row[3] == "logo_path":
+                        self.options["logo_path"] = self.menu.logo_path
+                    else:
+                        self.options[row[3]] = row[2].get()
+                else:
+                    self.options[row[3]] = None
+            self._render_preview()
         self._render_logo(self.menu.logo_path)
 
-    def _render_preview(self, title, tier="", logo_path=None, text_font=DEFAULT_FONT) -> None:
+    def _render_preview(self) -> None:
         """
         Renders a preview of the edited image in the child preview pane.
 
-        :param title: the title of the image
-        :param tier: the tier of the image
-        :param logo_path: the path to the logo for the image
         :return: None
         """
-        title = _convert_file_name_to_title(self.menu.image_path, title=title)
-        self.menu.current_edit = process_image(
-            self.menu.image_path,
-            title,
-            tier=tier,
-            logo_path=logo_path,
-            font=text_font
-        )
+        self.menu.current_edit = process_image(**self.options)
         maxsize = (1028, 1028)
         small_image = self.menu.current_edit.copy()
         small_image.thumbnail(maxsize, Image.ANTIALIAS)
@@ -183,6 +168,7 @@ class ImageTitlerOptionPane(ttk.Frame):
         self.logo_value: Optional[ttk.Label] = None
         self.font_state: tk.IntVar = tk.IntVar()
         self.font_value: tk.StringVar = tk.StringVar()
+        self.rows = list()
         self.init_option_pane()
 
     def init_option_pane(self) -> None:
@@ -191,13 +177,12 @@ class ImageTitlerOptionPane(ttk.Frame):
 
         :return: None
         """
-        rows = list()
-        rows.append(self.init_title_frame())
-        rows.append(self.init_tier_frame())
-        rows.append(self.init_logo_frame())
-        rows.append(self.init_font_frame())
-        for row in rows:
-            self._layout_option_row(*row)
+        self.rows.append(self.init_title_frame())
+        self.rows.append(self.init_tier_frame())
+        self.rows.append(self.init_logo_frame())
+        self.rows.append(self.init_font_frame())
+        for row in self.rows:
+            self._layout_option_row(*row[:3])
 
     def init_title_frame(self) -> tuple:
         """
@@ -213,9 +198,10 @@ class ImageTitlerOptionPane(ttk.Frame):
             command=self.parent.update_view,
             width=COLUMN_WIDTH
         )
+        title_label.variable = self.title_state
         self.title_value.trace(tk.W, self.parent.update_view)
         title_entry = tk.Entry(title_frame, textvariable=self.title_value)
-        return title_frame, title_label, title_entry
+        return title_frame, title_label, title_entry, "title"
 
     def init_tier_frame(self) -> tuple:
         """
@@ -231,6 +217,7 @@ class ImageTitlerOptionPane(ttk.Frame):
             command=self.parent.update_view,
             width=COLUMN_WIDTH
         )
+        tier_label.variable = self.tier_state
         self.tier_value.set(list(TIER_MAP.keys())[0])
         tier_option_menu = ttk.Combobox(
             tier_frame,
@@ -239,7 +226,7 @@ class ImageTitlerOptionPane(ttk.Frame):
             state="readonly"
         )
         tier_option_menu.bind("<<ComboboxSelected>>", self.parent.update_view)
-        return tier_frame, tier_label, tier_option_menu
+        return tier_frame, tier_label, tier_option_menu, "tier"
 
     def init_logo_frame(self) -> tuple:
         """
@@ -255,8 +242,9 @@ class ImageTitlerOptionPane(ttk.Frame):
             command=self.parent.update_view,
             width=COLUMN_WIDTH
         )
+        logo_label.variable = self.logo_state
         self.logo_value = ttk.Label(logo_frame, text=f"Select a logo using '{FILE_TAB_LABEL}' > '{NEW_LOGO_LABEL}'")
-        return logo_frame, logo_label, self.logo_value
+        return logo_frame, logo_label, self.logo_value, "logo_path"
 
     def init_font_frame(self) -> tuple:
         """
@@ -272,6 +260,7 @@ class ImageTitlerOptionPane(ttk.Frame):
             command=self.parent.update_view,
             width=COLUMN_WIDTH
         )
+        font_label.variable = self.font_state
         font_list = sorted(FONTS.keys())
         self.font_value.set(font_list[0])
         font_menu = ttk.Combobox(
@@ -281,7 +270,7 @@ class ImageTitlerOptionPane(ttk.Frame):
             state="readonly"
         )
         font_menu.bind("<<ComboboxSelected>>", self.parent.update_view)
-        return font_frame, font_label, font_menu
+        return font_frame, font_label, font_menu, "font"
 
     @staticmethod
     def _layout_option_row(frame, label, value) -> None:
@@ -373,7 +362,8 @@ def main():
 
     :return: None
     """
-    root = ImageTitlerMain()
+    options: dict = vars(parse_input())
+    root = ImageTitlerMain(options)
     version = pkg_resources.require("image-titler")[0].version
     root.title(f"The Renegade Coder Image Titler {version}")
     root.iconphoto(False, tk.PhotoImage(file=TRC_ICON))
