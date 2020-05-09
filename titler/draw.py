@@ -54,11 +54,11 @@ def _process_batch(**kwargs) -> List[Image.Image]:
     :return: None
     """
     edited_images = list()
-    input_path = kwargs.get("path")
+    input_path = kwargs.get(KEY_PATH)
     for path in os.listdir(input_path):
         absolute_path = os.path.join(input_path, path)
         image_kwargs = kwargs.copy()
-        image_kwargs["path"] = absolute_path
+        image_kwargs[KEY_PATH] = absolute_path
         edited_image = _process_image(**image_kwargs)
         edited_images.append(edited_image)
     return edited_images

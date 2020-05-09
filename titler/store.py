@@ -57,16 +57,15 @@ def _generate_image_output_path(**kwargs) -> str:
     version: str = pkg_resources.require("image-titler")[0].version
     version = version.replace(".", SEPARATOR)
 
-    path = kwargs.get(KEY_PATH, "example.jpg")
-    extension = Path(path).suffix
-
     if title := kwargs.get(KEY_TITLE):
         file_name = pathvalidate.sanitize_filename(title.lower().replace(" ", SEPARATOR))
-    elif path:
+    elif kwargs.get(KEY_PATH):
         file_name = Path(kwargs.get(KEY_PATH)).stem
     else:
-        file_name = "example"
+        kwargs[KEY_PATH] = "example.jpg"
+        file_name = Path(kwargs.get(KEY_PATH)).stem
 
+    extension = Path(kwargs.get(KEY_PATH)).suffix
     storage_path = f'{file_name}-{tag}-v{version}{extension}'
     if output_path := kwargs.get("output_path"):
         storage_path = f'{output_path}{os.sep}{storage_path}'

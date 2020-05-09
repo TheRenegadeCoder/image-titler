@@ -6,7 +6,7 @@ from unittest import TestCase
 import pkg_resources
 from PIL import Image, ImageChops
 
-from titler.constants import DEFAULT_FONT
+from titler.constants import DEFAULT_FONT, KEY_TITLE
 from titler.draw import process_images, _convert_file_name_to_title, _process_batch, _process_image, \
     _get_best_top_color, _split_string_by_nearest_middle_space
 from titler.parse import parse_input
@@ -56,67 +56,56 @@ class TestIntegration(TestUtilities):
         Path(SAMPLE_DUMP).mkdir(parents=True, exist_ok=True)
 
     @staticmethod
-    def generate_image(input_path, title, logo_path=None, tier="", font=DEFAULT_FONT):
-        test_image = _process_image(
-            path=input_path,
-            title=title,
-            logo_path=logo_path,
-            tier=tier,
-            font=font
-        )
-        test_file = save_copies([test_image], output_path=TEST_SOLO_DUMP, title=title)
+    def generate_image(**kwargs):
+        test_image = _process_image(**kwargs)
+        test_file = save_copies([test_image], **kwargs)
 
-        title = _convert_file_name_to_title(path=input_path)
-        sample_image = _process_image(
-            path=input_path,
-            title=title,
-            logo_path=logo_path,
-            tier=tier,
-            font=font
-        )
-        save_copies([sample_image], output_path=SAMPLE_DUMP)
+        kwargs[KEY_TITLE] = None
+        sample_image = _process_image(**kwargs)
+        save_copies([sample_image], **kwargs)
+
         return test_file[0]
 
     def test_custom_title(self):
-        test_file = self.generate_image(DEFAULT_IMAGE, "Test Default")
+        test_file = self.generate_image(path=DEFAULT_IMAGE, title="Test Default")
         self.assertTrue(Path(test_file).exists())
 
     def test_logo_red(self):
-        test_file = self.generate_image(LOGO_RED_IMAGE, "Test Red Logo", logo_path=TRC_ICON_PATH)
+        test_file = self.generate_image(path=LOGO_RED_IMAGE, title="Test Red Logo", logo_path=TRC_ICON_PATH)
         self.assertTrue(Path(test_file).exists())
 
     def test_logo_blue(self):
-        self.generate_image(LOGO_BLUE_IMAGE, "Test Blue Logo", logo_path=VF_ICON_PATH)
+        self.generate_image(path=LOGO_BLUE_IMAGE, title="Test Blue Logo", logo_path=VF_ICON_PATH)
 
     def test_free_tier(self):
-        self.generate_image(FREE_IMAGE, "Test Free Tier", tier="free")
+        self.generate_image(path=FREE_IMAGE, title="Test Free Tier", tier="free")
 
     def test_premium_tier(self):
-        self.generate_image(PREMIUM_IMAGE, "Test Premium Tier", tier="premium")
+        self.generate_image(path=PREMIUM_IMAGE, title="Test Premium Tier", tier="premium")
 
     def test_custom_font(self):
-        self.generate_image(CUSTOM_FONT_IMAGE, "Test Custom Font", font="assets/fonts/arial.ttf")
+        self.generate_image(path=CUSTOM_FONT_IMAGE, title="Test Custom Font", font="assets/fonts/arial.ttf")
 
     def test_custom_font_strange_height(self):
         self.generate_image(
-            CUSTOM_FONT_IMAGE,
+            path=CUSTOM_FONT_IMAGE,
             title="Test Custom Font Strange Height",
-            font="tests/fonts/gadugi.ttf"
+            font="assets/fonts/gadugi.ttf"
         )
 
     def test_special_chars_in_title(self):
         test_image = _process_image(path=SPECIAL_IMAGE, title="Test Special Chars?")
-        save_copies([test_image], output_path=TEST_SOLO_DUMP, title="Test Special Chars?")
+        save_copies([test_image], path=SPECIAL_IMAGE, output_path=TEST_SOLO_DUMP, title="Test Special Chars?")
 
     def test_one_line_title(self):
-        self.generate_image(ONE_LINE_TITLE_IMAGE, title="TestSingleLineFile")
+        self.generate_image(path=ONE_LINE_TITLE_IMAGE, title="TestSingleLineFile")
 
 
 class TestSaveCopies(TestUtilities):
 
     def test_default(self):
         image = Image.open(DEFAULT_IMAGE)
-        test_file = save_copies(image)[0]
+        test_file = save_copies([image])[0]
         self.assertTrue(Path(test_file).exists())
         Path(test_file).unlink()
 
