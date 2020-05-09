@@ -64,7 +64,7 @@ class ImageTitlerMain(tk.Tk):
         :return: None
         """
         save_copies(
-            list(self.menu.current_edit),
+            self.menu.current_edit,
             **self.options
         )
 
@@ -110,9 +110,9 @@ class ImageTitlerGUI(ttk.Frame):
 
         :return: None
         """
-        self.menu.current_edit = process_images(**self.options)[0]
+        self.menu.current_edit = process_images(**self.options)
         maxsize = (1028, 1028)
-        small_image = self.menu.current_edit.copy()
+        small_image = self.menu.current_edit[0].copy()
         small_image.thumbnail(maxsize, Image.ANTIALIAS)
         image = ImageTk.PhotoImage(small_image)
         self.preview.config(image=image)
