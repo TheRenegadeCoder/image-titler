@@ -16,6 +16,13 @@ from PIL import ImageDraw
 from PIL import ImageFont
 from titlecase import titlecase
 
+KEY_BATCH = "batch"
+KEY_FONT = "font"
+KEY_LOGO_PATH = "logo_path"
+KEY_PATH = "path"
+KEY_TIER = "tier"
+KEY_TITLE = "title"
+
 DEFAULT_FONT = os.path.join(os.path.dirname(__file__), "BERNHC.TTF")
 DEFAULT_BATCH_MODE = False
 
@@ -131,7 +138,7 @@ def _draw_overlay(image: Image.Image, color: tuple, **kwargs) -> Image:
     :return: the updated image
     """
     draw = ImageDraw.Draw(image)
-    font = kwargs.get("font", DEFAULT_FONT)
+    font = kwargs.get(KEY_FONT, DEFAULT_FONT)
     font = font if font else DEFAULT_FONT
     font = ImageFont.truetype(font, FONT_SIZE)
 
@@ -146,14 +153,14 @@ def _draw_overlay(image: Image.Image, color: tuple, **kwargs) -> Image:
         # Draw top
         width, top_offset, height, _ = _get_text_metrics(top_half_text, font)
         top_position = _get_text_position(width, height, top_offset, TOP_RECTANGLE_Y)
-        _draw_rectangle(draw, TOP_RECTANGLE_Y, width, kwargs.get("tier", ""), color)
+        _draw_rectangle(draw, TOP_RECTANGLE_Y, width, kwargs.get(KEY_TIER, ""), color)
         _draw_text(draw, top_position, top_half_text, font)
 
         # Draw bottom
         if bottom_half_text:
             width, top_offset, height, _ = _get_text_metrics(bottom_half_text, font)
             bottom_position = _get_text_position(width, height, top_offset, BOTTOM_RECTANGLE_Y)
-            _draw_rectangle(draw, BOTTOM_RECTANGLE_Y, width, kwargs.get("tier", ""), color)
+            _draw_rectangle(draw, BOTTOM_RECTANGLE_Y, width, kwargs.get(KEY_TIER, ""), color)
             _draw_text(draw, bottom_position, bottom_half_text, font)
 
     return image
@@ -316,6 +323,36 @@ def get_best_top_color(image: Image.Image) -> tuple:
     return color
 
 
+def _add_title_option(parser: argparse.ArgumentParser) -> None:
+    """
+    A helper function which sets up the title settings for the parser.
+    The title is then used to add a custom title to the image.
+
+    :param parser: a argument parser
+    :return: None
+    """
+    parser.add_argument(
+        '-t',
+        f'--{KEY_TITLE}',
+        help="add a custom title to the image (no effect when batch processing)"
+    )
+
+
+def _add_path_option(parser: argparse.ArgumentParser) -> None:
+    """
+    A helper function which sets up the path settings for the parser.
+    The path setting determines which file or folder is to be processed.
+
+    :param parser: a argument parser
+    :return: None
+    """
+    parser.add_argument(
+        '-p',
+        f'--{KEY_PATH}',
+        help="select an image file (or folder when batch processing)"
+    )
+
+
 def parse_input() -> argparse.Namespace:
     """
     Creates and executes a parser on the command line inputs.
@@ -323,13 +360,32 @@ def parse_input() -> argparse.Namespace:
     :return: the processed command line arguments
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument('-t', '--title', help="add a custom title to the image (no effect when batch processing)")
-    parser.add_argument('-p', '--path', help="select an image file")
+    _add_title_option(parser)
+    _add_path_option(parser)
     parser.add_argument('-o', '--output_path', help="select an output path for the processed image")
-    parser.add_argument('-r', '--tier', choices=TIER_MAP.keys(),
-                        help="select an image tier")
-    parser.add_argument('-l', '--logo_path', help="select a logo file for addition to the processed image")
-    parser.add_argument('-b', '--batch', default=DEFAULT_BATCH_MODE, action='store_true', help="turn on batch processing")
-    parser.add_argument('-f', "--font", default=DEFAULT_FONT, help="change the default font by path (e.g. 'arial.ttf')")
+    parser.add_argument(
+        '-r',
+        f'--{KEY_TIER}',
+        choices=TIER_MAP.keys(),
+        help="select an image tier"
+    )
+    parser.add_argument(
+        '-l',
+        f'--{KEY_LOGO_PATH}',
+        help="select a logo file for addition to the processed image"
+    )
+    parser.add_argument(
+        '-b',
+        f'--{KEY_BATCH}',
+        default=DEFAULT_BATCH_MODE,
+        action='store_true',
+        help="turn on batch processing"
+    )
+    parser.add_argument(
+        '-f',
+        f'--{KEY_FONT}',
+        default=DEFAULT_FONT,
+        help="change the default font by path (e.g. 'arial.ttf')"
+    )
     args = parser.parse_args()
     return args
