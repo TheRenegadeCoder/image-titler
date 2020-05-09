@@ -25,7 +25,7 @@ SPECIAL_IMAGE = "assets/happy-new-year.jpg"
 CUSTOM_FONT_IMAGE = "assets/reflecting-on-my-third-semester-of-teaching.jpg"
 ONE_LINE_TITLE_IMAGE = "assets/minimalism.jpg"
 
-TEST_DUMP = "test/dump"
+TEST_DUMP = "tests/dump"
 TEST_SOLO_DUMP = TEST_DUMP + "/solo"
 TEST_BATCH_DUMP = TEST_DUMP + "/batch"
 SAMPLE_DUMP = "samples/v" + pkg_resources.require("image-titler")[0].version
@@ -92,13 +92,13 @@ class TestIntegration(TestUtilities):
         self.generate_image(PREMIUM_IMAGE, "Test Premium Tier", tier="premium")
 
     def test_custom_font(self):
-        self.generate_image(CUSTOM_FONT_IMAGE, "Test Custom Font", font="test/fonts/arial.ttf")
+        self.generate_image(CUSTOM_FONT_IMAGE, "Test Custom Font", font="tests/fonts/arial.ttf")
 
     def test_custom_font_strange_height(self):
         self.generate_image(
             CUSTOM_FONT_IMAGE,
             title="Test Custom Font Strange Height",
-            font="test/fonts/gadugi.ttf"
+            font="tests/fonts/gadugi.ttf"
         )
 
     def test_special_chars_in_title(self):
@@ -220,7 +220,7 @@ class TestSplitString(TestUtilities):
 class TestParseInput(TestUtilities):
 
     def setUp(self) -> None:
-        sys.argv = sys.argv[:1]  # clears args for each test
+        sys.argv = sys.argv[:1]  # clears args for each tests
 
     def test_default(self):
         args = utilities.parse_input()
