@@ -1,12 +1,13 @@
 """
 The functional backend to the image-titler script.
 """
-
+from pathlib import Path
 from typing import Optional, List
 
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
+from titlecase import titlecase
 
 from utilities.constants import *
 
@@ -25,11 +26,31 @@ X_OFFSET = 30
 LOGO_SIZE = (RECTANGLE_HEIGHT, RECTANGLE_HEIGHT)
 LOGO_PADDING = 30
 
+def process_images(**kwargs) -> List[Image]:
+    """
+    The main entry point for any image editing. This function
+    will never return an empty list. If no settings are provided,
+    this function will return a default image with a default title.
 
-def process_batch(**kwargs) -> List[Optional[Image]]:
+    :return: None
+    """
+    is_batch: bool = kwargs.get(KEY_BATCH)
+    kwargs[KEY_PATH] = kwargs.get(KEY_PATH, "assets/images/3-ways-to-check-if-a-list-is-empty-in-python.jpg")
+    kwargs[KEY_TITLE] = kwargs.get(KEY_TITLE, _convert_file_name_to_title(**kwargs))
+    images = list()
+    if is_batch:
+        images = _process_batch(**kwargs)
+    else:
+        images.append(_process_image(**kwargs))
+    return images
+
+
+
+def _process_batch(**kwargs) -> List[Optional[Image]]:
     """
     Processes a batch of images.
 
+    :pre: kwargs.get(KEY_PATH) != None
     :return: None
     """
     edited_images = list()
@@ -38,32 +59,47 @@ def process_batch(**kwargs) -> List[Optional[Image]]:
         absolute_path = os.path.join(input_path, path)
         image_kwargs = kwargs.copy()
         image_kwargs["path"] = absolute_path
-        edited_image = process_image(**image_kwargs)
+        edited_image = _process_image(**image_kwargs)
         edited_images.append(edited_image)
     return edited_images
 
 
-def process_image(**kwargs) -> Optional[Image.Image]:
+def _process_image(**kwargs) -> Optional[Image.Image]:
     """
     Processes a single image.
 
+    :pre: kwargs.get(KEY_PATH) != None and kwargs.get(KEY_TITLE) != None
     :return: the edited image or None
     """
-    input_path = kwargs.get("path")
-    if input_path:
-        img = Image.open(input_path)
-        cropped_img: Image = img.crop((0, 0, IMAGE_WIDTH, IMAGE_HEIGHT))
-        color = RECTANGLE_FILL
-        if logo_path := kwargs.get("logo_path"):
-            logo: Image.Image = Image.open(logo_path)
-            color = _get_best_top_color(logo)
-            _draw_logo(cropped_img, logo)
-        edited_image = _draw_overlay(
-            cropped_img,
-            color,
-            **kwargs
-        )
-        return edited_image
+    input_path = kwargs.get(KEY_PATH)
+    img = Image.open(input_path)
+    cropped_img: Image = img.crop((0, 0, IMAGE_WIDTH, IMAGE_HEIGHT))
+    color = RECTANGLE_FILL
+    if logo_path := kwargs.get(KEY_LOGO_PATH):
+        logo: Image.Image = Image.open(logo_path)
+        color = _get_best_top_color(logo)
+        _draw_logo(cropped_img, logo)
+    edited_image = _draw_overlay(
+        cropped_img,
+        color,
+        **kwargs
+    )
+    return edited_image
+
+
+def _convert_file_name_to_title(**kwargs) -> Optional[str]:
+    """
+    A helper method which converts file names into titles. If the necessary arguments aren't supplied,
+    this function returns None.
+
+    :return: a title string or None
+    """
+    title: Optional[str] = kwargs.get("title")
+    path: Optional[str] = kwargs.get("path")
+    if not title and path:
+        file_path = Path(path).resolve().stem
+        title = titlecase(file_path.replace(kwargs.get("separator", SEPARATOR), ' '))
+    return title
 
 
 def _draw_rectangle(

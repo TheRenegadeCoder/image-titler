@@ -1,8 +1,4 @@
 import argparse
-from pathlib import Path
-from typing import Optional
-
-from titlecase import titlecase
 
 from utilities.constants import *
 
@@ -23,7 +19,6 @@ def parse_input() -> argparse.Namespace:
     _add_batch_option(parser)
     _add_font_option(parser)
     args = parser.parse_args()
-    args[KEY_TITLE] = _convert_file_name_to_title(**vars(args))
     return args
 
 
@@ -134,18 +129,3 @@ def _add_font_option(parser: argparse.ArgumentParser) -> None:
         default=DEFAULT_FONT,
         help="change the default font by path (e.g. 'arial.ttf')"
     )
-
-
-def _convert_file_name_to_title(**kwargs) -> Optional[str]:
-    """
-    A helper method which converts file names into titles. If the necessary arguments aren't supplied,
-    this function returns None.
-
-    :return: a title string or None
-    """
-    title: Optional[str] = kwargs.get("title")
-    path: Optional[str] = kwargs.get("path")
-    if not title and path:
-        file_path = Path(path).resolve().stem
-        title = titlecase(file_path.replace(kwargs.get("separator", SEPARATOR), ' '))
-    return title
