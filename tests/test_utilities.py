@@ -18,7 +18,7 @@ TRC_RED = (201, 2, 41, 255)
 VF_ICON_PATH = "assets/icons/virtual-flat-sample-icon.png"
 VF_BLUE = (0, 164, 246, 255)
 
-ASSETS = "assets/"
+ASSETS = "assets/images"
 DEFAULT_IMAGE = "assets/images/23-tech-topics-to-tackle.jpg"
 LOGO_RED_IMAGE = "assets/images/3-ways-to-check-if-a-list-is-empty-in-python.jpg"
 LOGO_BLUE_IMAGE = "assets/images/hello-world-in-matlab.jpg"
