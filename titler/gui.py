@@ -11,8 +11,6 @@ from matplotlib import font_manager
 
 from titler.constants import *
 
-TRC_ICON = os.path.join(os.path.dirname(__file__), '../icons/the-renegade-coder-sample-icon.png')
-
 FONTS = {
     f"{f.name} ({f.style}, {f.variant}, {f.weight}, {f.stretch})": f.fname
     for f in font_manager.fontManager.ttflist

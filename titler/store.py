@@ -62,10 +62,12 @@ def _generate_image_output_path(**kwargs) -> str:
 
     if title := kwargs.get(KEY_TITLE):
         file_name = pathvalidate.sanitize_filename(title.lower().replace(" ", SEPARATOR))
+    elif path:
+        file_name = Path(kwargs.get(KEY_PATH)).stem
     else:
         file_name = "example"
 
-    storage_path = f'{file_name}-{tag}-v{version}.{extension}'
+    storage_path = f'{file_name}-{tag}-v{version}{extension}'
     if output_path := kwargs.get("output_path"):
         storage_path = f'{output_path}{os.sep}{storage_path}'
     return storage_path

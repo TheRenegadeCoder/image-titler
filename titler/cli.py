@@ -45,7 +45,9 @@ def main() -> None:
     args = vars(parse_input())
     args[KEY_PATH] = _request_input_path(**args)
     if args[KEY_PATH]:
+        print(args)
         images = process_images(**args)
+        print(args)
         save_copies(images, **args)
 
 
