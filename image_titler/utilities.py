@@ -147,7 +147,7 @@ def _draw_overlay(image: Image.Image, color: tuple, **kwargs) -> Image:
     if title:
         # Detect space (precondition for split)
         if len(title.split()) > 1:
-            top_half_text, bottom_half_text = split_string_by_nearest_middle_space(title)
+            top_half_text, bottom_half_text = _split_string_by_nearest_middle_space(title)
         else:
             top_half_text, bottom_half_text = title, None
 
@@ -241,7 +241,7 @@ def _convert_file_name_to_title(**kwargs) -> Optional[str]:
     return title
 
 
-def split_string_by_nearest_middle_space(input_string: str) -> tuple:
+def _split_string_by_nearest_middle_space(input_string: str) -> tuple:
     """
     Splits a string by the nearest middle space. Assumes space is in string.
 
@@ -258,59 +258,7 @@ def split_string_by_nearest_middle_space(input_string: str) -> tuple:
     return input_string[:index], input_string[index + 1:]
 
 
-def save_copy(edited_image: Image.Image, **kwargs) -> str:
-    """
-    A helper function for saving a copy of the image.
-
-    :param edited_image: the edited image
-    :return: the path to the saved image
-    """
-    storage_path = _generate_image_output_path(**kwargs)
-    exif = _generate_version_exif(edited_image)
-    edited_image.save(storage_path, subsampling=0, quality=100, exif=exif)
-    return storage_path
-
-
-def process_batch(**kwargs) -> None:
-    """
-    Processes a batch of images.
-
-    :return: None
-    """
-    input_path = kwargs.get("path")
-    for path in os.listdir(input_path):
-        absolute_path = os.path.join(input_path, path)
-        image_kwargs = kwargs.copy()
-        image_kwargs["path"] = absolute_path
-        edited_image = process_image(**image_kwargs)
-        save_copy(edited_image, **image_kwargs)
-
-
-def process_image(**kwargs) -> Optional[Image.Image]:
-    """
-    Processes a single image.
-
-    :param kwargs: a dictionary of keyword arguments
-    :return: the edited image or None
-    """
-    input_path = kwargs.get("path")
-    if input_path:
-        img = Image.open(input_path)
-        cropped_img: Image = img.crop((0, 0, IMAGE_WIDTH, IMAGE_HEIGHT))
-        color = RECTANGLE_FILL
-        if logo_path := kwargs.get("logo_path"):
-            logo: Image.Image = Image.open(logo_path)
-            color = get_best_top_color(logo)
-            _draw_logo(cropped_img, logo)
-        edited_image = _draw_overlay(
-            cropped_img,
-            color,
-            **kwargs
-        )
-        return edited_image
-
-
-def get_best_top_color(image: Image.Image) -> tuple:
+def _get_best_top_color(image: Image.Image) -> tuple:
     """
     Computes the most popular non-white color from an image.
 
@@ -385,6 +333,72 @@ def _add_tier_option(parser: argparse.ArgumentParser) -> None:
     )
 
 
+def _add_logo_path_option(parser: argparse.ArgumentParser) -> None:
+    """
+    A helper function which sets up the logo path setting for the parser.
+    The logo path setting is used to display a logo on the image.
+
+    :param parser: an argument parser
+    :return: None
+    """
+    parser.add_argument(
+        '-l',
+        f'--{KEY_LOGO_PATH}',
+        help="select a logo file for addition to the processed image"
+    )
+
+
+def save_copy(edited_image: Image.Image, **kwargs) -> str:
+    """
+    A helper function for saving a copy of the image.
+
+    :param edited_image: the edited image
+    :return: the path to the saved image
+    """
+    storage_path = _generate_image_output_path(**kwargs)
+    exif = _generate_version_exif(edited_image)
+    edited_image.save(storage_path, subsampling=0, quality=100, exif=exif)
+    return storage_path
+
+
+def process_batch(**kwargs) -> None:
+    """
+    Processes a batch of images.
+
+    :return: None
+    """
+    input_path = kwargs.get("path")
+    for path in os.listdir(input_path):
+        absolute_path = os.path.join(input_path, path)
+        image_kwargs = kwargs.copy()
+        image_kwargs["path"] = absolute_path
+        edited_image = process_image(**image_kwargs)
+        save_copy(edited_image, **image_kwargs)
+
+
+def process_image(**kwargs) -> Optional[Image.Image]:
+    """
+    Processes a single image.
+
+    :return: the edited image or None
+    """
+    input_path = kwargs.get("path")
+    if input_path:
+        img = Image.open(input_path)
+        cropped_img: Image = img.crop((0, 0, IMAGE_WIDTH, IMAGE_HEIGHT))
+        color = RECTANGLE_FILL
+        if logo_path := kwargs.get("logo_path"):
+            logo: Image.Image = Image.open(logo_path)
+            color = _get_best_top_color(logo)
+            _draw_logo(cropped_img, logo)
+        edited_image = _draw_overlay(
+            cropped_img,
+            color,
+            **kwargs
+        )
+        return edited_image
+
+
 def parse_input() -> argparse.Namespace:
     """
     Creates and executes a parser on the command line inputs.
@@ -396,11 +410,7 @@ def parse_input() -> argparse.Namespace:
     _add_path_option(parser)
     _add_output_path_option(parser)
     _add_tier_option(parser)
-    parser.add_argument(
-        '-l',
-        f'--{KEY_LOGO_PATH}',
-        help="select a logo file for addition to the processed image"
-    )
+    _add_logo_path_option(parser)
     parser.add_argument(
         '-b',
         f'--{KEY_BATCH}',

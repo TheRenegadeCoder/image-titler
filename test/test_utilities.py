@@ -188,13 +188,13 @@ class TestGetBestTopColor(TestUtilities):
 
     def test_renegade_coder_icon(self):
         img: Image.Image = Image.open(TRC_ICON_PATH)
-        color = utilities.get_best_top_color(img)
+        color = utilities._get_best_top_color(img)
         self.assertEqual(color, TRC_RED)
         img.close()
 
     def test_virtual_flat_icon(self):
         img: Image.Image = Image.open(VF_ICON_PATH)
-        color = utilities.get_best_top_color(img)
+        color = utilities._get_best_top_color(img)
         self.assertEqual(color, VF_BLUE)
         img.close()
 
@@ -202,17 +202,17 @@ class TestGetBestTopColor(TestUtilities):
 class TestSplitString(TestUtilities):
 
     def test_first_space(self):
-        top, bottom = utilities.split_string_by_nearest_middle_space("Split first one")
+        top, bottom = utilities._split_string_by_nearest_middle_space("Split first one")
         self.assertEqual(top, "Split")
         self.assertEqual(bottom, "first one")
 
     def test_middle_space(self):
-        top, bottom = utilities.split_string_by_nearest_middle_space("Hello World")
+        top, bottom = utilities._split_string_by_nearest_middle_space("Hello World")
         self.assertEqual(top, "Hello")
         self.assertEqual(bottom, "World")
 
     def test_last_space(self):
-        top, bottom = utilities.split_string_by_nearest_middle_space("Split last opening")
+        top, bottom = utilities._split_string_by_nearest_middle_space("Split last opening")
         self.assertEqual(top, "Split last")
         self.assertEqual(bottom, "opening")
 
