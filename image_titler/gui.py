@@ -38,7 +38,7 @@ class ImageTitlerMain(tk.Tk):
     def __init__(self, options):
         super().__init__()
         self.options = options
-        self.menu = ImageTitlerMenuBar(self)
+        self.menu = ImageTitlerMenuBar(self, self.options)
         self.gui = ImageTitlerGUI(self, self.menu, self.options)
         self.gui.pack(anchor=tk.W)
 
@@ -74,12 +74,22 @@ class ImageTitlerGUI(ttk.Frame):
         super().__init__(parent, **kw)
         self.menu = menu
         self.options = options
+        self.option_pane = ImageTitlerOptionPane(self, self.options)
         self.preview = ImageTitlerPreviewPane(self, text=f"Select a file using '{FILE_TAB_LABEL}' > '{NEW_IMAGE_LABEL}'")
-        self.option_pane = ImageTitlerOptionPane(self)
         self.logo_path = None
-        self.set_layout()
+        self._set_layout()
 
-    def set_layout(self) -> None:
+    def update_view(self, *_) -> None:
+        """
+        Updates this frame visually by controlling what is happening in children components.
+
+        :return: None
+        """
+        if self.options["path"]:
+            self._render_preview()
+        self._render_logo(self.options.get("logo_path_loaded"))
+
+    def _set_layout(self) -> None:
         """
         Sets the layout of the window. Specifically, this function places the option pane
         on the left and the preview pane on the right.
@@ -88,27 +98,6 @@ class ImageTitlerGUI(ttk.Frame):
         """
         self.preview.pack(side=tk.RIGHT, expand=tk.YES, fill=tk.BOTH, padx=5, pady=5)
         self.option_pane.pack(side=tk.LEFT, anchor=tk.NW, padx=5, pady=5)
-
-    def update_view(self, *_) -> None:
-        """
-        Updates this frame visually by controlling what is happening in children components.
-
-        :return: None
-        """
-        if self.menu.image_path:
-            self.options["path"] = self.menu.image_path
-            for row in self.option_pane.rows:
-                if row[1].variable.get() == 1:
-                    if row[3] == "font":
-                        self.options[row[3]] = FONTS.get(row[2].get())
-                    elif row[3] == "logo_path":
-                        self.options["logo_path"] = self.menu.logo_path
-                    else:
-                        self.options[row[3]] = row[2].get()
-                else:
-                    self.options[row[3]] = None
-            self._render_preview()
-        self._render_logo(self.menu.logo_path)
 
     def _render_preview(self) -> None:
         """
@@ -151,40 +140,119 @@ class ImageTitlerPreviewPane(ttk.Label):
         super().__init__(parent, **kw)
 
 
+class ImageTitlerMenuBar(tk.Menu):
+    """
+    The menu bar for interactions like loading files and logos.
+    """
+
+    def __init__(self, parent: ImageTitlerMain, options: dict):
+        super().__init__(parent)
+        self.parent = parent
+        self.options = options
+        self.current_edit = None
+        self.file_menu = None
+        self.init_menu()
+
+    def init_menu(self) -> None:
+        """
+        Sets up the menu items.
+
+        :return: None
+        """
+        menu = tk.Menu(self.parent)
+        self.parent.config(menu=menu)
+
+        self.file_menu = tk.Menu(menu, tearoff=0, postcommand=self._save_as_enabled)
+        self.file_menu.add_command(label=NEW_IMAGE_LABEL, command=self._new_image)
+        self.file_menu.add_command(label=NEW_LOGO_LABEL, command=self._new_logo)
+        self.file_menu.add_command(label=SAVE_AS_LABEL, command=self._save_as)
+        menu.add_cascade(label=FILE_TAB_LABEL, menu=self.file_menu)
+
+    def _new_image(self) -> None:
+        """
+        Specifies behavior for when a user selects the "New Image" option.
+
+        :return: None
+        """
+        self.options["path"] = filedialog.askopenfilename(filetypes=FILE_TYPES)
+        self.parent.update_view()
+
+    def _new_logo(self) -> None:
+        """
+        Specifies the behavior when a user selects the "New Logo" option.
+
+        :return: None
+        """
+        self.options["logo_path_loaded"] = filedialog.askopenfilename(filetypes=FILE_TYPES)
+        self.parent.update_view()
+
+    def _save_as(self) -> None:
+        """
+        Specifies the behavior when a user selects the "Save As" option.
+
+        :return: None
+        """
+        self.options["output_path"] = filedialog.askdirectory()
+        self.parent.save_as()
+
+    def _save_as_enabled(self) -> None:
+        """
+        Enables/disables the "Save As" option.
+
+        :return: None
+        """
+        if self.current_edit:
+            self.file_menu.entryconfig(2, state=tk.NORMAL)  # TODO: make this not hardcoded
+        else:
+            self.file_menu.entryconfig(2, state=tk.DISABLED)
+
+
 class ImageTitlerOptionPane(ttk.Frame):
     """
     The option pane contains a set of options that can be controlled when editing the image.
     Changes are reflected in the preview pane.
     """
 
-    def __init__(self, parent: ImageTitlerGUI, **kw):
+    def __init__(self, parent: ImageTitlerGUI, options: dict, **kw):
         super().__init__(parent, **kw)
         self.parent = parent
+        self.options = options
         self.title_state: tk.IntVar = tk.IntVar()
         self.title_value: tk.StringVar = tk.StringVar()
         self.tier_state: tk.IntVar = tk.IntVar()
         self.tier_value: tk.StringVar = tk.StringVar()
+        self.logo_path: Optional[str] = None
         self.logo_state: tk.IntVar = tk.IntVar()
         self.logo_value: Optional[ttk.Label] = None
         self.font_state: tk.IntVar = tk.IntVar()
         self.font_value: tk.StringVar = tk.StringVar()
         self.rows = list()
-        self.init_option_pane()
+        self._init_option_pane()
+        self._init_vars()
 
-    def init_option_pane(self) -> None:
+    def _init_vars(self) -> None:
+        """
+        Initializes the options pane based on any initial options.
+
+        :return: None
+        """
+        title = self.options.get("title")
+        ImageTitlerOptionPane._populate_option(title, self.title_value, self.title_state)
+
+    def _init_option_pane(self) -> None:
         """
         Initializes the option pane by generating rows of settings.
 
         :return: None
         """
-        self.rows.append(self.init_title_frame())
-        self.rows.append(self.init_tier_frame())
+        self.rows.append(self._init_title_frame())
+        self.rows.append(self._init_tier_frame())
         self.rows.append(self.init_logo_frame())
         self.rows.append(self.init_font_frame())
         for row in self.rows:
             self._layout_option_row(*row[:3])
 
-    def init_title_frame(self) -> tuple:
+    def _init_title_frame(self) -> tuple:
         """
         Initializes the row for title information.
 
@@ -195,15 +263,28 @@ class ImageTitlerOptionPane(ttk.Frame):
             title_frame,
             text=TITLE_OPTION_LABEL,
             variable=self.title_state,
-            command=self.parent.update_view,
+            command=self._update_title,
             width=COLUMN_WIDTH
         )
         title_label.variable = self.title_state
-        self.title_value.trace(tk.W, self.parent.update_view)
+        self.title_value.trace(tk.W, self._update_title)
         title_entry = tk.Entry(title_frame, textvariable=self.title_value)
         return title_frame, title_label, title_entry, "title"
 
-    def init_tier_frame(self) -> tuple:
+    def _update_title(self, *_) -> None:
+        """
+        A helper method which serves as the update title functionality.
+        This should be triggered when the title is changed.
+
+        :return: None
+        """
+        if self.title_state.get():
+            self.options["title"] = self.title_value.get()
+        else:
+            self.options["title"] = None
+        self.parent.update_view()
+
+    def _init_tier_frame(self) -> tuple:
         """
         Initializes the row for tier information.
 
@@ -214,7 +295,7 @@ class ImageTitlerOptionPane(ttk.Frame):
             tier_frame,
             text=TIER_OPTION_LABEL,
             variable=self.tier_state,
-            command=self.parent.update_view,
+            command=self._update_tier,
             width=COLUMN_WIDTH
         )
         tier_label.variable = self.tier_state
@@ -225,8 +306,21 @@ class ImageTitlerOptionPane(ttk.Frame):
             values=list(TIER_MAP.keys()),
             state="readonly"
         )
-        tier_option_menu.bind("<<ComboboxSelected>>", self.parent.update_view)
+        tier_option_menu.bind("<<ComboboxSelected>>", self._update_tier)
         return tier_frame, tier_label, tier_option_menu, "tier"
+
+    def _update_tier(self, *_) -> None:
+        """
+        A helper method which serves as the update tier functionality.
+        This should be triggered when the tier is changed.
+
+        :return: None
+        """
+        if self.tier_state.get():
+            self.options["tier"] = self.tier_value.get()
+        else:
+            self.options["tier"] = None
+        self.parent.update_view()
 
     def init_logo_frame(self) -> tuple:
         """
@@ -239,12 +333,25 @@ class ImageTitlerOptionPane(ttk.Frame):
             logo_frame,
             text=LOGO_OPTION_LABEL,
             variable=self.logo_state,
-            command=self.parent.update_view,
+            command=self._update_logo,
             width=COLUMN_WIDTH
         )
         logo_label.variable = self.logo_state
         self.logo_value = ttk.Label(logo_frame, text=f"Select a logo using '{FILE_TAB_LABEL}' > '{NEW_LOGO_LABEL}'")
         return logo_frame, logo_label, self.logo_value, "logo_path"
+
+    def _update_logo(self) -> None:
+        """
+        Renders a preview of the logo in the options pane.
+
+        :return: None
+        """
+        logo_path = self.options.get("logo_path_loaded")
+        if logo_path and self.logo_state.get():
+            self.options["logo_path"] = logo_path
+        else:
+            self.options["logo_path"] = None
+        self.parent.update_view()
 
     def init_font_frame(self) -> tuple:
         """
@@ -257,7 +364,7 @@ class ImageTitlerOptionPane(ttk.Frame):
             font_frame,
             text="Font:",
             variable=self.font_state,
-            command=self.parent.update_view,
+            command=self._update_font,
             width=COLUMN_WIDTH
         )
         font_label.variable = self.font_state
@@ -269,8 +376,21 @@ class ImageTitlerOptionPane(ttk.Frame):
             values=font_list,
             state="readonly"
         )
-        font_menu.bind("<<ComboboxSelected>>", self.parent.update_view)
+        font_menu.bind("<<ComboboxSelected>>", self._update_font)
         return font_frame, font_label, font_menu, "font"
+
+    def _update_font(self, *_) -> None:
+        """
+        A helper method which serves as the update font functionality.
+        This should be triggered when the font is changed.
+
+        :return: None
+        """
+        if self.font_state.get():
+            self.options["font"] = FONTS.get(self.font_value.get())
+        else:
+            self.options["font"] = None
+        self.parent.update_view()
 
     @staticmethod
     def _layout_option_row(frame, label, value) -> None:
@@ -286,74 +406,11 @@ class ImageTitlerOptionPane(ttk.Frame):
         label.pack(side=tk.LEFT)
         value.pack(side=tk.LEFT, expand=tk.YES, fill=tk.X)
 
-
-class ImageTitlerMenuBar(tk.Menu):
-    """
-    The menu bar for interactions like loading files and logos.
-    """
-
-    def __init__(self, parent: ImageTitlerMain):
-        super().__init__(parent)
-        self.parent = parent
-        self.image_path = None
-        self.logo_path = None
-        self.output_path = None
-        self.current_edit = None
-        self.file_menu = None
-        self.init_menu()
-
-    def init_menu(self) -> None:
-        """
-        Sets up the menu items.
-
-        :return: None
-        """
-        menu = tk.Menu(self.parent)
-        self.parent.config(menu=menu)
-
-        self.file_menu = tk.Menu(menu, tearoff=0, postcommand=self.save_as_enabled)
-        self.file_menu.add_command(label=NEW_IMAGE_LABEL, command=self.new_image)
-        self.file_menu.add_command(label=NEW_LOGO_LABEL, command=self.new_logo)
-        self.file_menu.add_command(label=SAVE_AS_LABEL, command=self.save_as)
-        menu.add_cascade(label=FILE_TAB_LABEL, menu=self.file_menu)
-
-    def new_image(self) -> None:
-        """
-        Specifies behavior for when a user selects the "New Image" option.
-
-        :return: None
-        """
-        self.image_path = filedialog.askopenfilename(filetypes=FILE_TYPES)
-        self.parent.update_view()
-
-    def new_logo(self) -> None:
-        """
-        Specifies the behavior when a user selects the "New Logo" option.
-
-        :return: None
-        """
-        self.logo_path = filedialog.askopenfilename(filetypes=FILE_TYPES)
-        self.parent.update_view()
-
-    def save_as(self) -> None:
-        """
-        Specifies the behavior when a user selects the "Save As" option.
-
-        :return: None
-        """
-        self.output_path = filedialog.askdirectory()
-        self.parent.save_as()
-
-    def save_as_enabled(self) -> None:
-        """
-        Enables/disables the "Save As" option.
-
-        :return: None
-        """
-        if self.current_edit:
-            self.file_menu.entryconfig(2, state=tk.NORMAL)  # TODO: make this not hardcoded
-        else:
-            self.file_menu.entryconfig(2, state=tk.DISABLED)
+    @staticmethod
+    def _populate_option(option, value, state: tk.IntVar):
+        if option:
+            value.set(option)
+            state.set(1)
 
 
 def main():
