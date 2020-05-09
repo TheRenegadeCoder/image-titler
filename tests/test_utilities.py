@@ -6,7 +6,7 @@ from unittest import TestCase
 import pkg_resources
 from PIL import Image, ImageChops
 
-from titler.constants import DEFAULT_FONT, KEY_TITLE
+from titler.constants import DEFAULT_FONT, KEY_TITLE, KEY_OUTPUT_PATH
 from titler.draw import process_images, _convert_file_name_to_title, _process_batch, _process_image, \
     _get_best_top_color, _split_string_by_nearest_middle_space
 from titler.parse import parse_input
@@ -57,10 +57,13 @@ class TestIntegration(TestUtilities):
 
     @staticmethod
     def generate_image(**kwargs):
+        kwargs[KEY_OUTPUT_PATH] = TEST_SOLO_DUMP
         test_image = _process_image(**kwargs)
         test_file = save_copies([test_image], **kwargs)
 
+        kwargs[KEY_OUTPUT_PATH] = SAMPLE_DUMP
         kwargs[KEY_TITLE] = None
+        kwargs[KEY_TITLE] = _convert_file_name_to_title(**kwargs)
         sample_image = _process_image(**kwargs)
         save_copies([sample_image], **kwargs)
 
