@@ -4,9 +4,8 @@ The commandline interface for the image-titler script.
 
 import tkinter
 from tkinter.filedialog import askopenfilename, askdirectory
-from typing import Optional
 
-from image_titler.utilities import process_batch, process_image, FILE_TYPES, save_copy, parse_input
+from image_titler.utilities import *
 
 
 def _request_input_path(path: str, batch: bool) -> Optional[str]:

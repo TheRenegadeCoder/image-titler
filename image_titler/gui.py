@@ -2,18 +2,14 @@
 The GUI interface for the image-titler script.
 """
 
-import os
 import tkinter as tk
 import tkinter.ttk as ttk
-from pathlib import Path
 from tkinter import filedialog
-from typing import Optional
 
-import pkg_resources
-from PIL import ImageTk, Image
+from PIL import ImageTk
 from matplotlib import font_manager
 
-from image_titler.utilities import process_image, save_copy, TIER_MAP, FILE_TYPES, parse_input, DEFAULT_FONT
+from image_titler.utilities import *
 
 TRC_ICON = os.path.join(os.path.dirname(__file__), '../icons/the-renegade-coder-sample-icon.png')
 

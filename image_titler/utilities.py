@@ -22,6 +22,7 @@ KEY_LOGO_PATH = "logo_path"
 KEY_PATH = "path"
 KEY_TIER = "tier"
 KEY_TITLE = "title"
+KEY_OUTPUT_PATH = "output_path"
 
 DEFAULT_FONT = os.path.join(os.path.dirname(__file__), "BERNHC.TTF")
 DEFAULT_BATCH_MODE = False
@@ -328,7 +329,7 @@ def _add_title_option(parser: argparse.ArgumentParser) -> None:
     A helper function which sets up the title settings for the parser.
     The title is then used to add a custom title to the image.
 
-    :param parser: a argument parser
+    :param parser: an argument parser
     :return: None
     """
     parser.add_argument(
@@ -343,13 +344,44 @@ def _add_path_option(parser: argparse.ArgumentParser) -> None:
     A helper function which sets up the path settings for the parser.
     The path setting determines which file or folder is to be processed.
 
-    :param parser: a argument parser
+    :param parser: an argument parser
     :return: None
     """
     parser.add_argument(
         '-p',
         f'--{KEY_PATH}',
         help="select an image file (or folder when batch processing)"
+    )
+
+
+def _add_output_path_option(parser: argparse.ArgumentParser) -> None:
+    """
+    A helper function which sets up the output path settings for the parser.
+    The output path setting determines where the file will be stored.
+
+    :param parser: an argument parser
+    :return: None
+    """
+    parser.add_argument(
+        '-o',
+        f'--{KEY_OUTPUT_PATH}',
+        help="select an output path for the processed image"
+    )
+
+
+def _add_tier_option(parser: argparse.ArgumentParser) -> None:
+    """
+    A helper function which sets up the tier setting for the parser.
+    The tier setting determines the border color of the title bars.
+
+    :param parser: an argument parser
+    :return: None
+    """
+    parser.add_argument(
+        '-r',
+        f'--{KEY_TIER}',
+        choices=TIER_MAP.keys(),
+        help="select an image tier"
     )
 
 
@@ -362,13 +394,8 @@ def parse_input() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     _add_title_option(parser)
     _add_path_option(parser)
-    parser.add_argument('-o', '--output_path', help="select an output path for the processed image")
-    parser.add_argument(
-        '-r',
-        f'--{KEY_TIER}',
-        choices=TIER_MAP.keys(),
-        help="select an image tier"
-    )
+    _add_output_path_option(parser)
+    _add_tier_option(parser)
     parser.add_argument(
         '-l',
         f'--{KEY_LOGO_PATH}',
