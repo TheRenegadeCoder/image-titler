@@ -9,7 +9,7 @@ from PIL import ImageDraw
 from PIL import ImageFont
 from titlecase import titlecase
 
-from utilities.constants import *
+from titler.constants import *
 
 TEXT_FILL = (255, 255, 255)
 RECTANGLE_FILL = (201, 2, 41)
@@ -26,7 +26,8 @@ X_OFFSET = 30
 LOGO_SIZE = (RECTANGLE_HEIGHT, RECTANGLE_HEIGHT)
 LOGO_PADDING = 30
 
-def process_images(**kwargs) -> List[Image]:
+
+def process_images(**kwargs) -> List[Image.Image]:
     """
     The main entry point for any image editing. This function
     will never return an empty list. If no settings are provided,
@@ -35,8 +36,8 @@ def process_images(**kwargs) -> List[Image]:
     :return: None
     """
     is_batch: bool = kwargs.get(KEY_BATCH)
-    kwargs[KEY_PATH] = kwargs.get(KEY_PATH, "assets/images/3-ways-to-check-if-a-list-is-empty-in-python.jpg")
-    kwargs[KEY_TITLE] = kwargs.get(KEY_TITLE, _convert_file_name_to_title(**kwargs))
+    kwargs[KEY_PATH] = kwargs.get(KEY_PATH) if kwargs.get(KEY_PATH) else TRC_IMAGE
+    kwargs[KEY_TITLE] = kwargs.get(KEY_TITLE) if kwargs.get(KEY_TITLE) else _convert_file_name_to_title(**kwargs)
     images = list()
     if is_batch:
         images = _process_batch(**kwargs)
@@ -45,8 +46,7 @@ def process_images(**kwargs) -> List[Image]:
     return images
 
 
-
-def _process_batch(**kwargs) -> List[Optional[Image]]:
+def _process_batch(**kwargs) -> List[Image.Image]:
     """
     Processes a batch of images.
 

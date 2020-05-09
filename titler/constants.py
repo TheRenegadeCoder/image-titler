@@ -22,3 +22,7 @@ TIER_MAP = {
     "free": SILVER,
     "premium": GOLD
 }
+
+TRC_ICON = os.path.join(os.path.dirname(__file__), '../assets/icons/the-renegade-coder-sample-icon.png')
+TRC_IMAGE = os.path.join(os.path.dirname(__file__), '../assets/images/3-ways-to-check-if-a-list-is-empty-in-python.jpg"')
+

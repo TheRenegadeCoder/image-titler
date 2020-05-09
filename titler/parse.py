@@ -1,6 +1,6 @@
 import argparse
 
-from utilities.constants import *
+from titler.constants import *
 
 
 def parse_input() -> argparse.Namespace:
@@ -15,7 +15,6 @@ def parse_input() -> argparse.Namespace:
     _add_output_path_option(parser)
     _add_tier_option(parser)
     _add_logo_path_option(parser)
-    _add_batch_option(parser)
     _add_batch_option(parser)
     _add_font_option(parser)
     args = parser.parse_args()

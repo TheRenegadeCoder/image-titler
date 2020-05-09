@@ -9,7 +9,7 @@ from tkinter import filedialog
 from PIL import ImageTk
 from matplotlib import font_manager
 
-from image_titler.utilities import *
+from titler.constants import *
 
 TRC_ICON = os.path.join(os.path.dirname(__file__), '../icons/the-renegade-coder-sample-icon.png')
 
@@ -75,7 +75,8 @@ class ImageTitlerGUI(ttk.Frame):
         self.menu = menu
         self.options = options
         self.option_pane = ImageTitlerOptionPane(self, self.options)
-        self.preview = ImageTitlerPreviewPane(self, text=f"Select a file using '{FILE_TAB_LABEL}' > '{NEW_IMAGE_LABEL}'")
+        self.preview = ImageTitlerPreviewPane(self,
+                                              text=f"Select a file using '{FILE_TAB_LABEL}' > '{NEW_IMAGE_LABEL}'")
         self.logo_path = None
         self._set_layout()
 
