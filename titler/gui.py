@@ -4,12 +4,18 @@ The GUI interface for the image-titler script.
 
 import tkinter as tk
 import tkinter.ttk as ttk
+from pathlib import Path
 from tkinter import filedialog
+from typing import Optional
 
-from PIL import ImageTk
+import pkg_resources
+from PIL import ImageTk, Image
 from matplotlib import font_manager
 
 from titler.constants import *
+from titler.draw import process_images
+from titler.parse import parse_input
+from titler.store import save_copies
 
 FONTS = {
     f"{f.name} ({f.style}, {f.variant}, {f.weight}, {f.stretch})": f.fname
@@ -57,8 +63,8 @@ class ImageTitlerMain(tk.Tk):
 
         :return: None
         """
-        save_copy(
-            self.menu.current_edit,
+        save_copies(
+            list(self.menu.current_edit),
             **self.options
         )
 
@@ -104,7 +110,7 @@ class ImageTitlerGUI(ttk.Frame):
 
         :return: None
         """
-        self.menu.current_edit = process_image(**self.options)
+        self.menu.current_edit = process_images(**self.options)[0]
         maxsize = (1028, 1028)
         small_image = self.menu.current_edit.copy()
         small_image.thumbnail(maxsize, Image.ANTIALIAS)
@@ -150,9 +156,9 @@ class ImageTitlerMenuBar(tk.Menu):
         self.options = options
         self.current_edit = None
         self.file_menu = None
-        self.init_menu()
+        self._init_menu()
 
-    def init_menu(self) -> None:
+    def _init_menu(self) -> None:
         """
         Sets up the menu items.
 
@@ -238,11 +244,12 @@ class ImageTitlerOptionPane(ttk.Frame):
         title = self.options.get("title")
         ImageTitlerOptionPane._populate_option(title, self.title_value, self.title_state)
         tier = self.options.get("tier")
-        ImageTitlerOptionPane._populate_option(tier, self.tier_value, self.tier_state)
+        ImageTitlerOptionPane._populate_option(tier, self.tier_value, self.tier_state, list(TIER_MAP.keys())[0])
         font = self.options.get("font")
+        self.font_value.set(sorted(list(FONTS.keys()))[0])
         if font != DEFAULT_FONT:
-            font_name = next(k for k, v in FONTS.items() if Path(v).name == font)
-            ImageTitlerOptionPane._populate_option(font_name, self.font_value, self.font_state)
+            font = next(k for k, v in FONTS.items() if Path(v).name == font)
+            ImageTitlerOptionPane._populate_option(font, self.font_value, self.font_state)
 
     def _init_option_pane(self) -> None:
         """
@@ -352,9 +359,9 @@ class ImageTitlerOptionPane(ttk.Frame):
         """
         logo_path = self.options.get("logo_path_loaded")
         if logo_path and self.logo_state.get():
-            self.options["logo_path"] = logo_path
+            self.options[KEY_LOGO_PATH] = logo_path
         else:
-            self.options["logo_path"] = None
+            self.options[KEY_LOGO_PATH] = None
         self.parent.update_view()
 
     def init_font_frame(self) -> tuple:
@@ -410,10 +417,13 @@ class ImageTitlerOptionPane(ttk.Frame):
         value.pack(side=tk.LEFT, expand=tk.YES, fill=tk.X)
 
     @staticmethod
-    def _populate_option(option: str, value: tk.StringVar, state: tk.IntVar):
+    def _populate_option(option: str, value: tk.StringVar, state: tk.IntVar, default_option: str = None):
         if option:
             value.set(option)
             state.set(1)
+        else:
+            value.set(default_option)
+            state.set(0)
 
 
 def main():
