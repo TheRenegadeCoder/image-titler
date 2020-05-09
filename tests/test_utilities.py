@@ -6,24 +6,27 @@ from unittest import TestCase
 import pkg_resources
 from PIL import Image, ImageChops
 
-from image_titler import utilities
-from image_titler.utilities import save_copy, DEFAULT_FONT
+from titler.constants import DEFAULT_FONT
+from titler.draw import process_images, _convert_file_name_to_title, _process_batch, _process_image, \
+    _get_best_top_color, _split_string_by_nearest_middle_space
+from titler.parse import parse_input
+from titler.store import save_copies
 
-TRC_ICON_PATH = "icons/the-renegade-coder-sample-icon.png"
+TRC_ICON_PATH = "assets/icons/the-renegade-coder-sample-icon.png"
 TRC_RED = (201, 2, 41, 255)
 
-VF_ICON_PATH = "icons/virtual-flat-sample-icon.png"
+VF_ICON_PATH = "assets/icons/virtual-flat-sample-icon.png"
 VF_BLUE = (0, 164, 246, 255)
 
 ASSETS = "assets/"
-DEFAULT_IMAGE = "assets/23-tech-topics-to-tackle.jpg"
-LOGO_RED_IMAGE = "assets/3-ways-to-check-if-a-list-is-empty-in-python.jpg"
-LOGO_BLUE_IMAGE = "assets/hello-world-in-matlab.jpg"
-FREE_IMAGE = "assets/columbus-drivers-are-among-the-worst.jpg"
-PREMIUM_IMAGE = "assets/the-guide-to-causing-mass-panic.jpg"
-SPECIAL_IMAGE = "assets/happy-new-year.jpg"
-CUSTOM_FONT_IMAGE = "assets/reflecting-on-my-third-semester-of-teaching.jpg"
-ONE_LINE_TITLE_IMAGE = "assets/minimalism.jpg"
+DEFAULT_IMAGE = "assets/images/23-tech-topics-to-tackle.jpg"
+LOGO_RED_IMAGE = "assets/images/3-ways-to-check-if-a-list-is-empty-in-python.jpg"
+LOGO_BLUE_IMAGE = "assets/images/hello-world-in-matlab.jpg"
+FREE_IMAGE = "assets/images/columbus-drivers-are-among-the-worst.jpg"
+PREMIUM_IMAGE = "assets/images/the-guide-to-causing-mass-panic.jpg"
+SPECIAL_IMAGE = "assets/images/happy-new-year.jpg"
+CUSTOM_FONT_IMAGE = "assets/images/reflecting-on-my-third-semester-of-teaching.jpg"
+ONE_LINE_TITLE_IMAGE = "assets/images/minimalism.jpg"
 
 TEST_DUMP = "tests/dump"
 TEST_SOLO_DUMP = TEST_DUMP + "/solo"
@@ -54,25 +57,25 @@ class TestIntegration(TestUtilities):
 
     @staticmethod
     def generate_image(input_path, title, logo_path=None, tier="", font=DEFAULT_FONT):
-        test_image = utilities.process_image(
+        test_image = _process_image(
             path=input_path,
             title=title,
             logo_path=logo_path,
             tier=tier,
             font=font
         )
-        test_file = save_copy(test_image, output_path=TEST_SOLO_DUMP, title=title)
+        test_file = save_copies([test_image], output_path=TEST_SOLO_DUMP, title=title)
 
-        title = utilities._convert_file_name_to_title(path=input_path)
-        sample_image = utilities.process_image(
+        title = _convert_file_name_to_title(path=input_path)
+        sample_image = _process_image(
             path=input_path,
             title=title,
             logo_path=logo_path,
             tier=tier,
             font=font
         )
-        save_copy(sample_image, output_path=SAMPLE_DUMP)
-        return test_file
+        save_copies([sample_image], output_path=SAMPLE_DUMP)
+        return test_file[0]
 
     def test_custom_title(self):
         test_file = self.generate_image(DEFAULT_IMAGE, "Test Default")
@@ -92,7 +95,7 @@ class TestIntegration(TestUtilities):
         self.generate_image(PREMIUM_IMAGE, "Test Premium Tier", tier="premium")
 
     def test_custom_font(self):
-        self.generate_image(CUSTOM_FONT_IMAGE, "Test Custom Font", font="tests/fonts/arial.ttf")
+        self.generate_image(CUSTOM_FONT_IMAGE, "Test Custom Font", font="assets/fonts/arial.ttf")
 
     def test_custom_font_strange_height(self):
         self.generate_image(
@@ -102,18 +105,18 @@ class TestIntegration(TestUtilities):
         )
 
     def test_special_chars_in_title(self):
-        test_image = utilities.process_image(path=SPECIAL_IMAGE, title="Test Special Chars?")
-        save_copy(test_image, output_path=TEST_SOLO_DUMP, title="Test Special Chars?")
+        test_image = _process_image(path=SPECIAL_IMAGE, title="Test Special Chars?")
+        save_copies([test_image], output_path=TEST_SOLO_DUMP, title="Test Special Chars?")
 
     def test_one_line_title(self):
         self.generate_image(ONE_LINE_TITLE_IMAGE, title="TestSingleLineFile")
 
 
-class TestSaveCopy(TestUtilities):
+class TestSaveCopies(TestUtilities):
 
     def test_default(self):
         image = Image.open(DEFAULT_IMAGE)
-        test_file = save_copy(image)
+        test_file = save_copies(image)[0]
         self.assertTrue(Path(test_file).exists())
         Path(test_file).unlink()
 
@@ -123,8 +126,8 @@ class TestProcessImage(TestUtilities):
     def setUp(self) -> None:
         self.size = (1920, 960)
         self.input_image = Image.open(DEFAULT_IMAGE)
-        self.default_image = utilities.process_image(path=DEFAULT_IMAGE, title="Test Default Image")
-        self.different_title_image = utilities.process_image(path=DEFAULT_IMAGE, title="Test Different Logo Image")
+        self.default_image = _process_image(path=DEFAULT_IMAGE, title="Test Default Image")
+        self.different_title_image = _process_image(path=DEFAULT_IMAGE, title="Test Different Logo Image")
 
     def test_default(self):
         self.assertEqual(self.size, self.default_image.size)
@@ -156,31 +159,31 @@ class TestProcessBatch(TestUtilities):
         Path(TEST_BATCH_DUMP + "/premium-tier").mkdir(parents=True, exist_ok=True)
 
     def test_batch_default(self):
-        utilities.process_batch(path=ASSETS, output_path=TEST_BATCH_DUMP + "/default")
+        _process_batch(path=ASSETS, output_path=TEST_BATCH_DUMP + "/default")
 
     def test_batch_free_tier(self):
-        utilities.process_batch(path=ASSETS, tier="free", output_path=TEST_BATCH_DUMP + "/free-tier")
+        _process_batch(path=ASSETS, tier="free", output_path=TEST_BATCH_DUMP + "/free-tier")
 
     def test_batch_premium_tier(self):
-        utilities.process_batch(path=ASSETS, tier="premium", output_path=TEST_BATCH_DUMP + "/premium-tier")
+        _process_batch(path=ASSETS, tier="premium", output_path=TEST_BATCH_DUMP + "/premium-tier")
 
 
 class TestConvertFileNameToTitle(TestUtilities):
 
     def test_default(self):
-        title = utilities._convert_file_name_to_title()
+        title = _convert_file_name_to_title()
         self.assertEqual(None, title)
 
     def test_custom_title(self):
-        title = utilities._convert_file_name_to_title(title="How to Loop in Python")
+        title = _convert_file_name_to_title(title="How to Loop in Python")
         self.assertEqual("How to Loop in Python", title)
 
     def test_custom_path(self):
-        title = utilities._convert_file_name_to_title(path="how-to-loop-in-python.png")
+        title = _convert_file_name_to_title(path="how-to-loop-in-python.png")
         self.assertEqual("How to Loop in Python", title)
 
     def test_custom_separator(self):
-        title = utilities._convert_file_name_to_title(path="how.to.loop.in.python.png", separator=".")
+        title = _convert_file_name_to_title(path="how.to.loop.in.python.png", separator=".")
         self.assertEqual("How to Loop in Python", title)
 
 
@@ -188,13 +191,13 @@ class TestGetBestTopColor(TestUtilities):
 
     def test_renegade_coder_icon(self):
         img: Image.Image = Image.open(TRC_ICON_PATH)
-        color = utilities._get_best_top_color(img)
+        color = _get_best_top_color(img)
         self.assertEqual(color, TRC_RED)
         img.close()
 
     def test_virtual_flat_icon(self):
         img: Image.Image = Image.open(VF_ICON_PATH)
-        color = utilities._get_best_top_color(img)
+        color = _get_best_top_color(img)
         self.assertEqual(color, VF_BLUE)
         img.close()
 
@@ -202,17 +205,17 @@ class TestGetBestTopColor(TestUtilities):
 class TestSplitString(TestUtilities):
 
     def test_first_space(self):
-        top, bottom = utilities._split_string_by_nearest_middle_space("Split first one")
+        top, bottom = _split_string_by_nearest_middle_space("Split first one")
         self.assertEqual(top, "Split")
         self.assertEqual(bottom, "first one")
 
     def test_middle_space(self):
-        top, bottom = utilities._split_string_by_nearest_middle_space("Hello World")
+        top, bottom = _split_string_by_nearest_middle_space("Hello World")
         self.assertEqual(top, "Hello")
         self.assertEqual(bottom, "World")
 
     def test_last_space(self):
-        top, bottom = utilities._split_string_by_nearest_middle_space("Split last opening")
+        top, bottom = _split_string_by_nearest_middle_space("Split last opening")
         self.assertEqual(top, "Split last")
         self.assertEqual(bottom, "opening")
 
@@ -223,7 +226,7 @@ class TestParseInput(TestUtilities):
         sys.argv = sys.argv[:1]  # clears args for each tests
 
     def test_default(self):
-        args = utilities.parse_input()
+        args = parse_input()
         self.assertEqual(args.batch, False)
         self.assertEqual(args.path, None)
         self.assertEqual(args.tier, None)
@@ -234,7 +237,7 @@ class TestParseInput(TestUtilities):
     def test_title(self):
         sys.argv.append("-t")
         sys.argv.append("Hello World")
-        args = utilities.parse_input()
+        args = parse_input()
         self.assertEqual(args.batch, False)
         self.assertEqual(args.path, None)
         self.assertEqual(args.tier, None)
@@ -245,7 +248,7 @@ class TestParseInput(TestUtilities):
     def test_path(self):
         sys.argv.append("-p")
         sys.argv.append("path/to/stuff")
-        args = utilities.parse_input()
+        args = parse_input()
         self.assertEqual(args.batch, False)
         self.assertEqual(args.path, "path/to/stuff")
         self.assertEqual(args.tier, None)
@@ -256,7 +259,7 @@ class TestParseInput(TestUtilities):
     def test_output_path(self):
         sys.argv.append("-o")
         sys.argv.append("path/to/stuff")
-        args = utilities.parse_input()
+        args = parse_input()
         self.assertEqual(args.batch, False)
         self.assertEqual(args.path, None)
         self.assertEqual(args.tier, None)
@@ -267,7 +270,7 @@ class TestParseInput(TestUtilities):
     def test_logo_path(self):
         sys.argv.append("-l")
         sys.argv.append("path/to/stuff")
-        args = utilities.parse_input()
+        args = parse_input()
         self.assertEqual(args.batch, False)
         self.assertEqual(args.path, None)
         self.assertEqual(args.tier, None)
@@ -277,7 +280,7 @@ class TestParseInput(TestUtilities):
 
     def test_batch(self):
         sys.argv.append("-b")
-        args = utilities.parse_input()
+        args = parse_input()
         self.assertEqual(args.batch, True)
         self.assertEqual(args.path, None)
         self.assertEqual(args.tier, None)
@@ -288,7 +291,7 @@ class TestParseInput(TestUtilities):
     def test_tier_premium(self):
         sys.argv.append("-r")
         sys.argv.append("premium")
-        args = utilities.parse_input()
+        args = parse_input()
         self.assertEqual(args.batch, False)
         self.assertEqual(args.path, None)
         self.assertEqual(args.tier, "premium")
@@ -299,7 +302,7 @@ class TestParseInput(TestUtilities):
     def test_tier_free(self):
         sys.argv.append("-r")
         sys.argv.append("free")
-        args = utilities.parse_input()
+        args = parse_input()
         self.assertEqual(args.batch, False)
         self.assertEqual(args.path, None)
         self.assertEqual(args.tier, "free")

@@ -90,7 +90,7 @@ class ImageTitlerGUI(ttk.Frame):
 
         :return: None
         """
-        if self.options["path"]:
+        if self.options[KEY_PATH]:
             self._render_preview()
         self._render_logo(self.options.get("logo_path_loaded"))
 
@@ -179,7 +179,7 @@ class ImageTitlerMenuBar(tk.Menu):
 
         :return: None
         """
-        self.options["path"] = filedialog.askopenfilename(filetypes=FILE_TYPES)
+        self.options[KEY_PATH] = filedialog.askopenfilename(filetypes=FILE_TYPES)
         self.parent.update_view()
 
     def _new_logo(self) -> None:
@@ -318,7 +318,7 @@ class ImageTitlerOptionPane(ttk.Frame):
             state="readonly"
         )
         tier_option_menu.bind("<<ComboboxSelected>>", self._update_tier)
-        return tier_frame, tier_label, tier_option_menu, "tier"
+        return tier_frame, tier_label, tier_option_menu, KEY_TIER
 
     def _update_tier(self, *_) -> None:
         """
@@ -328,9 +328,9 @@ class ImageTitlerOptionPane(ttk.Frame):
         :return: None
         """
         if self.tier_state.get():
-            self.options["tier"] = self.tier_value.get()
+            self.options[KEY_TIER] = self.tier_value.get()
         else:
-            self.options["tier"] = None
+            self.options[KEY_TIER] = None
         self.parent.update_view()
 
     def init_logo_frame(self) -> tuple:
@@ -349,7 +349,7 @@ class ImageTitlerOptionPane(ttk.Frame):
         )
         logo_label.variable = self.logo_state
         self.logo_value = ttk.Label(logo_frame, text=f"Select a logo using '{FILE_TAB_LABEL}' > '{NEW_LOGO_LABEL}'")
-        return logo_frame, logo_label, self.logo_value, "logo_path"
+        return logo_frame, logo_label, self.logo_value, KEY_LOGO_PATH
 
     def _update_logo(self) -> None:
         """
@@ -387,7 +387,7 @@ class ImageTitlerOptionPane(ttk.Frame):
             state="readonly"
         )
         font_menu.bind("<<ComboboxSelected>>", self._update_font)
-        return font_frame, font_label, font_menu, "font"
+        return font_frame, font_label, font_menu, KEY_FONT
 
     def _update_font(self, *_) -> None:
         """
@@ -397,9 +397,9 @@ class ImageTitlerOptionPane(ttk.Frame):
         :return: None
         """
         if self.font_state.get():
-            self.options["font"] = FONTS.get(self.font_value.get())
+            self.options[KEY_FONT] = FONTS.get(self.font_value.get())
         else:
-            self.options["font"] = None
+            self.options[KEY_FONT] = None
         self.parent.update_view()
 
     @staticmethod
