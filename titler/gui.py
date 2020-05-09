@@ -6,7 +6,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from pathlib import Path
 from tkinter import filedialog
-from typing import Optional
+from typing import Optional, List
 
 import pkg_resources
 from PIL import ImageTk, Image
@@ -152,10 +152,10 @@ class ImageTitlerMenuBar(tk.Menu):
 
     def __init__(self, parent: ImageTitlerMain, options: dict):
         super().__init__(parent)
-        self.parent = parent
-        self.options = options
-        self.current_edit = None
-        self.file_menu = None
+        self.parent: ImageTitlerMain = parent
+        self.options: dict = options
+        self.current_edit: Optional[List] = None
+        self.file_menu: Optional[tk.Menu] = None
         self._init_menu()
 
     def _init_menu(self) -> None:
@@ -197,7 +197,7 @@ class ImageTitlerMenuBar(tk.Menu):
 
         :return: None
         """
-        self.options["output_path"] = filedialog.askdirectory()
+        self.options[KEY_OUTPUT_PATH] = filedialog.askdirectory()
         self.parent.save_as()
 
     def _save_as_enabled(self) -> None:
@@ -241,11 +241,11 @@ class ImageTitlerOptionPane(ttk.Frame):
 
         :return: None
         """
-        title = self.options.get("title")
+        title = self.options.get(KEY_TITLE)
         ImageTitlerOptionPane._populate_option(title, self.title_value, self.title_state)
-        tier = self.options.get("tier")
+        tier = self.options.get(KEY_TIER)
         ImageTitlerOptionPane._populate_option(tier, self.tier_value, self.tier_state, list(TIER_MAP.keys())[0])
-        font = self.options.get("font")
+        font = self.options.get(KEY_FONT)
         self.font_value.set(sorted(list(FONTS.keys()))[0])
         if font != DEFAULT_FONT:
             font = next(k for k, v in FONTS.items() if Path(v).name == font)
@@ -291,9 +291,9 @@ class ImageTitlerOptionPane(ttk.Frame):
         :return: None
         """
         if self.title_state.get():
-            self.options["title"] = self.title_value.get()
+            self.options[KEY_TITLE] = self.title_value.get()
         else:
-            self.options["title"] = None
+            self.options[KEY_TITLE] = None
         self.parent.update_view()
 
     def _init_tier_frame(self) -> tuple:
