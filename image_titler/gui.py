@@ -5,6 +5,7 @@ The GUI interface for the image-titler script.
 import os
 import tkinter as tk
 import tkinter.ttk as ttk
+from pathlib import Path
 from tkinter import filedialog
 from typing import Optional
 
@@ -12,11 +13,14 @@ import pkg_resources
 from PIL import ImageTk, Image
 from matplotlib import font_manager
 
-from image_titler.utilities import process_image, save_copy, TIER_MAP, FILE_TYPES, parse_input
+from image_titler.utilities import process_image, save_copy, TIER_MAP, FILE_TYPES, parse_input, DEFAULT_FONT
 
 TRC_ICON = os.path.join(os.path.dirname(__file__), '../icons/the-renegade-coder-sample-icon.png')
 
-FONTS = {f.name: f.fname for f in font_manager.fontManager.ttflist}
+FONTS = {
+    f"{f.name} ({f.style}, {f.variant}, {f.weight}, {f.stretch})": f.fname
+    for f in font_manager.fontManager.ttflist
+}
 
 FILE_TAB_LABEL = "File"
 NEW_IMAGE_LABEL = "New Image"
@@ -227,8 +231,8 @@ class ImageTitlerOptionPane(ttk.Frame):
         self.font_state: tk.IntVar = tk.IntVar()
         self.font_value: tk.StringVar = tk.StringVar()
         self.rows = list()
-        self._init_option_pane()
         self._init_vars()
+        self._init_option_pane()
 
     def _init_vars(self) -> None:
         """
@@ -238,6 +242,12 @@ class ImageTitlerOptionPane(ttk.Frame):
         """
         title = self.options.get("title")
         ImageTitlerOptionPane._populate_option(title, self.title_value, self.title_state)
+        tier = self.options.get("tier")
+        ImageTitlerOptionPane._populate_option(tier, self.tier_value, self.tier_state)
+        font = self.options.get("font")
+        if font != DEFAULT_FONT:
+            font_name = next(k for k, v in FONTS.items() if Path(v).name == font)
+            ImageTitlerOptionPane._populate_option(font_name, self.font_value, self.font_state)
 
     def _init_option_pane(self) -> None:
         """
@@ -299,7 +309,6 @@ class ImageTitlerOptionPane(ttk.Frame):
             width=COLUMN_WIDTH
         )
         tier_label.variable = self.tier_state
-        self.tier_value.set(list(TIER_MAP.keys())[0])
         tier_option_menu = ttk.Combobox(
             tier_frame,
             textvariable=self.tier_value,
@@ -369,7 +378,6 @@ class ImageTitlerOptionPane(ttk.Frame):
         )
         font_label.variable = self.font_state
         font_list = sorted(FONTS.keys())
-        self.font_value.set(font_list[0])
         font_menu = ttk.Combobox(
             font_frame,
             textvariable=self.font_value,
@@ -407,7 +415,7 @@ class ImageTitlerOptionPane(ttk.Frame):
         value.pack(side=tk.LEFT, expand=tk.YES, fill=tk.X)
 
     @staticmethod
-    def _populate_option(option, value, state: tk.IntVar):
+    def _populate_option(option: str, value: tk.StringVar, state: tk.IntVar):
         if option:
             value.set(option)
             state.set(1)
