@@ -122,19 +122,27 @@ class TestIntegration(TestUtilities):
         TestIntegration._generate_images(sample_command)
 
     def test_default(self):
-        TestIntegration._generate_test_image(["image-titler"])
-
-    def test_custom_path(self):
-        TestIntegration._generate_test_image(["image-titler", "--path", DEFAULT_IMAGE])
+        default = ["image-titler"]
+        TestIntegration._generate_test_image(default)
 
     def test_custom_title(self):
-        TestIntegration._generate_test_image(["image-titler", "--title", "Test Custom Title"])
+        custom_title = ["image-titler", "--title", "Test Custom Title"]
+        TestIntegration._generate_test_image(custom_title)
+
+    def test_custom_path(self):
+        custom_path = ["image-titler", "--path", DEFAULT_IMAGE, "--title", "Test Custom Path"]
+        TestIntegration._generate_test_image(custom_path)
+        TestIntegration._generate_sample_image(custom_path[:-2])
 
     def test_free_tier(self):
-        TestIntegration._generate_test_image(["image-titler", "--title", "Test Free Tier", "--tier", "free"])
+        free_tier = ["image-titler", "--path", FREE_IMAGE, "--tier", "free", "--title", "Test Free Tier"]
+        TestIntegration._generate_test_image(free_tier)
+        TestIntegration._generate_sample_image(free_tier[:-2])
 
     def test_premium_tier(self):
-        TestIntegration._generate_test_image(["image-titler", "--title", "Test Premium Tier", "--tier", "premium"])
+        premium_tier = ["image-titler", "--path", PREMIUM_IMAGE, "--tier", "premium", "--title", "Test Premium Tier"]
+        TestIntegration._generate_test_image(premium_tier)
+        TestIntegration._generate_sample_image(premium_tier[:-2])
 
 
 class TestParseInput(TestUtilities):
