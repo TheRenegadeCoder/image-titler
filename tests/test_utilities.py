@@ -2,6 +2,7 @@ import shutil
 import sys
 from pathlib import Path
 from unittest import TestCase
+from unittest.mock import patch
 
 import pkg_resources
 from PIL import Image
@@ -71,105 +72,100 @@ class TestIntegration(TestUtilities):
         sys.argv = list()
 
     @staticmethod
-    def generate_images(command: str):
-        sys.argv.extend(command.split())
-        args = vars(parse_input())
-        images = process_images(**args)
-        save_copies(images, **args)
+    def generate_images(command: list):
+        with patch.object(sys, "argv", command):
+            args = vars(parse_input())
+            images = process_images(**args)
+            save_copies(images, **args)
 
     def test_default(self):
-        TestIntegration.generate_images(f"image-titler -o {TEST_SOLO_DUMP}")
+        TestIntegration.generate_images(["image-titler"])
+
+    def test_custom_title(self):
+        TestIntegration.generate_images(["image-titler", "-t", "\"Test Custom Title\""])
 
 
 class TestParseInput(TestUtilities):
 
-    def setUp(self) -> None:
-        sys.argv = sys.argv[:1]  # clears args for each tests
-
     def test_default(self):
-        args = parse_input()
-        self.assertEqual(args.batch, False)
-        self.assertEqual(args.path, None)
-        self.assertEqual(args.tier, None)
-        self.assertEqual(args.output_path, None)
-        self.assertEqual(args.logo_path, None)
-        self.assertEqual(args.title, None)
+        with patch.object(sys, "argv", ["image-titler"]):
+            args = parse_input()
+            self.assertEqual(args.batch, False)
+            self.assertEqual(args.path, None)
+            self.assertEqual(args.tier, None)
+            self.assertEqual(args.output_path, None)
+            self.assertEqual(args.logo_path, None)
+            self.assertEqual(args.title, None)
 
     def test_title(self):
-        sys.argv.append("-t")
-        sys.argv.append("Hello World")
-        args = parse_input()
-        self.assertEqual(args.batch, False)
-        self.assertEqual(args.path, None)
-        self.assertEqual(args.tier, None)
-        self.assertEqual(args.output_path, None)
-        self.assertEqual(args.logo_path, None)
-        self.assertEqual(args.title, "Hello World")
+        with patch.object(sys, "argv", ["image-titler", "-t", "Hello World"]):
+            args = parse_input()
+            self.assertEqual(args.batch, False)
+            self.assertEqual(args.path, None)
+            self.assertEqual(args.tier, None)
+            self.assertEqual(args.output_path, None)
+            self.assertEqual(args.logo_path, None)
+            self.assertEqual(args.title, "Hello World")
 
     def test_path(self):
-        sys.argv.append("-p")
-        sys.argv.append("path/to/stuff")
-        args = parse_input()
-        self.assertEqual(args.batch, False)
-        self.assertEqual(args.path, "path/to/stuff")
-        self.assertEqual(args.tier, None)
-        self.assertEqual(args.output_path, None)
-        self.assertEqual(args.logo_path, None)
-        self.assertEqual(args.title, None)
+        with patch.object(sys, "argv", ["image-titler", "-p", "path/to/stuff"]):
+            args = parse_input()
+            self.assertEqual(args.batch, False)
+            self.assertEqual(args.path, "path/to/stuff")
+            self.assertEqual(args.tier, None)
+            self.assertEqual(args.output_path, None)
+            self.assertEqual(args.logo_path, None)
+            self.assertEqual(args.title, None)
 
     def test_output_path(self):
-        sys.argv.append("-o")
-        sys.argv.append("path/to/stuff")
-        args = parse_input()
-        self.assertEqual(args.batch, False)
-        self.assertEqual(args.path, None)
-        self.assertEqual(args.tier, None)
-        self.assertEqual(args.output_path, "path/to/stuff")
-        self.assertEqual(args.logo_path, None)
-        self.assertEqual(args.title, None)
+        with patch.object(sys, "argv", ["image-titler", "-o", "path/to/stuff"]):
+            args = parse_input()
+            self.assertEqual(args.batch, False)
+            self.assertEqual(args.path, None)
+            self.assertEqual(args.tier, None)
+            self.assertEqual(args.output_path, "path/to/stuff")
+            self.assertEqual(args.logo_path, None)
+            self.assertEqual(args.title, None)
 
     def test_logo_path(self):
-        sys.argv.append("-l")
-        sys.argv.append("path/to/stuff")
-        args = parse_input()
-        self.assertEqual(args.batch, False)
-        self.assertEqual(args.path, None)
-        self.assertEqual(args.tier, None)
-        self.assertEqual(args.output_path, None)
-        self.assertEqual(args.logo_path, "path/to/stuff")
-        self.assertEqual(args.title, None)
+        with patch.object(sys, "argv", ["image-titler", "-l", "path/to/stuff"]):
+            args = parse_input()
+            self.assertEqual(args.batch, False)
+            self.assertEqual(args.path, None)
+            self.assertEqual(args.tier, None)
+            self.assertEqual(args.output_path, None)
+            self.assertEqual(args.logo_path, "path/to/stuff")
+            self.assertEqual(args.title, None)
 
     def test_batch(self):
-        sys.argv.append("-b")
-        args = parse_input()
-        self.assertEqual(args.batch, True)
-        self.assertEqual(args.path, None)
-        self.assertEqual(args.tier, None)
-        self.assertEqual(args.output_path, None)
-        self.assertEqual(args.logo_path, None)
-        self.assertEqual(args.title, None)
+        with patch.object(sys, "argv", ["image-titler", "-b"]):
+            args = parse_input()
+            self.assertEqual(args.batch, True)
+            self.assertEqual(args.path, None)
+            self.assertEqual(args.tier, None)
+            self.assertEqual(args.output_path, None)
+            self.assertEqual(args.logo_path, None)
+            self.assertEqual(args.title, None)
 
     def test_tier_premium(self):
-        sys.argv.append("-r")
-        sys.argv.append("premium")
-        args = parse_input()
-        self.assertEqual(args.batch, False)
-        self.assertEqual(args.path, None)
-        self.assertEqual(args.tier, "premium")
-        self.assertEqual(args.output_path, None)
-        self.assertEqual(args.logo_path, None)
-        self.assertEqual(args.title, None)
+        with patch.object(sys, "argv", ["image-titler", "-r", "premium"]):
+            args = parse_input()
+            self.assertEqual(args.batch, False)
+            self.assertEqual(args.path, None)
+            self.assertEqual(args.tier, "premium")
+            self.assertEqual(args.output_path, None)
+            self.assertEqual(args.logo_path, None)
+            self.assertEqual(args.title, None)
 
     def test_tier_free(self):
-        sys.argv.append("-r")
-        sys.argv.append("free")
-        args = parse_input()
-        self.assertEqual(args.batch, False)
-        self.assertEqual(args.path, None)
-        self.assertEqual(args.tier, "free")
-        self.assertEqual(args.output_path, None)
-        self.assertEqual(args.logo_path, None)
-        self.assertEqual(args.title, None)
+        with patch.object(sys, "argv", ["image-titler", "-r", "free"]):
+            args = parse_input()
+            self.assertEqual(args.batch, False)
+            self.assertEqual(args.path, None)
+            self.assertEqual(args.tier, "free")
+            self.assertEqual(args.output_path, None)
+            self.assertEqual(args.logo_path, None)
+            self.assertEqual(args.title, None)
 
 
 class TestProcessImages(TestUtilities):
