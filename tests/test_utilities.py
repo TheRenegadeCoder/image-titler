@@ -18,7 +18,7 @@ TRC_RED = (201, 2, 41, 255)
 VF_ICON_PATH = "assets/icons/virtual-flat-sample-icon.png"
 VF_BLUE = (0, 164, 246, 255)
 
-ASSETS = "assets/images"
+IMAGE_FOLDER = "assets/images"
 DEFAULT_IMAGE = "assets/images/23-tech-topics-to-tackle.jpg"
 LOGO_RED_IMAGE = "assets/images/3-ways-to-check-if-a-list-is-empty-in-python.jpg"
 LOGO_BLUE_IMAGE = "assets/images/hello-world-in-matlab.jpg"
@@ -212,6 +212,16 @@ class TestSaveCopies(TestUtilities):
         self.paths.extend(save_copies(TEST_IMAGES, title="Test Many With Title Option"))
         self.verify_existence_and_delete()
 
+    def test_special_characters_in_title(self):
+        """
+        Tests the scenario when a title is provided with a special character in it.
+        It should save that file with all the special characters removed.
+
+        :return: None
+        """
+        self.paths.extend(save_copies(TEST_IMAGES, title="Test Special Chars?"))
+        self.verify_existence_and_delete()
+
 
 class TestProcessImages(TestUtilities):
 
@@ -224,6 +234,25 @@ class TestProcessImages(TestUtilities):
 
     def test_one_image(self):
         self.images.extend(process_images(path=DEFAULT_IMAGE))
+        self.assertEqual(1, len(self.images))
+
+    def test_many_images(self):
+        self.images.extend(process_images(path=IMAGE_FOLDER, batch=True))
+        self.assertEqual(len(TEST_IMAGES), len(self.images))
+
+    def test_one_line_title(self):
+        self.images.extend(process_images(title="TestSingleLineFile"))
+        self.assertEqual(1, len(self.images))
+
+    def test_premium_tier(self):
+        self.images.extend(process_images(title="Test Premium Tier", tier="premium"))
+
+    def test_custom_font(self):
+        self.images.extend(process_images(title="Test Custom Font", font="assets/fonts/arial.ttf"))
+        self.assertEqual(1, len(self.images))
+
+    def test_custom_font_strange_height(self):
+        self.images.extend(process_images(title="Test Custom Font Strange Height", font="assets/fonts/gadugi.ttf"))
         self.assertEqual(1, len(self.images))
 
 
@@ -275,26 +304,6 @@ class TestIntegration(TestUtilities):
     def test_free_tier(self):
         self.generate_image(path=FREE_IMAGE, title="Test Free Tier", tier="free")
 
-    def test_premium_tier(self):
-        self.generate_image(path=PREMIUM_IMAGE, title="Test Premium Tier", tier="premium")
-
-    def test_custom_font(self):
-        self.generate_image(path=CUSTOM_FONT_IMAGE, title="Test Custom Font", font="assets/fonts/arial.ttf")
-
-    def test_custom_font_strange_height(self):
-        self.generate_image(
-            path=CUSTOM_FONT_IMAGE,
-            title="Test Custom Font Strange Height",
-            font="assets/fonts/gadugi.ttf"
-        )
-
-    def test_special_chars_in_title(self):
-        test_image = _process_image(path=SPECIAL_IMAGE, title="Test Special Chars?")
-        save_copies([test_image], path=SPECIAL_IMAGE, output_path=TEST_SOLO_DUMP, title="Test Special Chars?")
-
-    def test_one_line_title(self):
-        self.generate_image(path=ONE_LINE_TITLE_IMAGE, title="TestSingleLineFile")
-
 
 class TestProcessImage(TestUtilities):
 
@@ -334,13 +343,13 @@ class TestProcessBatch(TestUtilities):
         Path(TEST_BATCH_DUMP + "/premium-tier").mkdir(parents=True, exist_ok=True)
 
     def test_batch_default(self):
-        _process_batch(path=ASSETS, output_path=TEST_BATCH_DUMP + "/default")
+        _process_batch(path=IMAGE_FOLDER, output_path=TEST_BATCH_DUMP + "/default")
 
     def test_batch_free_tier(self):
-        _process_batch(path=ASSETS, tier="free", output_path=TEST_BATCH_DUMP + "/free-tier")
+        _process_batch(path=IMAGE_FOLDER, tier="free", output_path=TEST_BATCH_DUMP + "/free-tier")
 
     def test_batch_premium_tier(self):
-        _process_batch(path=ASSETS, tier="premium", output_path=TEST_BATCH_DUMP + "/premium-tier")
+        _process_batch(path=IMAGE_FOLDER, tier="premium", output_path=TEST_BATCH_DUMP + "/premium-tier")
 
 
 class TestConvertFileNameToTitle(TestUtilities):
