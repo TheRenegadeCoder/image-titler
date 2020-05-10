@@ -175,6 +175,17 @@ class TestSaveCopies(TestUtilities):
         self.paths.extend(save_copies(self.images))
         self.verify_existence_and_delete()
 
+    def test_many_title(self):
+        """
+        Tests the scenario when multiple images are passed to this function with
+        the title option provided. It should save each image to a unique path
+        regardless of the fact they they'll all have the same core filename.
+
+        :return: None
+        """
+        self.paths.extend(save_copies(self.images, title="Test Many With Title Option"))
+        self.verify_existence_and_delete()
+
 
 class TestProcessImage(TestUtilities):
 

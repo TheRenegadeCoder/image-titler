@@ -14,16 +14,22 @@ def save_copies(edited_images: List[Image.Image], **kwargs) -> List[str]:
     """
     Saves a list of Pillow images as image files. The typical list of options
     apply and determine what the output file name will look like. For example,
-    the title keyword will apply that title to all images in the list. If the title
-    and batch keywords are not present, then the path keyword is used for images.
-    Otherwise, a generic file name is given.
+    the title keyword will apply that title to all images in the list. Meanwhile,
+    if the title keyword is not present but the filename attribute of edited_image
+    is present, then that attribute will be used. Otherwise, a generic file name
+    is given (image-titler).
+
+    Currently, image files are given the following name format:
+
+    {title}-featured-image-{software version}.{extension}
 
     :param edited_images: a list of edited images
+    :param kwargs: a set of keyword arguments (see parse_input for options)
     :return: a list of storage paths
     """
     storage_paths = list()
-    for edited_image in edited_images:
-        storage_path = _generate_image_output_path(edited_image, **kwargs)
+    for index, edited_image in enumerate(edited_images):
+        storage_path = _generate_image_output_path(edited_image, index, **kwargs)
         exif = _generate_version_exif(edited_image)
         edited_image.save(storage_path, subsampling=0, quality=100, exif=exif)
         storage_paths.append(storage_path)
@@ -51,13 +57,15 @@ def _generate_version_exif(image: Image.Image) -> bytes:
     return exif_data
 
 
-def _generate_image_output_path(edited_image: Image.Image, **kwargs) -> str:
+def _generate_image_output_path(edited_image: Image.Image, index: int, **kwargs) -> str:
     """
-    A helper function which generates image output paths from a series of strings.
+    A helper function which generates an image output path from an image and its options.
     If a title exists, this method will use the title as the file name.
     If the image has the filename attribute, that will be used instead.
     Otherwise, a generic file name is created.
 
+    :param edited_image: an image to be stored
+    :param index: the index of this image in a set
     :return: the path of the file to be created
     """
     tag = "featured-image"
@@ -77,7 +85,7 @@ def _generate_image_output_path(edited_image: Image.Image, **kwargs) -> str:
     if hasattr(edited_image, 'filename'):
         extension = Path(edited_image.filename).suffix
 
-    storage_path = f'{file_name}-{tag}-v{version}{extension}'
+    storage_path = f'{file_name}-{tag}-v{version}-i{index}{extension}'
     if output_path := kwargs.get("output_path"):
         storage_path = f'{output_path}{os.sep}{storage_path}'
     return storage_path
