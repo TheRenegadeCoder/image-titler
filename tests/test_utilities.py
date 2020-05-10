@@ -12,6 +12,8 @@ from titler.draw import process_images
 from titler.parse import parse_input
 from titler.store import save_copies
 
+CUSTOM_FONT = "assets/fonts/arial.ttf"
+
 TRC_ICON_PATH = "assets/icons/the-renegade-coder-sample-icon.png"
 TRC_RED = (201, 2, 41, 255)
 
@@ -182,25 +184,46 @@ class TestIntegration(TestUtilities):
         """
         Tests the following command: image-titler -p LOGO_RED_IMAGE -l TRC_ICON_PATH -t "Test Red Logo"
 
-        The resulting image should have a
+        The resulting image should have a red logo in the lower left corner.
 
-        :return:
+        :return: None
         """
         red_logo = ["image-titler", "--path", LOGO_RED_IMAGE, "--logo_path", TRC_ICON_PATH, "--title", "Test Red Logo"]
         TestIntegration._generate_test_image(red_logo)
         TestIntegration._generate_sample_image(red_logo[:-2])
 
     def test_blue_logo(self) -> None:
+        """
+        Tests the following command: image-titler -p LOGO_BLUE_IMAGE -l VF_ICON_PATH -t "Test Blue Logo"
+
+        The resulting image should have a blue logo in the lower left corner (and blue title bars)
+
+        :return: None
+        """
         blue_logo = ["image-titler", "--path", LOGO_BLUE_IMAGE, "--logo_path", VF_ICON_PATH, "--title", "Test Blue Logo"]
         TestIntegration._generate_test_image(blue_logo)
         TestIntegration._generate_sample_image(blue_logo[:-2])
 
     def test_custom_font(self) -> None:
-        custom_font = ["image-titler", "--path", CUSTOM_FONT_IMAGE, "--font", "assets/fonts/arial.ttf", "--title", "Test Custom Font"]
+        """
+        Tests the following command: image-titler -p CUSTOM_FONT_IMAGE -f CUSTOM_FONT -t "Test Custom Font"
+
+        The resulting image should have a title in arial font.
+
+        :return: None
+        """
+        custom_font = ["image-titler", "--path", CUSTOM_FONT_IMAGE, "--font", CUSTOM_FONT, "--title", "Test Custom Font"]
         TestIntegration._generate_test_image(custom_font)
         TestIntegration._generate_sample_image(custom_font[:-2])
 
     def test_one_line_title(self) -> None:
+        """
+        Tests the following command: image-titler -p ONE_LINE_TITLE_IMAGE -t "OneLineTitle"
+
+        The resulting image should have a single line title.
+
+        :return: None
+        """
         one_line_title = ["image-titler", "--path", ONE_LINE_TITLE_IMAGE, "--title", "OneLineTitle"]
         TestIntegration._generate_test_image(one_line_title)
         TestIntegration._generate_sample_image(one_line_title[:-2])
