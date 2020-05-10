@@ -218,8 +218,12 @@ class TestProcessImages(TestUtilities):
     def setUp(self) -> None:
         self.images = list()
 
-    def test_zero_image(self):
+    def test_zero_images(self):
         self.images.extend(process_images())
+        self.assertEqual(1, len(self.images))
+
+    def test_one_image(self):
+        self.images.extend(process_images(path=DEFAULT_IMAGE))
         self.assertEqual(1, len(self.images))
 
 
