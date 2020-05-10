@@ -144,6 +144,11 @@ class TestIntegration(TestUtilities):
         TestIntegration._generate_test_image(premium_tier)
         TestIntegration._generate_sample_image(premium_tier[:-2])
 
+    def test_red_logo(self):
+        red_logo = ["image-titler", "--path", LOGO_RED_IMAGE, "--logo_path", TRC_ICON_PATH, "--title", "Test Red Logo"]
+        TestIntegration._generate_test_image(red_logo)
+        TestIntegration._generate_sample_image(red_logo[:-2])
+
 
 class TestParseInput(TestUtilities):
     """
