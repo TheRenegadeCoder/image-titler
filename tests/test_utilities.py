@@ -156,11 +156,25 @@ class TestIntegration(TestUtilities):
         TestIntegration._generate_sample_image(custom_path[:-2])
 
     def test_free_tier(self) -> None:
+        """
+        Tests the following command: image-titler -p FREE_IMAGE -r free -t "Test Free Tier"
+
+        The resulting image should have a silver border around the title bar.
+
+        :return: None
+        """
         free_tier = ["image-titler", "--path", FREE_IMAGE, "--tier", "free", "--title", "Test Free Tier"]
         TestIntegration._generate_test_image(free_tier)
         TestIntegration._generate_sample_image(free_tier[:-2])
 
     def test_premium_tier(self) -> None:
+        """
+        Tests the following command: image-titler -p PREMIUM_IMAGE -r premium -t "Test Premium Tier"
+
+        The resulting image should have a gold border around the title bar.
+
+        :return: None
+        """
         premium_tier = ["image-titler", "--path", PREMIUM_IMAGE, "--tier", "premium", "--title", "Test Premium Tier"]
         TestIntegration._generate_test_image(premium_tier)
         TestIntegration._generate_sample_image(premium_tier[:-2])
