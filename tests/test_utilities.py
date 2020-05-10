@@ -6,6 +6,7 @@ from unittest.mock import patch
 
 import pkg_resources
 from PIL import Image
+from titler import cli
 
 from titler.draw import process_images
 from titler.parse import parse_input
@@ -91,9 +92,7 @@ class TestIntegration(TestUtilities):
         :return: None
         """
         with patch.object(sys, "argv", command):
-            args = vars(parse_input())
-            images = process_images(**args)
-            save_copies(images, **args)
+            cli.main()
 
     @staticmethod
     def _generate_test_image(command: list) -> None:
@@ -180,6 +179,13 @@ class TestIntegration(TestUtilities):
         TestIntegration._generate_sample_image(premium_tier[:-2])
 
     def test_red_logo(self) -> None:
+        """
+        Tests the following command: image-titler -p LOGO_RED_IMAGE -l TRC_ICON_PATH -t "Test Red Logo"
+
+        The resulting image should have a
+
+        :return:
+        """
         red_logo = ["image-titler", "--path", LOGO_RED_IMAGE, "--logo_path", TRC_ICON_PATH, "--title", "Test Red Logo"]
         TestIntegration._generate_test_image(red_logo)
         TestIntegration._generate_sample_image(red_logo[:-2])
