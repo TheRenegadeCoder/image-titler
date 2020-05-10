@@ -142,6 +142,7 @@ class TestSaveCopies(TestUtilities):
             self.assertTrue(p.exists(), f"{p} does not exist")
             p.unlink()
 
+
     def test_zero_images(self):
         """
         Tests the scenario when no images are passed to this function.

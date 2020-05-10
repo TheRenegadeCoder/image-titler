@@ -17,11 +17,11 @@ setuptools.setup(
     python_requires=">=3.8",
     entry_points={
         "console_scripts": [
-            'image-titler = image_titler.command:main',
-            'image_titler = image_titler.command:main',  # For backwards compatibility
+            'image-titler = titler.cli:main',
+            'image_titler = titler.cli:main',  # For backwards compatibility
         ],
         "gui_scripts": [
-            'image-titler-gui = image_titler.gui:main',
+            'image-titler-gui = titler.gui:main',
         ]
     },
     classifiers=[
