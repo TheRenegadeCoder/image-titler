@@ -2,14 +2,9 @@
 The commandline interface for the image-titler script.
 """
 
-import tkinter
-from tkinter.filedialog import askopenfilename, askdirectory
-from typing import Optional
-
 from titler.draw import process_images
 from titler.parse import parse_input
 from titler.store import save_copies
-from titler.constants import *
 
 
 def main() -> None:
