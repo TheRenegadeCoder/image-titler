@@ -8,7 +8,7 @@ from PIL import Image, ImageChops
 
 from titler.constants import KEY_TITLE, KEY_OUTPUT_PATH
 from titler.draw import _convert_file_name_to_title, _process_batch, _process_image, \
-    _get_best_top_color, _split_string_by_nearest_middle_space
+    _get_best_top_color, _split_string_by_nearest_middle_space, process_images
 from titler.parse import parse_input
 from titler.store import save_copies
 
@@ -27,6 +27,20 @@ PREMIUM_IMAGE = "assets/images/the-guide-to-causing-mass-panic.jpg"
 SPECIAL_IMAGE = "assets/images/happy-new-year.jpg"
 CUSTOM_FONT_IMAGE = "assets/images/reflecting-on-my-third-semester-of-teaching.jpg"
 ONE_LINE_TITLE_IMAGE = "assets/images/minimalism.jpg"
+
+TEST_IMAGES = [
+    Image.open(path) for path in
+    [
+        DEFAULT_IMAGE,
+        LOGO_RED_IMAGE,
+        LOGO_BLUE_IMAGE,
+        FREE_IMAGE,
+        PREMIUM_IMAGE,
+        SPECIAL_IMAGE,
+        CUSTOM_FONT_IMAGE,
+        ONE_LINE_TITLE_IMAGE
+    ]
+]
 
 TEST_DUMP = "tests/dump"
 TEST_SOLO_DUMP = TEST_DUMP + "/solo"
@@ -135,19 +149,6 @@ class TestSaveCopies(TestUtilities):
     exposed function: save_copies().
     """
 
-    @classmethod
-    def setUpClass(cls) -> None:
-        """
-        Initializes a set of images at the start of testing.
-
-        :return: None
-        """
-        cls.images = [
-            Image.open(DEFAULT_IMAGE),
-            Image.open(LOGO_RED_IMAGE),
-            Image.open(LOGO_BLUE_IMAGE)
-        ]
-
     def setUp(self) -> None:
         """
         Resets the list of paths.
@@ -186,7 +187,7 @@ class TestSaveCopies(TestUtilities):
 
         :return: None
         """
-        self.paths.extend(save_copies(self.images[:1]))
+        self.paths.extend(save_copies(TEST_IMAGES[:1]))
         self.verify_existence_and_delete()
 
     def test_many_images(self):
@@ -197,7 +198,7 @@ class TestSaveCopies(TestUtilities):
 
         :return: None
         """
-        self.paths.extend(save_copies(self.images))
+        self.paths.extend(save_copies(TEST_IMAGES))
         self.verify_existence_and_delete()
 
     def test_many_title(self):
@@ -208,12 +209,18 @@ class TestSaveCopies(TestUtilities):
 
         :return: None
         """
-        self.paths.extend(save_copies(self.images, title="Test Many With Title Option"))
+        self.paths.extend(save_copies(TEST_IMAGES, title="Test Many With Title Option"))
         self.verify_existence_and_delete()
 
 
 class TestProcessImages(TestUtilities):
-    pass
+
+    def setUp(self) -> None:
+        self.images = list()
+
+    def test_zero_image(self):
+        self.images.extend(process_images())
+        self.assertEqual(1, len(self.images))
 
 
 # Everything below this line needs to be removed
