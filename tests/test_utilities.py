@@ -52,11 +52,24 @@ class TestUtilities(TestCase):
 
 
 class TestIntegration(TestUtilities):
+    """
+    An integration test class which the three core functions in series.
+    """
 
     @classmethod
     def setUpClass(cls) -> None:
+        """
+        Sets up storage paths for testing.
+
+        :return: None
+        """
         try:
             shutil.rmtree(TEST_SOLO_DUMP)
+        except FileNotFoundError:
+            pass
+
+        try:
+            shutil.rmtree(TEST_BATCH_DUMP)
         except FileNotFoundError:
             pass
 
@@ -66,44 +79,62 @@ class TestIntegration(TestUtilities):
             pass
 
         Path(TEST_SOLO_DUMP).mkdir(parents=True, exist_ok=True)
+        Path(TEST_BATCH_DUMP).mkdir(parents=True, exist_ok=True)
         Path(SAMPLE_DUMP).mkdir(parents=True, exist_ok=True)
 
-    def setUp(self) -> None:
-        sys.argv = list()
-
     @staticmethod
-    def _generate_images(command: list):
+    def _generate_images(command: list) -> None:
+        """
+        Generates a set of images from a command list.
+
+        :param command: a spliced up command as a list
+        :return: None
+        """
         with patch.object(sys, "argv", command):
             args = vars(parse_input())
             images = process_images(**args)
             save_copies(images, **args)
 
     @staticmethod
-    def _generate_test_images(command: list):
+    def _generate_test_image(command: list) -> None:
+        """
+        Generates a test image by appending the output path option
+        for the TEST_SOLO_DUMP path.
+
+        :param command: a splice up command as a list
+        :return: None
+        """
         test_command = command.copy()
         test_command.extend(["-o", TEST_SOLO_DUMP])
         TestIntegration._generate_images(test_command)
 
     @staticmethod
-    def _generate_sample_images(command: list):
+    def _generate_sample_image(command: list) -> None:
+        """
+        Generates a sample image by appending the output path option
+        for the SAMPLE_DUMP path.
+
+        :param command: a splice up command as a list
+        :return: None
+        """
         sample_command = command.copy()
         sample_command.extend(["-o", SAMPLE_DUMP])
         TestIntegration._generate_images(sample_command)
 
     def test_default(self):
-        TestIntegration._generate_test_images(["image-titler"])
+        TestIntegration._generate_test_image(["image-titler"])
 
     def test_custom_path(self):
-        TestIntegration._generate_test_images(["image-titler", "--path", DEFAULT_IMAGE])
+        TestIntegration._generate_test_image(["image-titler", "--path", DEFAULT_IMAGE])
 
     def test_custom_title(self):
-        TestIntegration._generate_test_images(["image-titler", "--title", "Test Custom Title"])
+        TestIntegration._generate_test_image(["image-titler", "--title", "Test Custom Title"])
 
     def test_free_tier(self):
-        TestIntegration._generate_test_images(["image-titler", "--title", "Test Free Tier", "--tier", "free"])
+        TestIntegration._generate_test_image(["image-titler", "--title", "Test Free Tier", "--tier", "free"])
 
     def test_premium_tier(self):
-        TestIntegration._generate_test_images(["image-titler", "--title", "Test Premium Tier", "--tier", "premium"])
+        TestIntegration._generate_test_image(["image-titler", "--title", "Test Premium Tier", "--tier", "premium"])
 
 
 class TestParseInput(TestUtilities):
