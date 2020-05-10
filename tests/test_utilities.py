@@ -211,15 +211,35 @@ class TestProcessImages(TestUtilities):
         self.assertEqual(1, len(self.images))
 
     def test_red_logo(self):
+        """
+        Tests the rendering of a logo.
+
+        :return: None
+        """
         self.images.extend(process_images(title="Test Red Logo", logo_path=TRC_ICON_PATH))
 
     def test_logo_blue(self):
+        """
+        Tests the rendering of the blue logo while also testing the color detection algorithm.
+
+        :return: None
+        """
         self.images.extend(process_images(title="Test Blue Logo", logo_path=VF_ICON_PATH))
 
-    def test_free_tier(self):
+    def test_free_tier(self) -> None:
+        """
+        Tests the rendering of the free tier on the title bar.
+
+        :return: None
+        """
         self.images.extend(process_images(title="Test Free Tier", tier="free"))
 
-    def test_premium_tier(self):
+    def test_premium_tier(self) -> None:
+        """
+        Tests the rendering of the premium tier on the title bar.
+
+        :return: None
+        """
         self.images.extend(process_images(title="Test Premium Tier", tier="premium"))
 
     def test_custom_font(self) -> None:
