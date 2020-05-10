@@ -346,7 +346,16 @@ class TestSaveCopies(TestUtilities):
         """
         self.paths = list()
 
-    def verify_existence_and_delete(self) -> None:
+    def tearDown(self) -> None:
+        """
+        Deletes all files in paths list.
+
+        :return: None
+        """
+        for path in self.paths:
+            Path(path).unlink()
+
+    def verify_existence(self) -> None:
         """
         Verifies that a file exists and deletes it.
 
@@ -355,7 +364,6 @@ class TestSaveCopies(TestUtilities):
         for path in self.paths:
             p = Path(path)
             self.assertTrue(p.exists(), f"{p} does not exist")
-            p.unlink()
 
     def test_zero_images(self) -> None:
         """
@@ -377,7 +385,7 @@ class TestSaveCopies(TestUtilities):
         :return: None
         """
         self.paths.extend(save_copies(TEST_IMAGES[:1]))
-        self.verify_existence_and_delete()
+        self.verify_existence()
 
     def test_many_images(self) -> None:
         """
@@ -388,7 +396,7 @@ class TestSaveCopies(TestUtilities):
         :return: None
         """
         self.paths.extend(save_copies(TEST_IMAGES))
-        self.verify_existence_and_delete()
+        self.verify_existence()
 
     def test_many_title(self) -> None:
         """
@@ -399,7 +407,7 @@ class TestSaveCopies(TestUtilities):
         :return: None
         """
         self.paths.extend(save_copies(TEST_IMAGES, title="Test Many With Title Option"))
-        self.verify_existence_and_delete()
+        self.verify_existence()
 
     def test_special_characters_in_title(self) -> None:
         """
@@ -409,4 +417,4 @@ class TestSaveCopies(TestUtilities):
         :return: None
         """
         self.paths.extend(save_copies(TEST_IMAGES, title="Test Special Chars?"))
-        self.verify_existence_and_delete()
+        self.verify_existence()
