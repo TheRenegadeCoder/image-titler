@@ -136,7 +136,7 @@ class TestIntegration(TestUtilities):
         """
         Tests the following command: image-titler -t "Test Custom Title"
 
-        The resulting image should have the custom title.
+        The resulting image should have the custom title on the default image.
 
         :return: None
         """
@@ -144,6 +144,13 @@ class TestIntegration(TestUtilities):
         TestIntegration._generate_test_image(custom_title)
 
     def test_custom_path(self) -> None:
+        """
+        Tests the following command: image-titler -p DEFAULT_IMAGE -t "Test Custom Path"
+
+        The resulting image should have a title built from the file name.
+
+        :return: None
+        """
         custom_path = ["image-titler", "--path", DEFAULT_IMAGE, "--title", "Test Custom Path"]
         TestIntegration._generate_test_image(custom_path)
         TestIntegration._generate_sample_image(custom_path[:-2])
