@@ -205,11 +205,21 @@ class TestProcessImages(TestUtilities):
     def test_premium_tier(self):
         self.images.extend(process_images(title="Test Premium Tier", tier="premium"))
 
-    def test_custom_font(self):
+    def test_custom_font(self) -> None:
+        """
+        Tests the rendering of a custom font on the title bar.
+
+        :return: None
+        """
         self.images.extend(process_images(title="Test Custom Font", font="assets/fonts/arial.ttf"))
         self.assertEqual(1, len(self.images))
 
-    def test_custom_font_strange_height(self):
+    def test_custom_font_strange_height(self) -> None:
+        """
+        Tests the vertical alignment of the text placement algorithm for customs fonts with a strange height.
+
+        :return: None
+        """
         self.images.extend(process_images(title="Test Custom Font Strange Height", font="assets/fonts/gadugi.ttf"))
         self.assertEqual(1, len(self.images))
 
@@ -239,7 +249,7 @@ class TestSaveCopies(TestUtilities):
             self.assertTrue(p.exists(), f"{p} does not exist")
             p.unlink()
 
-    def test_zero_images(self):
+    def test_zero_images(self) -> None:
         """
         Tests the scenario when no images are passed to this function.
         It should return an empty list (since there were no files
@@ -250,7 +260,7 @@ class TestSaveCopies(TestUtilities):
         self.paths.extend(save_copies(list()))
         self.assertEqual(list(), self.paths)
 
-    def test_one_image(self):
+    def test_one_image(self) -> None:
         """
         Tests the scenario when a single image is passed to this function.
         It should save that image and return a list which contains a single
@@ -261,7 +271,7 @@ class TestSaveCopies(TestUtilities):
         self.paths.extend(save_copies(TEST_IMAGES[:1]))
         self.verify_existence_and_delete()
 
-    def test_many_images(self):
+    def test_many_images(self) -> None:
         """
         Tests the scenario when multiple images are passed to this function.
         It should save each image to a unique path and return those paths
@@ -272,7 +282,7 @@ class TestSaveCopies(TestUtilities):
         self.paths.extend(save_copies(TEST_IMAGES))
         self.verify_existence_and_delete()
 
-    def test_many_title(self):
+    def test_many_title(self) -> None:
         """
         Tests the scenario when multiple images are passed to this function with
         the title option provided. It should save each image to a unique path
@@ -283,7 +293,7 @@ class TestSaveCopies(TestUtilities):
         self.paths.extend(save_copies(TEST_IMAGES, title="Test Many With Title Option"))
         self.verify_existence_and_delete()
 
-    def test_special_characters_in_title(self):
+    def test_special_characters_in_title(self) -> None:
         """
         Tests the scenario when a title is provided with a special character in it.
         It should save that file with all the special characters removed.
