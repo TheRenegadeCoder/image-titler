@@ -4,11 +4,10 @@ from pathlib import Path
 from unittest import TestCase
 
 import pkg_resources
-from PIL import Image, ImageChops
+from PIL import Image
 
 from titler.constants import KEY_TITLE, KEY_OUTPUT_PATH
-from titler.draw import _convert_file_name_to_title, _process_batch, _process_image, \
-    _get_best_top_color, _split_string_by_nearest_middle_space, process_images
+from titler.draw import process_images
 from titler.parse import parse_input
 from titler.store import save_copies
 
@@ -50,6 +49,38 @@ SAMPLE_DUMP = "samples/v" + pkg_resources.require("image-titler")[0].version
 
 class TestUtilities(TestCase):
     pass
+
+
+class TestIntegration(TestUtilities):
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        try:
+            shutil.rmtree(TEST_SOLO_DUMP)
+        except FileNotFoundError:
+            pass
+
+        try:
+            shutil.rmtree(SAMPLE_DUMP)
+        except FileNotFoundError:
+            pass
+
+        Path(TEST_SOLO_DUMP).mkdir(parents=True, exist_ok=True)
+        Path(SAMPLE_DUMP).mkdir(parents=True, exist_ok=True)
+
+    @staticmethod
+    def generate_image(**kwargs):
+        kwargs[KEY_OUTPUT_PATH] = TEST_SOLO_DUMP
+        test_image = _process_image(**kwargs)
+        test_file = save_copies([test_image], **kwargs)
+
+        kwargs[KEY_OUTPUT_PATH] = SAMPLE_DUMP
+        kwargs[KEY_TITLE] = None
+        kwargs[KEY_TITLE] = _convert_file_name_to_title(**kwargs)
+        sample_image = _process_image(**kwargs)
+        save_copies([sample_image], **kwargs)
+
+        return test_file[0]
 
 
 class TestParseInput(TestUtilities):
@@ -143,6 +174,48 @@ class TestParseInput(TestUtilities):
         self.assertEqual(args.title, None)
 
 
+class TestProcessImages(TestUtilities):
+
+    def setUp(self) -> None:
+        self.images = list()
+
+    def test_zero_images(self):
+        self.images.extend(process_images())
+        self.assertEqual(1, len(self.images))
+
+    def test_one_image(self):
+        self.images.extend(process_images(path=DEFAULT_IMAGE))
+        self.assertEqual(1, len(self.images))
+
+    def test_many_images(self):
+        self.images.extend(process_images(path=IMAGE_FOLDER, batch=True))
+        self.assertEqual(len(TEST_IMAGES), len(self.images))
+
+    def test_one_line_title(self):
+        self.images.extend(process_images(title="TestSingleLineFile"))
+        self.assertEqual(1, len(self.images))
+
+    def test_red_logo(self):
+        self.images.extend(process_images(title="Test Red Logo", logo_path=TRC_ICON_PATH))
+
+    def test_logo_blue(self):
+        self.images.extend(process_images(title="Test Blue Logo", logo_path=VF_ICON_PATH))
+
+    def test_free_tier(self):
+        self.images.extend(process_images(title="Test Free Tier", tier="free"))
+
+    def test_premium_tier(self):
+        self.images.extend(process_images(title="Test Premium Tier", tier="premium"))
+
+    def test_custom_font(self):
+        self.images.extend(process_images(title="Test Custom Font", font="assets/fonts/arial.ttf"))
+        self.assertEqual(1, len(self.images))
+
+    def test_custom_font_strange_height(self):
+        self.images.extend(process_images(title="Test Custom Font Strange Height", font="assets/fonts/gadugi.ttf"))
+        self.assertEqual(1, len(self.images))
+
+
 class TestSaveCopies(TestUtilities):
     """
     A test class for the store.py file which consists of a single
@@ -221,184 +294,3 @@ class TestSaveCopies(TestUtilities):
         """
         self.paths.extend(save_copies(TEST_IMAGES, title="Test Special Chars?"))
         self.verify_existence_and_delete()
-
-
-class TestProcessImages(TestUtilities):
-
-    def setUp(self) -> None:
-        self.images = list()
-
-    def test_zero_images(self):
-        self.images.extend(process_images())
-        self.assertEqual(1, len(self.images))
-
-    def test_one_image(self):
-        self.images.extend(process_images(path=DEFAULT_IMAGE))
-        self.assertEqual(1, len(self.images))
-
-    def test_many_images(self):
-        self.images.extend(process_images(path=IMAGE_FOLDER, batch=True))
-        self.assertEqual(len(TEST_IMAGES), len(self.images))
-
-    def test_one_line_title(self):
-        self.images.extend(process_images(title="TestSingleLineFile"))
-        self.assertEqual(1, len(self.images))
-
-    def test_premium_tier(self):
-        self.images.extend(process_images(title="Test Premium Tier", tier="premium"))
-
-    def test_custom_font(self):
-        self.images.extend(process_images(title="Test Custom Font", font="assets/fonts/arial.ttf"))
-        self.assertEqual(1, len(self.images))
-
-    def test_custom_font_strange_height(self):
-        self.images.extend(process_images(title="Test Custom Font Strange Height", font="assets/fonts/gadugi.ttf"))
-        self.assertEqual(1, len(self.images))
-
-
-# Everything below this line needs to be removed
-
-
-class TestIntegration(TestUtilities):
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        try:
-            shutil.rmtree(TEST_SOLO_DUMP)
-        except FileNotFoundError:
-            pass
-
-        try:
-            shutil.rmtree(SAMPLE_DUMP)
-        except FileNotFoundError:
-            pass
-
-        Path(TEST_SOLO_DUMP).mkdir(parents=True, exist_ok=True)
-        Path(SAMPLE_DUMP).mkdir(parents=True, exist_ok=True)
-
-    @staticmethod
-    def generate_image(**kwargs):
-        kwargs[KEY_OUTPUT_PATH] = TEST_SOLO_DUMP
-        test_image = _process_image(**kwargs)
-        test_file = save_copies([test_image], **kwargs)
-
-        kwargs[KEY_OUTPUT_PATH] = SAMPLE_DUMP
-        kwargs[KEY_TITLE] = None
-        kwargs[KEY_TITLE] = _convert_file_name_to_title(**kwargs)
-        sample_image = _process_image(**kwargs)
-        save_copies([sample_image], **kwargs)
-
-        return test_file[0]
-
-    def test_custom_title(self):
-        test_file = self.generate_image(path=DEFAULT_IMAGE, title="Test Default")
-        self.assertTrue(Path(test_file).exists())
-
-    def test_logo_red(self):
-        test_file = self.generate_image(path=LOGO_RED_IMAGE, title="Test Red Logo", logo_path=TRC_ICON_PATH)
-        self.assertTrue(Path(test_file).exists())
-
-    def test_logo_blue(self):
-        self.generate_image(path=LOGO_BLUE_IMAGE, title="Test Blue Logo", logo_path=VF_ICON_PATH)
-
-    def test_free_tier(self):
-        self.generate_image(path=FREE_IMAGE, title="Test Free Tier", tier="free")
-
-
-class TestProcessImage(TestUtilities):
-
-    def setUp(self) -> None:
-        self.size = (1920, 960)
-        self.input_image = Image.open(DEFAULT_IMAGE)
-        self.default_image = _process_image(path=DEFAULT_IMAGE, title="Test Default Image")
-        self.different_title_image = _process_image(path=DEFAULT_IMAGE, title="Test Different Logo Image")
-
-    def test_default(self):
-        self.assertEqual(self.size, self.default_image.size)
-        self.assertIsNone(ImageChops.difference(self.default_image, self.default_image).getbbox())
-        self.assertIsNotNone(ImageChops.difference(self.input_image, self.default_image).getbbox())
-
-    def test_compare_all(self):
-        images = [
-            self.default_image,
-            self.different_title_image
-        ]
-        for i1 in images:
-            for i2 in images:
-                if i1 is not i2:
-                    self.assertIsNotNone(ImageChops.difference(i1, i2).getbbox())
-
-
-class TestProcessBatch(TestUtilities):
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        try:
-            shutil.rmtree(TEST_BATCH_DUMP)
-        except FileNotFoundError:
-            pass
-
-        Path(TEST_BATCH_DUMP + "/default").mkdir(parents=True, exist_ok=True)
-        Path(TEST_BATCH_DUMP + "/free-tier").mkdir(parents=True, exist_ok=True)
-        Path(TEST_BATCH_DUMP + "/premium-tier").mkdir(parents=True, exist_ok=True)
-
-    def test_batch_default(self):
-        _process_batch(path=IMAGE_FOLDER, output_path=TEST_BATCH_DUMP + "/default")
-
-    def test_batch_free_tier(self):
-        _process_batch(path=IMAGE_FOLDER, tier="free", output_path=TEST_BATCH_DUMP + "/free-tier")
-
-    def test_batch_premium_tier(self):
-        _process_batch(path=IMAGE_FOLDER, tier="premium", output_path=TEST_BATCH_DUMP + "/premium-tier")
-
-
-class TestConvertFileNameToTitle(TestUtilities):
-
-    def test_default(self):
-        title = _convert_file_name_to_title()
-        self.assertEqual(None, title)
-
-    def test_custom_title(self):
-        title = _convert_file_name_to_title(title="How to Loop in Python")
-        self.assertEqual("How to Loop in Python", title)
-
-    def test_custom_path(self):
-        title = _convert_file_name_to_title(path="how-to-loop-in-python.png")
-        self.assertEqual("How to Loop in Python", title)
-
-    def test_custom_separator(self):
-        title = _convert_file_name_to_title(path="how.to.loop.in.python.png", separator=".")
-        self.assertEqual("How to Loop in Python", title)
-
-
-class TestGetBestTopColor(TestUtilities):
-
-    def test_renegade_coder_icon(self):
-        img: Image.Image = Image.open(TRC_ICON_PATH)
-        color = _get_best_top_color(img)
-        self.assertEqual(color, TRC_RED)
-        img.close()
-
-    def test_virtual_flat_icon(self):
-        img: Image.Image = Image.open(VF_ICON_PATH)
-        color = _get_best_top_color(img)
-        self.assertEqual(color, VF_BLUE)
-        img.close()
-
-
-class TestSplitString(TestUtilities):
-
-    def test_first_space(self):
-        top, bottom = _split_string_by_nearest_middle_space("Split first one")
-        self.assertEqual(top, "Split")
-        self.assertEqual(bottom, "first one")
-
-    def test_middle_space(self):
-        top, bottom = _split_string_by_nearest_middle_space("Hello World")
-        self.assertEqual(top, "Hello")
-        self.assertEqual(bottom, "World")
-
-    def test_last_space(self):
-        top, bottom = _split_string_by_nearest_middle_space("Split last opening")
-        self.assertEqual(top, "Split last")
-        self.assertEqual(bottom, "opening")
