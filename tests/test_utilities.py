@@ -121,45 +121,59 @@ class TestIntegration(TestUtilities):
         sample_command.extend(["-o", SAMPLE_DUMP])
         TestIntegration._generate_images(sample_command)
 
-    def test_default(self):
+    def test_default(self) -> None:
+        """
+        Tests the following command: image-titler
+
+        The resulting image should be the default image.
+
+        :return: None
+        """
         default = ["image-titler"]
         TestIntegration._generate_test_image(default)
 
-    def test_custom_title(self):
+    def test_custom_title(self) -> None:
+        """
+        Tests the following command: image-titler -t "Test Custom Title"
+
+        The resulting image should have the custom title.
+
+        :return: None
+        """
         custom_title = ["image-titler", "--title", "Test Custom Title"]
         TestIntegration._generate_test_image(custom_title)
 
-    def test_custom_path(self):
+    def test_custom_path(self) -> None:
         custom_path = ["image-titler", "--path", DEFAULT_IMAGE, "--title", "Test Custom Path"]
         TestIntegration._generate_test_image(custom_path)
         TestIntegration._generate_sample_image(custom_path[:-2])
 
-    def test_free_tier(self):
+    def test_free_tier(self) -> None:
         free_tier = ["image-titler", "--path", FREE_IMAGE, "--tier", "free", "--title", "Test Free Tier"]
         TestIntegration._generate_test_image(free_tier)
         TestIntegration._generate_sample_image(free_tier[:-2])
 
-    def test_premium_tier(self):
+    def test_premium_tier(self) -> None:
         premium_tier = ["image-titler", "--path", PREMIUM_IMAGE, "--tier", "premium", "--title", "Test Premium Tier"]
         TestIntegration._generate_test_image(premium_tier)
         TestIntegration._generate_sample_image(premium_tier[:-2])
 
-    def test_red_logo(self):
+    def test_red_logo(self) -> None:
         red_logo = ["image-titler", "--path", LOGO_RED_IMAGE, "--logo_path", TRC_ICON_PATH, "--title", "Test Red Logo"]
         TestIntegration._generate_test_image(red_logo)
         TestIntegration._generate_sample_image(red_logo[:-2])
 
-    def test_blue_logo(self):
+    def test_blue_logo(self) -> None:
         blue_logo = ["image-titler", "--path", LOGO_BLUE_IMAGE, "--logo_path", VF_ICON_PATH, "--title", "Test Blue Logo"]
         TestIntegration._generate_test_image(blue_logo)
         TestIntegration._generate_sample_image(blue_logo[:-2])
 
-    def test_custom_font(self):
+    def test_custom_font(self) -> None:
         custom_font = ["image-titler", "--path", CUSTOM_FONT_IMAGE, "--font", "assets/fonts/arial.ttf", "--title", "Test Custom Font"]
         TestIntegration._generate_test_image(custom_font)
         TestIntegration._generate_sample_image(custom_font[:-2])
 
-    def test_one_line_title(self):
+    def test_one_line_title(self) -> None:
         one_line_title = ["image-titler", "--path", ONE_LINE_TITLE_IMAGE, "--title", "OneLineTitle"]
         TestIntegration._generate_test_image(one_line_title)
         TestIntegration._generate_sample_image(one_line_title[:-2])
