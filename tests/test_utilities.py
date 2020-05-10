@@ -190,27 +190,55 @@ class TestParseInput(TestUtilities):
 
 
 class TestProcessImages(TestUtilities):
+    """
+    A test class for the draw.py file—specifically the only exposed function, process_images.
+    """
 
     def setUp(self) -> None:
+        """
+        Prepares an empty list of images for each test.
+
+        :return:
+        """
         self.images = list()
 
-    def test_zero_images(self):
+    def test_zero_images(self) -> None:
+        """
+        Tests that a default image is properly returned when no files are passed.
+
+        :return: None
+        """
         self.images.extend(process_images())
         self.assertEqual(1, len(self.images))
 
-    def test_one_image(self):
+    def test_one_image(self) -> None:
+        """
+        Tests the single image processing feature.
+
+        :return: None
+        """
         self.images.extend(process_images(path=DEFAULT_IMAGE))
         self.assertEqual(1, len(self.images))
 
-    def test_many_images(self):
+    def test_many_images(self) -> None:
+        """
+        Tests the batch processing feature.
+
+        :return: None
+        """
         self.images.extend(process_images(path=IMAGE_FOLDER, batch=True))
         self.assertEqual(len(TEST_IMAGES), len(self.images))
 
-    def test_one_line_title(self):
+    def test_one_line_title(self) -> None:
+        """
+        Tests that the split text algorithm properly handles single term titles.
+
+        :return: None
+        """
         self.images.extend(process_images(title="TestSingleLineFile"))
         self.assertEqual(1, len(self.images))
 
-    def test_red_logo(self):
+    def test_red_logo(self) -> None:
         """
         Tests the rendering of a logo.
 
@@ -218,7 +246,7 @@ class TestProcessImages(TestUtilities):
         """
         self.images.extend(process_images(title="Test Red Logo", logo_path=TRC_ICON_PATH))
 
-    def test_logo_blue(self):
+    def test_logo_blue(self) -> None:
         """
         Tests the rendering of the blue logo while also testing the color detection algorithm.
 
