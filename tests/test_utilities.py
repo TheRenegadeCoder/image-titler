@@ -38,6 +38,187 @@ class TestUtilities(TestCase):
     pass
 
 
+class TestParseInput(TestUtilities):
+
+    def setUp(self) -> None:
+        sys.argv = sys.argv[:1]  # clears args for each tests
+
+    def test_default(self):
+        args = parse_input()
+        self.assertEqual(args.batch, False)
+        self.assertEqual(args.path, None)
+        self.assertEqual(args.tier, None)
+        self.assertEqual(args.output_path, None)
+        self.assertEqual(args.logo_path, None)
+        self.assertEqual(args.title, None)
+
+    def test_title(self):
+        sys.argv.append("-t")
+        sys.argv.append("Hello World")
+        args = parse_input()
+        self.assertEqual(args.batch, False)
+        self.assertEqual(args.path, None)
+        self.assertEqual(args.tier, None)
+        self.assertEqual(args.output_path, None)
+        self.assertEqual(args.logo_path, None)
+        self.assertEqual(args.title, "Hello World")
+
+    def test_path(self):
+        sys.argv.append("-p")
+        sys.argv.append("path/to/stuff")
+        args = parse_input()
+        self.assertEqual(args.batch, False)
+        self.assertEqual(args.path, "path/to/stuff")
+        self.assertEqual(args.tier, None)
+        self.assertEqual(args.output_path, None)
+        self.assertEqual(args.logo_path, None)
+        self.assertEqual(args.title, None)
+
+    def test_output_path(self):
+        sys.argv.append("-o")
+        sys.argv.append("path/to/stuff")
+        args = parse_input()
+        self.assertEqual(args.batch, False)
+        self.assertEqual(args.path, None)
+        self.assertEqual(args.tier, None)
+        self.assertEqual(args.output_path, "path/to/stuff")
+        self.assertEqual(args.logo_path, None)
+        self.assertEqual(args.title, None)
+
+    def test_logo_path(self):
+        sys.argv.append("-l")
+        sys.argv.append("path/to/stuff")
+        args = parse_input()
+        self.assertEqual(args.batch, False)
+        self.assertEqual(args.path, None)
+        self.assertEqual(args.tier, None)
+        self.assertEqual(args.output_path, None)
+        self.assertEqual(args.logo_path, "path/to/stuff")
+        self.assertEqual(args.title, None)
+
+    def test_batch(self):
+        sys.argv.append("-b")
+        args = parse_input()
+        self.assertEqual(args.batch, True)
+        self.assertEqual(args.path, None)
+        self.assertEqual(args.tier, None)
+        self.assertEqual(args.output_path, None)
+        self.assertEqual(args.logo_path, None)
+        self.assertEqual(args.title, None)
+
+    def test_tier_premium(self):
+        sys.argv.append("-r")
+        sys.argv.append("premium")
+        args = parse_input()
+        self.assertEqual(args.batch, False)
+        self.assertEqual(args.path, None)
+        self.assertEqual(args.tier, "premium")
+        self.assertEqual(args.output_path, None)
+        self.assertEqual(args.logo_path, None)
+        self.assertEqual(args.title, None)
+
+    def test_tier_free(self):
+        sys.argv.append("-r")
+        sys.argv.append("free")
+        args = parse_input()
+        self.assertEqual(args.batch, False)
+        self.assertEqual(args.path, None)
+        self.assertEqual(args.tier, "free")
+        self.assertEqual(args.output_path, None)
+        self.assertEqual(args.logo_path, None)
+        self.assertEqual(args.title, None)
+
+
+class TestSaveCopies(TestUtilities):
+    """
+    A test class for the store.py file which consists of a single
+    exposed function: save_copies().
+    """
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        """
+        Initializes a set of images at the start of testing.
+
+        :return: None
+        """
+        cls.images = [
+            Image.open(DEFAULT_IMAGE),
+            Image.open(LOGO_RED_IMAGE),
+            Image.open(LOGO_BLUE_IMAGE)
+        ]
+
+    def setUp(self) -> None:
+        """
+        Resets the list of paths.
+
+        :return: None
+        """
+        self.paths = list()
+
+    def verify_existence_and_delete(self) -> None:
+        """
+        Verifies that a file exists and deletes it.
+
+        :return: None
+        """
+        for path in self.paths:
+            p = Path(path)
+            self.assertTrue(p.exists(), f"{p} does not exist")
+            p.unlink()
+
+    def test_zero_images(self):
+        """
+        Tests the scenario when no images are passed to this function.
+        It should return an empty list (since there were no files
+        to process).
+
+        :return: None
+        """
+        self.paths.extend(save_copies(list()))
+        self.assertEqual(list(), self.paths)
+
+    def test_one_image(self):
+        """
+        Tests the scenario when a single image is passed to this function.
+        It should save that image and return a list which contains a single
+        path to that image.
+
+        :return: None
+        """
+        self.paths.extend(save_copies(self.images[:1]))
+        self.verify_existence_and_delete()
+
+    def test_many_images(self):
+        """
+        Tests the scenario when multiple images are passed to this function.
+        It should save each image to a unique path and return those paths
+        in a list.
+
+        :return: None
+        """
+        self.paths.extend(save_copies(self.images))
+        self.verify_existence_and_delete()
+
+    def test_many_title(self):
+        """
+        Tests the scenario when multiple images are passed to this function with
+        the title option provided. It should save each image to a unique path
+        regardless of the fact they they'll all have the same core filename.
+
+        :return: None
+        """
+        self.paths.extend(save_copies(self.images, title="Test Many With Title Option"))
+        self.verify_existence_and_delete()
+
+
+class TestProcessImages(TestUtilities):
+    pass
+
+
+# Everything below this line needs to be removed
+
+
 class TestIntegration(TestUtilities):
 
     @classmethod
@@ -102,90 +283,6 @@ class TestIntegration(TestUtilities):
 
     def test_one_line_title(self):
         self.generate_image(path=ONE_LINE_TITLE_IMAGE, title="TestSingleLineFile")
-
-
-class TestSaveCopies(TestUtilities):
-    """
-    A test class for the store.py file which consists of a single
-    exposed function: save_copies().
-    """
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        """
-        Initializes a set of images at the start of testing.
-
-        :return: None
-        """
-        cls.images = [
-            Image.open(DEFAULT_IMAGE),
-            Image.open(LOGO_RED_IMAGE),
-            Image.open(LOGO_BLUE_IMAGE)
-        ]
-
-    def setUp(self) -> None:
-        """
-        Resets the list of paths.
-
-        :return: None
-        """
-        self.paths = list()
-
-    def verify_existence_and_delete(self) -> None:
-        """
-        Verifies that a file exists and deletes it.
-
-        :return: None
-        """
-        for path in self.paths:
-            p = Path(path)
-            self.assertTrue(p.exists(), f"{p} does not exist")
-            p.unlink()
-
-
-    def test_zero_images(self):
-        """
-        Tests the scenario when no images are passed to this function.
-        It should return an empty list (since there were no files
-        to process).
-
-        :return: None
-        """
-        self.paths.extend(save_copies(list()))
-        self.assertEqual(list(), self.paths)
-
-    def test_one_image(self):
-        """
-        Tests the scenario when a single image is passed to this function.
-        It should save that image and return a list which contains a single
-        path to that image.
-
-        :return: None
-        """
-        self.paths.extend(save_copies(self.images[:1]))
-        self.verify_existence_and_delete()
-
-    def test_many_images(self):
-        """
-        Tests the scenario when multiple images are passed to this function.
-        It should save each image to a unique path and return those paths
-        in a list.
-
-        :return: None
-        """
-        self.paths.extend(save_copies(self.images))
-        self.verify_existence_and_delete()
-
-    def test_many_title(self):
-        """
-        Tests the scenario when multiple images are passed to this function with
-        the title option provided. It should save each image to a unique path
-        regardless of the fact they they'll all have the same core filename.
-
-        :return: None
-        """
-        self.paths.extend(save_copies(self.images, title="Test Many With Title Option"))
-        self.verify_existence_and_delete()
 
 
 class TestProcessImage(TestUtilities):
@@ -285,94 +382,3 @@ class TestSplitString(TestUtilities):
         top, bottom = _split_string_by_nearest_middle_space("Split last opening")
         self.assertEqual(top, "Split last")
         self.assertEqual(bottom, "opening")
-
-
-class TestParseInput(TestUtilities):
-
-    def setUp(self) -> None:
-        sys.argv = sys.argv[:1]  # clears args for each tests
-
-    def test_default(self):
-        args = parse_input()
-        self.assertEqual(args.batch, False)
-        self.assertEqual(args.path, None)
-        self.assertEqual(args.tier, None)
-        self.assertEqual(args.output_path, None)
-        self.assertEqual(args.logo_path, None)
-        self.assertEqual(args.title, None)
-
-    def test_title(self):
-        sys.argv.append("-t")
-        sys.argv.append("Hello World")
-        args = parse_input()
-        self.assertEqual(args.batch, False)
-        self.assertEqual(args.path, None)
-        self.assertEqual(args.tier, None)
-        self.assertEqual(args.output_path, None)
-        self.assertEqual(args.logo_path, None)
-        self.assertEqual(args.title, "Hello World")
-
-    def test_path(self):
-        sys.argv.append("-p")
-        sys.argv.append("path/to/stuff")
-        args = parse_input()
-        self.assertEqual(args.batch, False)
-        self.assertEqual(args.path, "path/to/stuff")
-        self.assertEqual(args.tier, None)
-        self.assertEqual(args.output_path, None)
-        self.assertEqual(args.logo_path, None)
-        self.assertEqual(args.title, None)
-
-    def test_output_path(self):
-        sys.argv.append("-o")
-        sys.argv.append("path/to/stuff")
-        args = parse_input()
-        self.assertEqual(args.batch, False)
-        self.assertEqual(args.path, None)
-        self.assertEqual(args.tier, None)
-        self.assertEqual(args.output_path, "path/to/stuff")
-        self.assertEqual(args.logo_path, None)
-        self.assertEqual(args.title, None)
-
-    def test_logo_path(self):
-        sys.argv.append("-l")
-        sys.argv.append("path/to/stuff")
-        args = parse_input()
-        self.assertEqual(args.batch, False)
-        self.assertEqual(args.path, None)
-        self.assertEqual(args.tier, None)
-        self.assertEqual(args.output_path, None)
-        self.assertEqual(args.logo_path, "path/to/stuff")
-        self.assertEqual(args.title, None)
-
-    def test_batch(self):
-        sys.argv.append("-b")
-        args = parse_input()
-        self.assertEqual(args.batch, True)
-        self.assertEqual(args.path, None)
-        self.assertEqual(args.tier, None)
-        self.assertEqual(args.output_path, None)
-        self.assertEqual(args.logo_path, None)
-        self.assertEqual(args.title, None)
-
-    def test_tier_premium(self):
-        sys.argv.append("-r")
-        sys.argv.append("premium")
-        args = parse_input()
-        self.assertEqual(args.batch, False)
-        self.assertEqual(args.path, None)
-        self.assertEqual(args.tier, "premium")
-        self.assertEqual(args.output_path, None)
-        self.assertEqual(args.logo_path, None)
-        self.assertEqual(args.title, None)
-
-    def test_tier_free(self):
-        sys.argv.append("-r")
-        sys.argv.append("free")
-        args = parse_input()
-        self.assertEqual(args.batch, False)
-        self.assertEqual(args.path, None)
-        self.assertEqual(args.tier, "free")
-        self.assertEqual(args.output_path, None)
-        self.assertEqual(args.logo_path, None)
-        self.assertEqual(args.title, None)
