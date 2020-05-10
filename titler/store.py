@@ -68,7 +68,6 @@ def _generate_image_output_path(edited_image: Image.Image, index: int, **kwargs)
     :param index: the index of this image in a set
     :return: the path of the file to be created
     """
-    tag = "featured-image"
     version: str = pkg_resources.require("image-titler")[0].version
     version = version.replace(".", SEPARATOR)
     extension = ".jpg"
@@ -85,7 +84,7 @@ def _generate_image_output_path(edited_image: Image.Image, index: int, **kwargs)
     if hasattr(edited_image, 'filename'):
         extension = Path(edited_image.filename).suffix
 
-    storage_path = f'{file_name}-{tag}-v{version}-i{index}{extension}'
+    storage_path = f'{file_name}-v{version}-i{index}{extension}'
     if output_path := kwargs.get("output_path"):
         storage_path = f'{output_path}{os.sep}{storage_path}'
     return storage_path

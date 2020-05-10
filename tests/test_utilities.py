@@ -6,7 +6,6 @@ from unittest import TestCase
 import pkg_resources
 from PIL import Image
 
-from titler.constants import KEY_TITLE, KEY_OUTPUT_PATH
 from titler.draw import process_images
 from titler.parse import parse_input
 from titler.store import save_copies
@@ -19,7 +18,7 @@ VF_BLUE = (0, 164, 246, 255)
 
 IMAGE_FOLDER = "assets/images"
 DEFAULT_IMAGE = "assets/images/23-tech-topics-to-tackle.jpg"
-LOGO_RED_IMAGE = "assets/images/3-ways-to-check-if-a-list-is-empty-in-python.jpg"
+LOGO_RED_IMAGE = "assets/images/welcome-to-the-image-titler-by-the-renegade-coder.jpg"
 LOGO_BLUE_IMAGE = "assets/images/hello-world-in-matlab.jpg"
 FREE_IMAGE = "assets/images/columbus-drivers-are-among-the-worst.jpg"
 PREMIUM_IMAGE = "assets/images/the-guide-to-causing-mass-panic.jpg"
@@ -68,19 +67,18 @@ class TestIntegration(TestUtilities):
         Path(TEST_SOLO_DUMP).mkdir(parents=True, exist_ok=True)
         Path(SAMPLE_DUMP).mkdir(parents=True, exist_ok=True)
 
+    def setUp(self) -> None:
+        sys.argv = list()
+
     @staticmethod
-    def generate_image(**kwargs):
-        kwargs[KEY_OUTPUT_PATH] = TEST_SOLO_DUMP
-        test_image = _process_image(**kwargs)
-        test_file = save_copies([test_image], **kwargs)
+    def generate_images(command: str):
+        sys.argv.extend(command.split())
+        args = vars(parse_input())
+        images = process_images(**args)
+        save_copies(images, **args)
 
-        kwargs[KEY_OUTPUT_PATH] = SAMPLE_DUMP
-        kwargs[KEY_TITLE] = None
-        kwargs[KEY_TITLE] = _convert_file_name_to_title(**kwargs)
-        sample_image = _process_image(**kwargs)
-        save_copies([sample_image], **kwargs)
-
-        return test_file[0]
+    def test_default(self):
+        TestIntegration.generate_images(f"image-titler -o {TEST_SOLO_DUMP}")
 
 
 class TestParseInput(TestUtilities):
