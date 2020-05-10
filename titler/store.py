@@ -12,14 +12,18 @@ from titler.constants import *
 
 def save_copies(edited_images: List[Image.Image], **kwargs) -> List[str]:
     """
-    A helper function for saving a copy of the image.
+    Saves a list of Pillow images as image files. The typical list of options
+    apply and determine what the output file name will look like. For example,
+    the title keyword will apply that title to all images in the list. If the title
+    and batch keywords are not present, then the path keyword is used for images.
+    Otherwise, a generic file name is given.
 
     :param edited_images: a list of edited images
     :return: a list of storage paths
     """
     storage_paths = list()
     for edited_image in edited_images:
-        storage_path = _generate_image_output_path(**kwargs)
+        storage_path = _generate_image_output_path(edited_image, **kwargs)
         exif = _generate_version_exif(edited_image)
         edited_image.save(storage_path, subsampling=0, quality=100, exif=exif)
         storage_paths.append(storage_path)
@@ -47,25 +51,32 @@ def _generate_version_exif(image: Image.Image) -> bytes:
     return exif_data
 
 
-def _generate_image_output_path(**kwargs) -> str:
+def _generate_image_output_path(edited_image: Image.Image, **kwargs) -> str:
     """
     A helper function which generates image output paths from a series of strings.
+    If a title exists, this method will use the title as the file name.
+    If the image has the filename attribute, that will be used instead.
+    Otherwise, a generic file name is created.
 
     :return: the path of the file to be created
     """
     tag = "featured-image"
     version: str = pkg_resources.require("image-titler")[0].version
     version = version.replace(".", SEPARATOR)
+    extension = ".jpg"
 
+    # File name logic
     if title := kwargs.get(KEY_TITLE):
         file_name = pathvalidate.sanitize_filename(title.lower().replace(" ", SEPARATOR))
-    elif kwargs.get(KEY_PATH):
-        file_name = Path(kwargs.get(KEY_PATH)).stem
+    elif hasattr(edited_image, 'filename'):
+        file_name = Path(edited_image.filename).stem
     else:
-        kwargs[KEY_PATH] = "example.jpg"
-        file_name = Path(kwargs.get(KEY_PATH)).stem
+        file_name = "image-titler"
 
-    extension = Path(kwargs.get(KEY_PATH)).suffix
+    # Extension logic
+    if hasattr(edited_image, 'filename'):
+        extension = Path(edited_image.filename).suffix
+
     storage_path = f'{file_name}-{tag}-v{version}{extension}'
     if output_path := kwargs.get("output_path"):
         storage_path = f'{output_path}{os.sep}{storage_path}'
