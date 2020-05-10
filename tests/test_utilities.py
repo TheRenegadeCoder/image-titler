@@ -149,6 +149,21 @@ class TestIntegration(TestUtilities):
         TestIntegration._generate_test_image(red_logo)
         TestIntegration._generate_sample_image(red_logo[:-2])
 
+    def test_blue_logo(self):
+        blue_logo = ["image-titler", "--path", LOGO_BLUE_IMAGE, "--logo_path", VF_ICON_PATH, "--title", "Test Blue Logo"]
+        TestIntegration._generate_test_image(blue_logo)
+        TestIntegration._generate_sample_image(blue_logo[:-2])
+
+    def test_custom_font(self):
+        custom_font = ["image-titler", "--path", CUSTOM_FONT_IMAGE, "--font", "assets/fonts/arial.ttf", "--title", "Test Custom Font"]
+        TestIntegration._generate_test_image(custom_font)
+        TestIntegration._generate_sample_image(custom_font[:-2])
+
+    def test_one_line_title(self):
+        one_line_title = ["image-titler", "--path", ONE_LINE_TITLE_IMAGE, "--title", "OneLineTitle"]
+        TestIntegration._generate_test_image(one_line_title)
+        TestIntegration._generate_sample_image(one_line_title[:-2])
+
 
 class TestParseInput(TestUtilities):
     """
