@@ -72,17 +72,38 @@ class TestIntegration(TestUtilities):
         sys.argv = list()
 
     @staticmethod
-    def generate_images(command: list):
+    def _generate_images(command: list):
         with patch.object(sys, "argv", command):
             args = vars(parse_input())
             images = process_images(**args)
             save_copies(images, **args)
 
+    @staticmethod
+    def _generate_test_images(command: list):
+        test_command = command.copy()
+        test_command.extend(["-o", TEST_SOLO_DUMP])
+        TestIntegration._generate_images(test_command)
+
+    @staticmethod
+    def _generate_sample_images(command: list):
+        sample_command = command.copy()
+        sample_command.extend(["-o", SAMPLE_DUMP])
+        TestIntegration._generate_images(sample_command)
+
     def test_default(self):
-        TestIntegration.generate_images(["image-titler"])
+        TestIntegration._generate_test_images(["image-titler"])
+
+    def test_custom_path(self):
+        TestIntegration._generate_test_images(["image-titler", "--path", DEFAULT_IMAGE])
 
     def test_custom_title(self):
-        TestIntegration.generate_images(["image-titler", "-t", "\"Test Custom Title\""])
+        TestIntegration._generate_test_images(["image-titler", "--title", "Test Custom Title"])
+
+    def test_free_tier(self):
+        TestIntegration._generate_test_images(["image-titler", "--title", "Test Free Tier", "--tier", "free"])
+
+    def test_premium_tier(self):
+        TestIntegration._generate_test_images(["image-titler", "--title", "Test Premium Tier", "--tier", "premium"])
 
 
 class TestParseInput(TestUtilities):

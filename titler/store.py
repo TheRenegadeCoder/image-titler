@@ -77,6 +77,8 @@ def _generate_image_output_path(edited_image: Image.Image, index: int, **kwargs)
         file_name = pathvalidate.sanitize_filename(title.lower().replace(" ", SEPARATOR))
     elif hasattr(edited_image, 'filename'):
         file_name = Path(edited_image.filename).stem
+    elif path := kwargs.get(KEY_PATH):
+        file_name = Path(path).stem if Path(path).is_file() else "image-titler"
     else:
         file_name = "image-titler"
 

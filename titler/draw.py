@@ -74,6 +74,7 @@ def _process_image(**kwargs) -> Optional[Image.Image]:
     input_path = kwargs.get(KEY_PATH)
     img = Image.open(input_path)
     cropped_img: Image = img.crop((0, 0, IMAGE_WIDTH, IMAGE_HEIGHT))
+    cropped_img.filename = img.filename  # Ensures filename data is transferred to updated copy
     color = RECTANGLE_FILL
     if logo_path := kwargs.get(KEY_LOGO_PATH):
         logo: Image.Image = Image.open(logo_path)
