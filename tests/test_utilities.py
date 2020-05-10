@@ -107,8 +107,16 @@ class TestIntegration(TestUtilities):
 
 
 class TestParseInput(TestUtilities):
+    """
+    A test class for the parse.py file—specifically, the parse_input() function.
+    """
 
-    def test_default(self):
+    def test_default(self) -> None:
+        """
+        Tests that all the defaults are in a falsey state.
+
+        :return: None
+        """
         with patch.object(sys, "argv", ["image-titler"]):
             args = parse_input()
             self.assertEqual(args.batch, False)
@@ -118,7 +126,12 @@ class TestParseInput(TestUtilities):
             self.assertEqual(args.logo_path, None)
             self.assertEqual(args.title, None)
 
-    def test_title(self):
+    def test_title(self) -> None:
+        """
+        Tests that the title is properly stored.
+
+        :return: None
+        """
         with patch.object(sys, "argv", ["image-titler", "-t", "Hello World"]):
             args = parse_input()
             self.assertEqual(args.batch, False)
@@ -128,7 +141,12 @@ class TestParseInput(TestUtilities):
             self.assertEqual(args.logo_path, None)
             self.assertEqual(args.title, "Hello World")
 
-    def test_path(self):
+    def test_path(self) -> None:
+        """
+        Tests that the input path is properly stored.
+
+        :return: None
+        """
         with patch.object(sys, "argv", ["image-titler", "-p", "path/to/stuff"]):
             args = parse_input()
             self.assertEqual(args.batch, False)
@@ -138,7 +156,12 @@ class TestParseInput(TestUtilities):
             self.assertEqual(args.logo_path, None)
             self.assertEqual(args.title, None)
 
-    def test_output_path(self):
+    def test_output_path(self) -> None:
+        """
+        Tests that the output path is properly stored.
+
+        :return: None
+        """
         with patch.object(sys, "argv", ["image-titler", "-o", "path/to/stuff"]):
             args = parse_input()
             self.assertEqual(args.batch, False)
@@ -148,7 +171,12 @@ class TestParseInput(TestUtilities):
             self.assertEqual(args.logo_path, None)
             self.assertEqual(args.title, None)
 
-    def test_logo_path(self):
+    def test_logo_path(self) -> None:
+        """
+        Tests that the logo path is properly stored.
+
+        :return: None
+        """
         with patch.object(sys, "argv", ["image-titler", "-l", "path/to/stuff"]):
             args = parse_input()
             self.assertEqual(args.batch, False)
@@ -158,7 +186,12 @@ class TestParseInput(TestUtilities):
             self.assertEqual(args.logo_path, "path/to/stuff")
             self.assertEqual(args.title, None)
 
-    def test_batch(self):
+    def test_batch(self) -> None:
+        """
+        Tests that the batch setting is properly set to True.
+
+        :return: None
+        """
         with patch.object(sys, "argv", ["image-titler", "-b"]):
             args = parse_input()
             self.assertEqual(args.batch, True)
@@ -168,7 +201,12 @@ class TestParseInput(TestUtilities):
             self.assertEqual(args.logo_path, None)
             self.assertEqual(args.title, None)
 
-    def test_tier_premium(self):
+    def test_tier_premium(self) -> None:
+        """
+        Tests that the premium tier is properly stored.
+
+        :return: None
+        """
         with patch.object(sys, "argv", ["image-titler", "-r", "premium"]):
             args = parse_input()
             self.assertEqual(args.batch, False)
@@ -178,7 +216,12 @@ class TestParseInput(TestUtilities):
             self.assertEqual(args.logo_path, None)
             self.assertEqual(args.title, None)
 
-    def test_tier_free(self):
+    def test_tier_free(self) -> None:
+        """
+        Tests that the free tier is properly stored.
+
+        :return: None
+        """
         with patch.object(sys, "argv", ["image-titler", "-r", "free"]):
             args = parse_input()
             self.assertEqual(args.batch, False)
