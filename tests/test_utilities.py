@@ -6,8 +6,8 @@ from unittest import TestCase
 import pkg_resources
 from PIL import Image, ImageChops
 
-from titler.constants import DEFAULT_FONT, KEY_TITLE, KEY_OUTPUT_PATH
-from titler.draw import process_images, _convert_file_name_to_title, _process_batch, _process_image, \
+from titler.constants import KEY_TITLE, KEY_OUTPUT_PATH
+from titler.draw import _convert_file_name_to_title, _process_batch, _process_image, \
     _get_best_top_color, _split_string_by_nearest_middle_space
 from titler.parse import parse_input
 from titler.store import save_copies
@@ -105,12 +105,75 @@ class TestIntegration(TestUtilities):
 
 
 class TestSaveCopies(TestUtilities):
+    """
+    A test class for the store.py file which consists of a single
+    exposed function: save_copies().
+    """
 
-    def test_default(self):
-        image = Image.open(DEFAULT_IMAGE)
-        test_file = save_copies([image])[0]
-        self.assertTrue(Path(test_file).exists())
-        Path(test_file).unlink()
+    @classmethod
+    def setUpClass(cls) -> None:
+        """
+        Initializes a set of images at the start of testing.
+
+        :return: None
+        """
+        cls.images = [
+            Image.open(DEFAULT_IMAGE),
+            Image.open(LOGO_RED_IMAGE),
+            Image.open(LOGO_BLUE_IMAGE)
+        ]
+
+    def setUp(self) -> None:
+        """
+        Resets the list of paths.
+
+        :return: None
+        """
+        self.paths = list()
+
+    def verify_existence_and_delete(self) -> None:
+        """
+        Verifies that a file exists and deletes it.
+
+        :return: None
+        """
+        for path in self.paths:
+            p = Path(path)
+            self.assertTrue(p.exists(), f"{p} does not exist")
+            p.unlink()
+
+    def test_zero_images(self):
+        """
+        Tests the scenario when no images are passed to this function.
+        It should return an empty list (since there were no files
+        to process).
+
+        :return: None
+        """
+        self.paths.extend(save_copies(list()))
+        self.assertEqual(list(), self.paths)
+
+    def test_one_image(self):
+        """
+        Tests the scenario when a single image is passed to this function.
+        It should save that image and return a list which contains a single
+        path to that image.
+
+        :return: None
+        """
+        self.paths.extend(save_copies(self.images[:1]))
+        self.verify_existence_and_delete()
+
+    def test_many_images(self):
+        """
+        Tests the scenario when multiple images are passed to this function.
+        It should save each image to a unique path and return those paths
+        in a list.
+
+        :return: None
+        """
+        self.paths.extend(save_copies(self.images))
+        self.verify_existence_and_delete()
 
 
 class TestProcessImage(TestUtilities):
