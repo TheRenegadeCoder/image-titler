@@ -243,6 +243,7 @@ class ImageTitlerOptionPane(ttk.Frame):
 
         :return: None
         """
+        # TODO: remove this method and add each section to each initialization method
         title = self.options.get(KEY_TITLE)
         ImageTitlerOptionPane._populate_option(title, self.title_value, self.title_state)
         tier = self.options.get(KEY_TIER)
