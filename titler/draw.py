@@ -36,12 +36,13 @@ def process_images(**kwargs) -> List[Image.Image]:
     :return: None
     """
     is_batch: bool = kwargs.get(KEY_BATCH)
-    kwargs[KEY_PATH] = kwargs.get(KEY_PATH) if kwargs.get(KEY_PATH) else TRC_IMAGE
-    kwargs[KEY_TITLE] = kwargs.get(KEY_TITLE) if kwargs.get(KEY_TITLE) else _convert_file_name_to_title(**kwargs)
     images = list()
     if is_batch:
+        kwargs[KEY_PATH] = kwargs.get(KEY_PATH) if kwargs.get(KEY_PATH) else TRC_IMAGES
         images = _process_batch(**kwargs)
     else:
+        kwargs[KEY_PATH] = kwargs.get(KEY_PATH) if kwargs.get(KEY_PATH) else TRC_IMAGE
+        kwargs[KEY_TITLE] = kwargs.get(KEY_TITLE) if kwargs.get(KEY_TITLE) else _convert_file_name_to_title(**kwargs)
         images.append(_process_image(**kwargs))
     return images
 
@@ -59,6 +60,7 @@ def _process_batch(**kwargs) -> List[Image.Image]:
         absolute_path = os.path.join(input_path, path)
         image_kwargs = kwargs.copy()
         image_kwargs[KEY_PATH] = absolute_path
+        image_kwargs[KEY_TITLE] = kwargs.get(KEY_TITLE) if kwargs.get(KEY_TITLE) else _convert_file_name_to_title(**image_kwargs)
         edited_image = _process_image(**image_kwargs)
         edited_images.append(edited_image)
     return edited_images
@@ -95,8 +97,8 @@ def _convert_file_name_to_title(**kwargs) -> Optional[str]:
 
     :return: a title string or None
     """
-    title: Optional[str] = kwargs.get("title")
-    path: Optional[str] = kwargs.get("path")
+    title: Optional[str] = kwargs.get(KEY_TITLE)
+    path: Optional[str] = kwargs.get(KEY_PATH)
     if not title and path:
         file_path = Path(path).resolve().stem
         title = titlecase(file_path.replace(kwargs.get("separator", SEPARATOR), ' '))

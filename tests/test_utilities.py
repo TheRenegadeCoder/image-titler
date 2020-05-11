@@ -97,7 +97,7 @@ class TestIntegration(TestUtilities):
             cli.main()
 
     @staticmethod
-    def _generate_test_image(command: list) -> None:
+    def _generate_solo_test_image(command: list) -> None:
         """
         Generates a test image by appending the output path option
         for the TEST_SOLO_DUMP path.
@@ -107,6 +107,19 @@ class TestIntegration(TestUtilities):
         """
         test_command = command.copy()
         test_command.extend(["-o", TEST_SOLO_DUMP])
+        TestIntegration._generate_images(test_command)
+
+    @staticmethod
+    def _generate_batch_test_images(command: list) -> None:
+        """
+        Generates a test image set by appending the output path option
+        for the TEST_BATCH_DUMP path.
+
+        :param command: a splice up command as a list
+        :return: None
+        """
+        test_command = command.copy()
+        test_command.extend(["-o", TEST_BATCH_DUMP])
         TestIntegration._generate_images(test_command)
 
     @staticmethod
@@ -131,7 +144,7 @@ class TestIntegration(TestUtilities):
         :return: None
         """
         default = ["image-titler"]
-        TestIntegration._generate_test_image(default)
+        TestIntegration._generate_solo_test_image(default)
         TestIntegration._generate_sample_image(default)
 
     def test_custom_title(self) -> None:
@@ -143,7 +156,7 @@ class TestIntegration(TestUtilities):
         :return: None
         """
         custom_title = ["image-titler", "--title", "Test Custom Title"]
-        TestIntegration._generate_test_image(custom_title)
+        TestIntegration._generate_solo_test_image(custom_title)
 
     def test_custom_path(self) -> None:
         """
@@ -154,7 +167,7 @@ class TestIntegration(TestUtilities):
         :return: None
         """
         custom_path = ["image-titler", "--path", DEFAULT_IMAGE, "--title", "Test Custom Path"]
-        TestIntegration._generate_test_image(custom_path)
+        TestIntegration._generate_solo_test_image(custom_path)
         TestIntegration._generate_sample_image(custom_path[:-2])
 
     def test_free_tier(self) -> None:
@@ -166,7 +179,7 @@ class TestIntegration(TestUtilities):
         :return: None
         """
         free_tier = ["image-titler", "--path", FREE_IMAGE, "--tier", "free", "--title", "Test Free Tier"]
-        TestIntegration._generate_test_image(free_tier)
+        TestIntegration._generate_solo_test_image(free_tier)
         TestIntegration._generate_sample_image(free_tier[:-2])
 
     def test_premium_tier(self) -> None:
@@ -178,7 +191,7 @@ class TestIntegration(TestUtilities):
         :return: None
         """
         premium_tier = ["image-titler", "--path", PREMIUM_IMAGE, "--tier", "premium", "--title", "Test Premium Tier"]
-        TestIntegration._generate_test_image(premium_tier)
+        TestIntegration._generate_solo_test_image(premium_tier)
         TestIntegration._generate_sample_image(premium_tier[:-2])
 
     def test_red_logo(self) -> None:
@@ -190,7 +203,7 @@ class TestIntegration(TestUtilities):
         :return: None
         """
         red_logo = ["image-titler", "--path", LOGO_RED_IMAGE, "--logo_path", TRC_ICON_PATH, "--title", "Test Red Logo"]
-        TestIntegration._generate_test_image(red_logo)
+        TestIntegration._generate_solo_test_image(red_logo)
         TestIntegration._generate_sample_image(red_logo[:-2])
 
     def test_blue_logo(self) -> None:
@@ -202,7 +215,7 @@ class TestIntegration(TestUtilities):
         :return: None
         """
         blue_logo = ["image-titler", "--path", LOGO_BLUE_IMAGE, "--logo_path", VF_ICON_PATH, "--title", "Test Blue Logo"]
-        TestIntegration._generate_test_image(blue_logo)
+        TestIntegration._generate_solo_test_image(blue_logo)
         TestIntegration._generate_sample_image(blue_logo[:-2])
 
     def test_custom_font(self) -> None:
@@ -214,7 +227,7 @@ class TestIntegration(TestUtilities):
         :return: None
         """
         custom_font = ["image-titler", "--path", CUSTOM_FONT_IMAGE, "--font", CUSTOM_FONT, "--title", "Test Custom Font"]
-        TestIntegration._generate_test_image(custom_font)
+        TestIntegration._generate_solo_test_image(custom_font)
         TestIntegration._generate_sample_image(custom_font[:-2])
 
     def test_one_line_title(self) -> None:
@@ -226,8 +239,19 @@ class TestIntegration(TestUtilities):
         :return: None
         """
         one_line_title = ["image-titler", "--path", ONE_LINE_TITLE_IMAGE, "--title", "OneLineTitle"]
-        TestIntegration._generate_test_image(one_line_title)
+        TestIntegration._generate_solo_test_image(one_line_title)
         TestIntegration._generate_sample_image(one_line_title[:-2])
+
+    def test_batch_default(self) -> None:
+        """
+        Tests the following command: image-titler -b
+
+        The resulting images should be generated from a default location.
+
+        :return: None
+        """
+        batch = ["image-titler", "-b"]
+        TestIntegration._generate_batch_test_images(batch)
 
 
 class TestParseInput(TestUtilities):

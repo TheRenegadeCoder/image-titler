@@ -32,7 +32,7 @@ def _add_title_option(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         '-t',
         f'--{KEY_TITLE}',
-        help="add a custom title to the image (no effect when batch processing)"
+        help="add a custom title to the image"
     )
 
 
