@@ -245,7 +245,7 @@ class ImageTitlerOptionPane(ttk.Frame):
         """
         # TODO: remove this method and add each section to each initialization method
         title = self.options.get(KEY_TITLE)
-        ImageTitlerOptionPane._populate_option(title, self.title_value, self.title_state)
+        ImageTitlerOptionPane._populate_option(title, self.title_value, self.title_state, "")
         tier = self.options.get(KEY_TIER)
         ImageTitlerOptionPane._populate_option(tier, self.tier_value, self.tier_state, list(TIER_MAP.keys())[0])
         font = self.options.get(KEY_FONT)
