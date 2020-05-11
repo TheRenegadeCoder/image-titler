@@ -13,6 +13,7 @@ from imagetitler.parse import parse_input
 from imagetitler.store import save_copies
 
 CUSTOM_FONT = "imagetitler/assets/fonts/arial.ttf"
+CUSTOM_FONT_TALL = "imagetitler/assets/fonts/gadugi.ttf"
 
 TRC_ICON_PATH = "imagetitler/assets/icons/the-renegade-coder-sample-icon.png"
 TRC_RED = (201, 2, 41, 255)
@@ -467,7 +468,7 @@ class TestProcessImages(TestUtilities):
 
         :return: None
         """
-        self.images.extend(process_images(title="Test Custom Font", font="assets/fonts/arial.ttf"))
+        self.images.extend(process_images(title="Test Custom Font", font=CUSTOM_FONT))
         self.assertEqual(1, len(self.images))
 
     def test_custom_font_strange_height(self) -> None:
@@ -476,7 +477,7 @@ class TestProcessImages(TestUtilities):
 
         :return: None
         """
-        self.images.extend(process_images(title="Test Custom Font Strange Height", font="assets/fonts/gadugi.ttf"))
+        self.images.extend(process_images(title="Test Custom Font Strange Height", font=CUSTOM_FONT_TALL))
         self.assertEqual(1, len(self.images))
 
 
