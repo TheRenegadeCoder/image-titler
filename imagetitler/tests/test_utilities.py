@@ -44,7 +44,7 @@ TEST_IMAGES = [
     ]
 ]
 
-TEST_DUMP = "tests/dump"
+TEST_DUMP = "imagetitler/tests/dump"
 TEST_SOLO_DUMP = TEST_DUMP + "/solo"
 TEST_BATCH_DUMP = TEST_DUMP + "/batch"
 SAMPLE_DUMP = "samples/v" + pkg_resources.require("image-titler")[0].version
