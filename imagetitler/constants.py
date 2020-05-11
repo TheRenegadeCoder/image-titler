@@ -23,6 +23,6 @@ TIER_MAP = {
     "premium": GOLD
 }
 
-TRC_ICON = os.path.join(os.path.dirname(__file__), '../assets/icons/the-renegade-coder-sample-icon.png')
-TRC_IMAGE = os.path.join(os.path.dirname(__file__), '../assets/images/welcome-to-the-image-titler-by-the-renegade-coder.jpg')
-TRC_IMAGES = os.path.join(os.path.dirname(__file__), '../assets/images/')
+TRC_ICON = os.path.join(os.path.dirname(__file__), '../imagetitler/assets/icons/the-renegade-coder-sample-icon.png')
+TRC_IMAGE = os.path.join(os.path.dirname(__file__), '../imagetitler/assets/images/welcome-to-the-image-titler-by-the-renegade-coder.jpg')
+TRC_IMAGES = os.path.join(os.path.dirname(__file__), '../imagetitler/assets/images/')

@@ -12,23 +12,23 @@ from titler.draw import process_images
 from titler.parse import parse_input
 from titler.store import save_copies
 
-CUSTOM_FONT = "assets/fonts/arial.ttf"
+CUSTOM_FONT = "imagetitler/assets/fonts/arial.ttf"
 
-TRC_ICON_PATH = "assets/icons/the-renegade-coder-sample-icon.png"
+TRC_ICON_PATH = "imagetitler/assets/icons/the-renegade-coder-sample-icon.png"
 TRC_RED = (201, 2, 41, 255)
 
-VF_ICON_PATH = "assets/icons/virtual-flat-sample-icon.png"
+VF_ICON_PATH = "imagetitler/assets/icons/virtual-flat-sample-icon.png"
 VF_BLUE = (0, 164, 246, 255)
 
-IMAGE_FOLDER = "assets/images"
-DEFAULT_IMAGE = "assets/images/welcome-to-the-image-titler-by-the-renegade-coder.jpg"
-LOGO_RED_IMAGE = "assets/images/23-tech-topics-to-tackle.jpg"
-LOGO_BLUE_IMAGE = "assets/images/hello-world-in-matlab.jpg"
-FREE_IMAGE = "assets/images/columbus-drivers-are-among-the-worst.jpg"
-PREMIUM_IMAGE = "assets/images/the-guide-to-causing-mass-panic.jpg"
-SPECIAL_IMAGE = "assets/images/happy-new-year.jpg"
-CUSTOM_FONT_IMAGE = "assets/images/reflecting-on-my-third-semester-of-teaching.jpg"
-ONE_LINE_TITLE_IMAGE = "assets/images/minimalism.jpg"
+IMAGE_FOLDER = "imagetitler/assets/images"
+DEFAULT_IMAGE = "imagetitler/assets/images/welcome-to-the-image-titler-by-the-renegade-coder.jpg"
+LOGO_RED_IMAGE = "imagetitler/assets/images/23-tech-topics-to-tackle.jpg"
+LOGO_BLUE_IMAGE = "imagetitler/assets/images/hello-world-in-matlab.jpg"
+FREE_IMAGE = "imagetitler/assets/images/columbus-drivers-are-among-the-worst.jpg"
+PREMIUM_IMAGE = "imagetitler/assets/images/the-guide-to-causing-mass-panic.jpg"
+SPECIAL_IMAGE = "imagetitler/assets/images/happy-new-year.jpg"
+CUSTOM_FONT_IMAGE = "imagetitler/assets/images/reflecting-on-my-third-semester-of-teaching.jpg"
+ONE_LINE_TITLE_IMAGE = "imagetitler/assets/images/minimalism.jpg"
 
 TEST_IMAGES = [
     Image.open(path) for path in
