@@ -135,6 +135,8 @@ def _get_output_path(**kwargs) -> str:
     """
     if not (output_path := kwargs.get("output_path")):
         output_path = ""
+    if output_path:
+        output_path += "/"
     return output_path
 
 
@@ -154,5 +156,5 @@ def _generate_image_output_path(edited_image: Image.Image, index: int, **kwargs)
     extension = _get_extension(edited_image)
     index = _get_index(index, **kwargs)
     output_path = _get_output_path(**kwargs)
-    storage_path = f'{output_path}/{file_name}{version}{index}{extension}'
+    storage_path = f'{output_path}{file_name}{version}{index}{extension}'
     return storage_path
