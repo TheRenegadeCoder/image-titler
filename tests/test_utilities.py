@@ -497,6 +497,7 @@ class TestSaveCopies(TestUtilities):
         :return: None
         """
         self.paths.extend(save_copies(list()))
+        self.assertEqual(0, len(self.paths))
         self.assertEqual(list(), self.paths)
 
     def test_one_image(self) -> None:
@@ -507,7 +508,8 @@ class TestSaveCopies(TestUtilities):
 
         :return: None
         """
-        self.paths.extend(save_copies(TEST_IMAGES[:1]))
+        self.paths.extend(save_copies(TEST_IMAGES))
+        self.assertEqual(1, len(self.paths))
         self.verify_existence()
 
     def test_many_images(self) -> None:
@@ -519,6 +521,7 @@ class TestSaveCopies(TestUtilities):
         :return: None
         """
         self.paths.extend(save_copies(TEST_IMAGES))
+        self.assertEqual(1, len(self.paths))
         self.verify_existence()
 
     def test_many_title(self) -> None:
@@ -529,7 +532,8 @@ class TestSaveCopies(TestUtilities):
 
         :return: None
         """
-        self.paths.extend(save_copies(TEST_IMAGES, title="Test Many With Title Option"))
+        self.paths.extend(save_copies(TEST_IMAGES, title="Test Many With Title Option", batch=True))
+        self.assertEqual(len(TEST_IMAGES), len(self.paths))
         self.verify_existence()
 
     def test_special_characters_in_title(self) -> None:
@@ -540,4 +544,5 @@ class TestSaveCopies(TestUtilities):
         :return: None
         """
         self.paths.extend(save_copies(TEST_IMAGES, title="Test Special Chars?"))
+        self.assertEqual(1, len(self.paths))
         self.verify_existence()
