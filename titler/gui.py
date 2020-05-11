@@ -78,11 +78,12 @@ class ImageTitlerGUI(ttk.Frame):
         super().__init__(parent, **kw)
         self.menu = menu
         self.options = options
+        self.logo_path = None
         self.option_pane = ImageTitlerOptionPane(self, self.options)
         self.preview = ImageTitlerPreviewPane(self,
                                               text=f"Select a file using '{FILE_TAB_LABEL}' > '{NEW_IMAGE_LABEL}'")
-        self.logo_path = None
         self._set_layout()
+        self.update_view()
 
     def update_view(self, *_) -> None:
         """
@@ -251,6 +252,8 @@ class ImageTitlerOptionPane(ttk.Frame):
         if font != DEFAULT_FONT:
             font = next(k for k, v in FONTS.items() if Path(v).name == font)
             ImageTitlerOptionPane._populate_option(font, self.font_value, self.font_state)
+        logo = self.options.get(KEY_LOGO_PATH)
+        self.logo_state.set(1 if logo else 0)
 
     def _init_option_pane(self) -> None:
         """
