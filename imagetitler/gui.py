@@ -135,6 +135,7 @@ class ImageTitlerGUI(ttk.Frame):
             self.option_pane.logo_value.config(image=image)
             self.option_pane.logo_value.image = image
             self.option_pane.logo_value.logo_path = self.logo_path
+            self.option_pane.logo_state.set(1)
 
 
 class ImageTitlerPreviewPane(ttk.Label):
