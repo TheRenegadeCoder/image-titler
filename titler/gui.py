@@ -92,7 +92,7 @@ class ImageTitlerGUI(ttk.Frame):
         """
         if self.options[KEY_PATH]:
             self._render_preview()
-        self._render_logo(self.options.get("logo_path_loaded"))
+        self._render_logo()
 
     def _set_layout(self) -> None:
         """
@@ -118,13 +118,13 @@ class ImageTitlerGUI(ttk.Frame):
         self.preview.config(image=image)
         self.preview.image = image
 
-    def _render_logo(self, logo_path: Optional[str]) -> None:
+    def _render_logo(self) -> None:
         """
         Renders a preview of the logo in the options pane.
 
-        :param logo_path: the path to a logo
         :return: None
         """
+        logo_path = self.options.get(KEY_LOGO_PATH)
         if logo_path and logo_path != self.logo_path:
             self.logo_path = logo_path
             maxsize = (50, 50)
@@ -133,6 +133,7 @@ class ImageTitlerGUI(ttk.Frame):
             image = ImageTk.PhotoImage(small_image)
             self.option_pane.logo_value.config(image=image)
             self.option_pane.logo_value.image = image
+            self.option_pane.logo_value.logo_path = self.logo_path
 
 
 class ImageTitlerPreviewPane(ttk.Label):
@@ -188,7 +189,7 @@ class ImageTitlerMenuBar(tk.Menu):
 
         :return: None
         """
-        self.options["logo_path_loaded"] = filedialog.askopenfilename(filetypes=FILE_TYPES)
+        self.options["logo_path"] = filedialog.askopenfilename(filetypes=FILE_TYPES)
         self.parent.update_view()
 
     def _save_as(self) -> None:
@@ -357,9 +358,8 @@ class ImageTitlerOptionPane(ttk.Frame):
 
         :return: None
         """
-        logo_path = self.options.get("logo_path_loaded")
-        if logo_path and self.logo_state.get():
-            self.options[KEY_LOGO_PATH] = logo_path
+        if self.logo_state.get() and hasattr(self.logo_value, "logo_path"):
+            self.options[KEY_LOGO_PATH] = self.logo_value.logo_path
         else:
             self.options[KEY_LOGO_PATH] = None
         self.parent.update_view()
