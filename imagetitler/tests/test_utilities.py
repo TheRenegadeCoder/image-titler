@@ -6,11 +6,11 @@ from unittest.mock import patch
 
 import pkg_resources
 from PIL import Image
-from titler import cli
+from imagetitler import cli
 
-from titler.draw import process_images
-from titler.parse import parse_input
-from titler.store import save_copies
+from imagetitler.draw import process_images
+from imagetitler.parse import parse_input
+from imagetitler.store import save_copies
 
 CUSTOM_FONT = "imagetitler/assets/fonts/arial.ttf"
 

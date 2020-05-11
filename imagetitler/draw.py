@@ -9,7 +9,7 @@ from PIL import ImageDraw
 from PIL import ImageFont
 from titlecase import titlecase
 
-from titler.constants import *
+from imagetitler.constants import *
 
 TEXT_FILL = (255, 255, 255)
 RECTANGLE_FILL = (201, 2, 41)

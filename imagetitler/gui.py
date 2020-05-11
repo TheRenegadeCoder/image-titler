@@ -12,10 +12,10 @@ import pkg_resources
 from PIL import ImageTk, Image
 from matplotlib import font_manager
 
-from titler.constants import *
-from titler.draw import process_images
-from titler.parse import parse_input
-from titler.store import save_copies
+from imagetitler.constants import *
+from imagetitler.draw import process_images
+from imagetitler.parse import parse_input
+from imagetitler.store import save_copies
 
 FONTS = {
     f"{f.name} ({f.style}, {f.variant}, {f.weight}, {f.stretch})": f.fname
