@@ -21,8 +21,8 @@ VF_ICON_PATH = "assets/icons/virtual-flat-sample-icon.png"
 VF_BLUE = (0, 164, 246, 255)
 
 IMAGE_FOLDER = "assets/images"
-DEFAULT_IMAGE = "assets/images/23-tech-topics-to-tackle.jpg"
-LOGO_RED_IMAGE = "assets/images/welcome-to-the-image-titler-by-the-renegade-coder.jpg"
+DEFAULT_IMAGE = "assets/images/welcome-to-the-image-titler-by-the-renegade-coder.jpg"
+LOGO_RED_IMAGE = "assets/images/23-tech-topics-to-tackle.jpg"
 LOGO_BLUE_IMAGE = "assets/images/hello-world-in-matlab.jpg"
 FREE_IMAGE = "assets/images/columbus-drivers-are-among-the-worst.jpg"
 PREMIUM_IMAGE = "assets/images/the-guide-to-causing-mass-panic.jpg"
@@ -132,6 +132,7 @@ class TestIntegration(TestUtilities):
         """
         default = ["image-titler"]
         TestIntegration._generate_test_image(default)
+        TestIntegration._generate_sample_image(default)
 
     def test_custom_title(self) -> None:
         """

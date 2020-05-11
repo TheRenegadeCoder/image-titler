@@ -7,9 +7,9 @@ here's a quick video overview:
 
 ## Default Behavior
 
-The following image is an example of the default behavior of this program as of v1.8.0:
+The following image is an example of the default behavior of this program as of 2.2.0:
 
-![23 Tech Topics to Tackle](v2.1.0/23-tech-topics-to-tackle-featured-image-v2-1-0.JPEG)
+![Welcome to the Image Titler by The Renegade Coder](v2.2.0/welcome-to-the-image-titler-by-the-renegade-coder-v2-2-0.jpg)
 
 Here's the command that would generate this image:
 
@@ -21,48 +21,48 @@ image-titler
 
 The following image is an example of the behavior when the script is provided a logo as of 1.8.0:
 
-![3 Ways to Check If a List is Empty in Python](v2.1.0/3-ways-to-check-if-a-list-is-empty-in-python-featured-image-v2-1-0.JPEG)
+![23 Tech Topics to Tackle](v2.2.0/23-tech-topics-to-tackle-v2-2-0.jpg)
 
 When using a logo, title background color is generated automatically. Here's another example:
 
-![Hello World in MATLAB](v2.1.0/hello-world-in-matlab-featured-image-v2-1-0.JPEG)
+![Hello World in MATLAB](v2.2.0/hello-world-in-matlab-v2-2-0.jpg)
 
 Here's the command that would generate these images:
 
 ```shell script
-image-titler -l "path/to/logo"
+image-titler -l "path/to/logo" -p "path/to/image"
 ```
 
 # Tier Behavior
 
 The following image is an example of the behavior when the premium subscription tier is applied to the logo as of 1.8.0:
 
-![The Guide to Causing Mass Panic](v2.1.0/the-guide-to-causing-mass-panic-featured-image-v2-1-0.JPEG)
+![The Guide to Causing Mass Panic](v2.2.0/the-guide-to-causing-mass-panic-v2-2-0.jpg)
 
 To generate an image like this, use the following command:
 
 ```shell script
-image-titler -r premium
+image-titler -r premium -p "path/to/image"
 ```
 
 In addition, the script supports a free tier as well:
 
-![Columbus Drivers Are Among the Worst](v2.1.0/columbus-drivers-are-among-the-worst-featured-image-v2-1-0.JPEG)
+![Columbus Drivers Are Among the Worst](v2.2.0/columbus-drivers-are-among-the-worst-v2-2-0.jpg)
 
 To generate an image like this, use the following command:
 
 ```shell script
-image-titler -r free
+image-titler -r free -p "path/to/image"
 ```
 
 # Custom Font Behavior
 
 In v2.1.0, we introduced custom font support:
 
-![Reflecting on My Third Semester of Teaching](v2.1.0/reflecting-on-my-third-semester-of-teaching-featured-image-v2-1-0.JPEG)
+![Reflecting on My Third Semester of Teaching](v2.2.0/reflecting-on-my-third-semester-of-teaching-v2-2-0.jpg)
 
 To generate an image like this, use the following command:
 
 ```shell script
-image-titler -f "arial.ttf"
+image-titler -f "arial.ttf" -p "path/to/image"
 ```

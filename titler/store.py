@@ -19,6 +19,8 @@ def save_copies(edited_images: List[Image.Image], **kwargs) -> List[str]:
     is present, then that attribute will be used. Otherwise, a generic file name
     is given (image-titler).
 
+    Note: the batch setting must be present to process more than one image.
+
     Currently, image files are given the following name format:
 
     {title}-featured-image-{software version}.{extension}
