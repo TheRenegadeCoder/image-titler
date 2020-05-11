@@ -38,7 +38,18 @@ Alternatively, you can spin up the GUI version of the software as of 2.0.0 as fo
 image-titler-gui
 ```
 
-At this time, the GUI does not feature the same command line interface. 
+Since 2.2.0, all the CLI commands from above will work to populate the GUI as well. Try
+some of these:
+
+```shell
+image-titler-gui --title "Hello, World!"  # Adds a custom title
+image-titler-gui --output_path "path/to/output"  # Sets the output path
+image-titler-gui --path "path/to/image"  # Sets the image path
+image-titler-gui --tier "free"  # Sets the membership tier which changes the rectangle borders
+image-titler-gui --logo_path "path/to/logo"  # Adds a 145x145 logo to the lower left corner of the image
+image-titler-gui --batch  # Runs the program in batch mode on a directory
+image-titler-gui --font "path/to/font"  # Changes the default title font
+```
 
 ## Default Behavior
 
