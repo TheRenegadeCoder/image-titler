@@ -132,8 +132,16 @@ def _add_font_option(parser: argparse.ArgumentParser) -> None:
 
 
 def _add_custom_size_option(parser: argparse.ArgumentParser) -> None:
+    """
+    A helper function which sets up the size options for the parser.
+    The size is then used to resize and crop input images.
+
+    :param parser: an argument parser
+    :return: None
+    """
     parser.add_argument(
         "-s",
         f'--{KEY_SIZE}',
+        choices=SIZE_MAP.keys(),  # [f'{k} {v}' for k, v in SIZE_MAP.items()]
         help="change the default size of the output image"
     )
