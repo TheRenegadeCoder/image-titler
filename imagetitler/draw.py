@@ -246,11 +246,13 @@ def _draw_overlay(image: Image.Image, color: tuple, **kwargs) -> Image:
         _draw_rectangle(draw, TOP_RECTANGLE_Y, width, color, **kwargs)
         _draw_text(draw, top_position, top_half_text, font)
 
+        bottom_rectangle_y = TOP_RECTANGLE_Y + _get_bar_height(**kwargs) + 30
+
         # Draw bottom
         if bottom_half_text:
             width, top_offset, height, _ = _get_text_metrics(bottom_half_text, font)
-            bottom_position = _get_text_position(width, height, top_offset, BOTTOM_RECTANGLE_Y, **kwargs)
-            _draw_rectangle(draw, BOTTOM_RECTANGLE_Y, width, color, **kwargs)
+            bottom_position = _get_text_position(width, height, top_offset, bottom_rectangle_y, **kwargs)
+            _draw_rectangle(draw, bottom_rectangle_y, width, color, **kwargs)
             _draw_text(draw, bottom_position, bottom_half_text, font)
 
     return image
