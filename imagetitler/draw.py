@@ -66,17 +66,18 @@ def _process_batch(**kwargs) -> List[Image.Image]:
     return edited_images
 
 
-def _process_image(**kwargs) -> Optional[Image.Image]:
+def _process_image(**kwargs) -> Image.Image:
     """
     Processes a single image.
 
     :pre: kwargs.get(KEY_PATH) != None and kwargs.get(KEY_TITLE) != None
     :return: the edited image or None
     """
-    input_path = kwargs.get(KEY_PATH)
-    img = Image.open(input_path)
-    cropped_img: Image = img.crop((0, 0, IMAGE_WIDTH, IMAGE_HEIGHT))
-    cropped_img.filename = img.filename  # Ensures filename data is transferred to updated copy
+    input_path = kwargs.get(KEY_PATH)  # TODO: might be able to speed things up by caching this
+    img: Image.Image = Image.open(input_path)
+    cropped_img: Image.Image = _resize_image(img, **kwargs)
+    if hasattr(img, "filename"):
+        cropped_img.filename = img.filename  # Ensures filename data is transferred to updated copy
     color = RECTANGLE_FILL
     if logo_path := kwargs.get(KEY_LOGO_PATH):
         logo: Image.Image = Image.open(logo_path)
@@ -88,6 +89,22 @@ def _process_image(**kwargs) -> Optional[Image.Image]:
         **kwargs
     )
     return edited_image
+
+
+def _resize_image(img: Image.Image, **kwargs) -> Image.Image:
+    """
+    A helper function which resizes an image. First, the image is constrained
+    by its width. Then, any excess height is cropped until the desired aspect
+    ratio is achieved. See "size" option for more details.
+
+    :param img: an image to be resized
+    :param kwargs: a set of options
+    :return: a resized image
+    """
+    size = kwargs.get(KEY_SIZE) if kwargs.get(KEY_SIZE) else SIZE_MAP.get(DEFAULT_SIZE)
+    img.thumbnail((size[0], img.size[1]))
+    cropped_img: Image = img.crop((0, 0, size[0], size[1]))
+    return cropped_img
 
 
 def _convert_file_name_to_title(**kwargs) -> Optional[str]:
