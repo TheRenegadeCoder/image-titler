@@ -234,6 +234,8 @@ class ImageTitlerOptionPane(ttk.Frame):
         self.logo_value: Optional[ttk.Label] = None
         self.font_state: tk.IntVar = tk.IntVar()
         self.font_value: tk.StringVar = tk.StringVar()
+        self.size_state: tk.IntVar = tk.IntVar()
+        self.size_value: tk.StringVar = tk.StringVar()
         self.rows = list()
         self._init_vars()
         self._init_option_pane()
@@ -256,6 +258,8 @@ class ImageTitlerOptionPane(ttk.Frame):
             ImageTitlerOptionPane._populate_option(font, self.font_value, self.font_state)
         logo = self.options.get(KEY_LOGO_PATH)
         self.logo_state.set(1 if logo else 0)
+        size = self.options.get(KEY_SIZE)
+        ImageTitlerOptionPane._populate_option(size, self.size_value, self.size_state, sorted(SIZE_MAP.keys())[0])
 
     def _init_option_pane(self) -> None:
         """
@@ -264,9 +268,10 @@ class ImageTitlerOptionPane(ttk.Frame):
         :return: None
         """
         self.rows.append(self._init_title_frame())
+        self.rows.append(self.init_font_frame())
+        self.rows.append(self._init_size_frame())
         self.rows.append(self._init_tier_frame())
         self.rows.append(self.init_logo_frame())
-        self.rows.append(self.init_font_frame())
         for row in self.rows:
             self._layout_option_row(*row[:3])
 
@@ -389,7 +394,8 @@ class ImageTitlerOptionPane(ttk.Frame):
             font_frame,
             textvariable=self.font_value,
             values=font_list,
-            state="readonly"
+            state="readonly",
+            width=40
         )
         font_menu.bind("<<ComboboxSelected>>", self._update_font)
         return font_frame, font_label, font_menu, KEY_FONT
@@ -405,6 +411,32 @@ class ImageTitlerOptionPane(ttk.Frame):
             self.options[KEY_FONT] = FONTS.get(self.font_value.get())
         else:
             self.options[KEY_FONT] = None
+        self.parent.update_view()
+
+    def _init_size_frame(self) -> tuple:
+        size_frame = ttk.Frame(self)
+        size_label = ttk.Checkbutton(
+            size_frame,
+            text="Size:",
+            variable=self.size_state,
+            command=self._update_size,
+            width=COLUMN_WIDTH
+        )
+        size_label.variable = self.size_state
+        size_menu = ttk.Combobox(
+            size_frame,
+            textvariable=self.size_value,
+            values=sorted(SIZE_MAP.keys()),
+            state="readonly"
+        )
+        size_menu.bind("<<ComboboxSelected>>", self._update_size)
+        return size_frame, size_label, size_menu, KEY_SIZE
+
+    def _update_size(self, *_):
+        if self.size_state.get():
+            self.options[KEY_SIZE] = self.size_value.get()
+        else:
+            self.options[KEY_SIZE] = None
         self.parent.update_view()
 
     @staticmethod
