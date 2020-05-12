@@ -26,6 +26,7 @@ TIER_MAP = {
 }
 
 SIZE_MAP = {
+    "Twitter Card": (1200, 628),
     "WordPress": (1200, 628),
     "YouTube": (1280, 720)
 }
