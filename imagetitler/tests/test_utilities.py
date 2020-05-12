@@ -30,6 +30,7 @@ PREMIUM_IMAGE = "imagetitler/assets/images/the-guide-to-causing-mass-panic.jpg"
 SPECIAL_IMAGE = "imagetitler/assets/images/happy-new-year.jpg"
 CUSTOM_FONT_IMAGE = "imagetitler/assets/images/reflecting-on-my-third-semester-of-teaching.jpg"
 ONE_LINE_TITLE_IMAGE = "imagetitler/assets/images/minimalism.jpg"
+YOUTUBE_IMAGE = "imagetitler/assets/images/the-art-of-simplification.jpg"
 
 TEST_IMAGES = [
     Image.open(path) for path in
@@ -41,7 +42,8 @@ TEST_IMAGES = [
         PREMIUM_IMAGE,
         SPECIAL_IMAGE,
         CUSTOM_FONT_IMAGE,
-        ONE_LINE_TITLE_IMAGE
+        ONE_LINE_TITLE_IMAGE,
+        YOUTUBE_IMAGE
     ]
 ]
 
@@ -255,8 +257,16 @@ class TestIntegration(TestUtilities):
         TestIntegration._generate_batch_test_images(batch)
 
     def test_size_youtube(self) -> None:
-        size = ["image-titler", "-s", "YouTube", "--title", "Test YouTube Size"]
+        """
+        Tests the following command: image-titler -p YOUTUBE_IMAGE -s "YouTube" -t "Test YouTube Size"
+
+        The resulting image should have the dimensions of a YouTube thumbnail.
+
+        :return: None
+        """
+        size = ["image-titler", "--path", YOUTUBE_IMAGE, "-s", "YouTube", "--title", "Test YouTube Size"]
         TestIntegration._generate_solo_test_image(size)
+        TestIntegration._generate_sample_image(size[:-2])
 
 
 class TestParseInput(TestUtilities):
