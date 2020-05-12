@@ -19,9 +19,7 @@ FONT_SIZE = 114
 TOP_RECTANGLE_Y = 30
 BOTTOM_RECTANGLE_Y = TOP_RECTANGLE_Y + 180
 BOTTOM_TEXT_Y = BOTTOM_RECTANGLE_Y + 5
-RECTANGLE_HEIGHT = 145
 X_OFFSET = 30
-LOGO_SIZE = (RECTANGLE_HEIGHT, RECTANGLE_HEIGHT)
 LOGO_PADDING = 30
 
 
@@ -80,7 +78,7 @@ def _process_image(**kwargs) -> Image.Image:
     if logo_path := kwargs.get(KEY_LOGO_PATH):
         logo: Image.Image = Image.open(logo_path)
         color = _get_best_top_color(logo)
-        _draw_logo(cropped_img, logo)
+        _draw_logo(cropped_img, logo, **kwargs)
     edited_image = _draw_overlay(
         cropped_img,
         color,
@@ -133,6 +131,17 @@ def _convert_file_name_to_title(**kwargs) -> Optional[str]:
     return title
 
 
+def _get_bar_height(**kwargs) -> int:
+    """
+    A helper function which retrieves the bar height based on the size of the image.
+
+    :param kwargs: a set of options
+    :return: the bar height in pixels
+    """
+    image_size = _retrieve_size_from_options(**kwargs)
+    return image_size[1] // 8
+
+
 def _draw_rectangle(
         draw: ImageDraw,
         position: int,
@@ -154,7 +163,7 @@ def _draw_rectangle(
     draw.rectangle(
         (
             (image_width - width - X_OFFSET * 2, position),
-            (image_width, position + RECTANGLE_HEIGHT)
+            (image_width, position + _get_bar_height(**kwargs))
         ),
         fill=color,
         outline=TIER_MAP.get(kwargs.get(KEY_TIER), None),
@@ -195,7 +204,7 @@ def _get_text_position(text_width, text_height, text_ascent, y_offset, **kwargs)
     image_width = _retrieve_size_from_options(**kwargs)[0]
     return (
         image_width - text_width - X_OFFSET,
-        y_offset - text_ascent + (RECTANGLE_HEIGHT - text_height) / 2
+        y_offset - text_ascent + (_get_bar_height(**kwargs) - text_height) / 2
     )
 
 
@@ -247,7 +256,18 @@ def _draw_overlay(image: Image.Image, color: tuple, **kwargs) -> Image:
     return image
 
 
-def _draw_logo(img: Image.Image, logo: Image.Image):
+def _get_logo_size(**kwargs) -> tuple:
+    """
+    A helper function that retrieves the size of the logo based on the size of the bars.
+
+    :param kwargs: a set of options
+    :return: a logo size tuple
+    """
+    bar_height = _get_bar_height(**kwargs)
+    return bar_height, bar_height
+
+
+def _draw_logo(img: Image.Image, logo: Image.Image, **kwargs):
     """
     Adds a logo to the image if a path is provided.
 
@@ -255,9 +275,10 @@ def _draw_logo(img: Image.Image, logo: Image.Image):
     :param logo: the logo file to be added
     :return: nothing
     """
-    logo.thumbnail(LOGO_SIZE)
+    logo_size = _get_logo_size(**kwargs)
+    logo.thumbnail(logo_size)
     _, height = img.size
-    img.paste(logo, (LOGO_PADDING, height - LOGO_SIZE[1] - LOGO_PADDING), logo)
+    img.paste(logo, (LOGO_PADDING, height - logo_size[1] - LOGO_PADDING), logo)
 
 
 def _split_string_by_nearest_middle_space(input_string: str) -> tuple:
