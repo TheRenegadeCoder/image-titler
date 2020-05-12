@@ -17,6 +17,7 @@ def parse_input() -> argparse.Namespace:
     _add_logo_path_option(parser)
     _add_batch_option(parser)
     _add_font_option(parser)
+    _add_custom_size_option(parser)
     args = parser.parse_args()
     return args
 
@@ -127,4 +128,20 @@ def _add_font_option(parser: argparse.ArgumentParser) -> None:
         f'--{KEY_FONT}',
         default=DEFAULT_FONT,
         help="change the default font by path (e.g. 'arial.ttf')"
+    )
+
+
+def _add_custom_size_option(parser: argparse.ArgumentParser) -> None:
+    """
+    A helper function which sets up the size options for the parser.
+    The size is then used to resize and crop input images.
+
+    :param parser: an argument parser
+    :return: None
+    """
+    parser.add_argument(
+        "-s",
+        f'--{KEY_SIZE}',
+        choices=SIZE_MAP.keys(),  # [f'{k} {v}' for k, v in SIZE_MAP.items()]
+        help="change the default size of the output image"
     )
