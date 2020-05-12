@@ -219,6 +219,12 @@ def _get_text_metrics(text: str, font: ImageFont):
 
 
 def _get_appropriate_font_size(**kwargs) -> ImageFont:
+    """
+    A helper function which computes the font size given a set of options.
+
+    :param kwargs: a set of options
+    :return: a font of the appropriate size
+    """
     bar_height = _get_bar_height(**kwargs)
     font = kwargs.get(KEY_FONT, DEFAULT_FONT)
     font = font if font else DEFAULT_FONT

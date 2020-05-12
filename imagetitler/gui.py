@@ -414,6 +414,11 @@ class ImageTitlerOptionPane(ttk.Frame):
         self.parent.update_view()
 
     def _init_size_frame(self) -> tuple:
+        """
+        Initializes the row for size information.
+
+        :return: a tuple containing the size container and its two children (see layout_option_row for order)
+        """
         size_frame = ttk.Frame(self)
         size_label = ttk.Checkbutton(
             size_frame,
@@ -433,6 +438,12 @@ class ImageTitlerOptionPane(ttk.Frame):
         return size_frame, size_label, size_menu, KEY_SIZE
 
     def _update_size(self, *_):
+        """
+        A helper method which serves as the update size functionality.
+        This should be triggered when the size is changed.
+
+        :return: None
+        """
         if self.size_state.get():
             self.options[KEY_SIZE] = self.size_value.get()
         else:
