@@ -26,9 +26,9 @@ TIER_MAP = {
 }
 
 SIZE_MAP = {
-    "Twitter Card": (1200, 628),
-    "WordPress": (1200, 628),
-    "YouTube": (1280, 720)
+    "Twitter": (1200, 628),  # Card size according to: https://louisem.com/217438/twitter-image-size
+    "WordPress": (1200, 628),  # Thumbnail size according to: https://blog.snappa.com/youtube-thumbnail-size/
+    "YouTube": (1280, 720)  # Featured image size according to: https://blog.snappa.com/wordpress-featured-image-size/
 }
 
 TRC_ICON = os.path.join(os.path.dirname(__file__), 'assets/icons/the-renegade-coder-sample-icon.png')
