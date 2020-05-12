@@ -164,7 +164,7 @@ def _draw_rectangle(
         ),
         fill=color,
         outline=TIER_MAP.get(kwargs.get(KEY_TIER), None),
-        width=7
+        width=4
     )
 
 
