@@ -16,7 +16,7 @@ RECTANGLE_FILL = (201, 2, 41)
 WHITE = (255, 255, 255, 0)
 
 TOP_RECTANGLE_Y = 20
-X_OFFSET = 20
+X_OFFSET = TOP_RECTANGLE_Y
 LOGO_PADDING = TOP_RECTANGLE_Y
 
 
@@ -252,7 +252,7 @@ def _draw_overlay(image: Image.Image, color: tuple, **kwargs) -> Image:
         _draw_rectangle(draw, TOP_RECTANGLE_Y, width, color, **kwargs)
         _draw_text(draw, top_position, top_half_text, font)
 
-        bottom_rectangle_y = TOP_RECTANGLE_Y + _get_bar_height(**kwargs) + 25
+        bottom_rectangle_y = TOP_RECTANGLE_Y + _get_bar_height(**kwargs) + TOP_RECTANGLE_Y
 
         # Draw bottom
         if bottom_half_text:

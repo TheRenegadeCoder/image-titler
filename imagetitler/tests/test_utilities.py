@@ -254,6 +254,10 @@ class TestIntegration(TestUtilities):
         batch = ["image-titler", "-b"]
         TestIntegration._generate_batch_test_images(batch)
 
+    def test_size_youtube(self) -> None:
+        size = ["image-titler", "-s", "YouTube", "--title", "Test YouTube Size"]
+        TestIntegration._generate_solo_test_image(size)
+
 
 class TestParseInput(TestUtilities):
     """
