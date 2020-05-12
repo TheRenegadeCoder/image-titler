@@ -7,6 +7,7 @@ KEY_PATH = "path"
 KEY_TIER = "tier"
 KEY_TITLE = "title"
 KEY_OUTPUT_PATH = "output_path"
+KEY_SIZE = "size"
 
 FILE_TYPES = [('image files', ('.png', '.jpg', '.jpeg'))]
 
