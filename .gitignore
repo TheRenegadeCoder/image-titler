@@ -106,4 +106,4 @@ ENV/
 .history/
 
 # Remove file dump
-/tests/dump
+imagetitler/tests/dump
