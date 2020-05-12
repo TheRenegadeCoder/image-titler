@@ -15,12 +15,9 @@ TEXT_FILL = (255, 255, 255)
 RECTANGLE_FILL = (201, 2, 41)
 WHITE = (255, 255, 255, 0)
 
-FONT_SIZE = 114
-TOP_RECTANGLE_Y = 30
-BOTTOM_RECTANGLE_Y = TOP_RECTANGLE_Y + 180
-BOTTOM_TEXT_Y = BOTTOM_RECTANGLE_Y + 5
-X_OFFSET = 30
-LOGO_PADDING = 30
+TOP_RECTANGLE_Y = 20
+X_OFFSET = 20
+LOGO_PADDING = TOP_RECTANGLE_Y
 
 
 def process_images(**kwargs) -> List[Image.Image]:
@@ -139,7 +136,7 @@ def _get_bar_height(**kwargs) -> int:
     :return: the bar height in pixels
     """
     image_size = _retrieve_size_from_options(**kwargs)
-    return image_size[1] // 8
+    return image_size[1] // 7
 
 
 def _draw_rectangle(
@@ -221,6 +218,17 @@ def _get_text_metrics(text: str, font: ImageFont):
     return width, offset_y, ascent - offset_y, descent
 
 
+def _get_appropriate_font_size(**kwargs) -> ImageFont:
+    bar_height = _get_bar_height(**kwargs)
+    font = kwargs.get(KEY_FONT, DEFAULT_FONT)
+    font = font if font else DEFAULT_FONT
+    title = kwargs.get(KEY_TITLE)
+    font_size = 12
+    while ImageFont.truetype(font, font_size).getsize(title)[1] < bar_height - 10:
+        font_size += 1
+    return ImageFont.truetype(font, font_size)
+
+
 def _draw_overlay(image: Image.Image, color: tuple, **kwargs) -> Image:
     """
     Draws text over an image.
@@ -229,9 +237,7 @@ def _draw_overlay(image: Image.Image, color: tuple, **kwargs) -> Image:
     :return: the updated image
     """
     draw = ImageDraw.Draw(image)
-    font = kwargs.get(KEY_FONT, DEFAULT_FONT)
-    font = font if font else DEFAULT_FONT
-    font = ImageFont.truetype(font, FONT_SIZE)
+    font = _get_appropriate_font_size(**kwargs)
 
     if title := kwargs.get(KEY_TITLE):
         # Detect space (precondition for split)
@@ -246,7 +252,7 @@ def _draw_overlay(image: Image.Image, color: tuple, **kwargs) -> Image:
         _draw_rectangle(draw, TOP_RECTANGLE_Y, width, color, **kwargs)
         _draw_text(draw, top_position, top_half_text, font)
 
-        bottom_rectangle_y = TOP_RECTANGLE_Y + _get_bar_height(**kwargs) + 30
+        bottom_rectangle_y = TOP_RECTANGLE_Y + _get_bar_height(**kwargs) + 25
 
         # Draw bottom
         if bottom_half_text:
