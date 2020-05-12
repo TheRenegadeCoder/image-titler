@@ -33,7 +33,7 @@ Here's the command that would generate these images:
 image-titler -l "path/to/logo" -p "path/to/image"
 ```
 
-# Tier Behavior
+## Tier Behavior
 
 The following image is an example of the behavior when the premium subscription tier is applied to the logo as of 1.8.0:
 
@@ -55,7 +55,7 @@ To generate an image like this, use the following command:
 image-titler -r free -p "path/to/image"
 ```
 
-# Custom Font Behavior
+## Custom Font Behavior
 
 In v2.1.0, we introduced custom font support:
 
@@ -65,4 +65,17 @@ To generate an image like this, use the following command:
 
 ```shell script
 image-titler -f "arial.ttf" -p "path/to/image"
+```
+
+## Custom Size Behavior
+
+In v2.3.0, we introduced custom size support. For example, the following image was
+generated in the YouTube size (1280, 720):
+
+![The Art of Simplification](v2.3.0/the-art-of-simplification-v2-3-0.jpg)
+
+To generate an image like this, use the following command:
+
+```shell
+image-titler -s YouTube -p "path/to/image"
 ```
