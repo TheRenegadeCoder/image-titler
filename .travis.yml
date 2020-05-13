@@ -17,7 +17,6 @@ deploy:
   provider: pypi
   user: ${PYPI_USERNAME}
   password: ${PYPI_PASSWORD}
-  distributions: "sdist bdist_wheel bdist_msi --target-version 3.8"
   on:
     tags: true
 
