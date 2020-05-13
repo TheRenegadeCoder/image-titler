@@ -36,4 +36,5 @@ setuptools.setup(
         'piexif',
         'matplotlib'
     ],
+    #scripts=["winstall.py"],
 )
