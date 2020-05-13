@@ -31,12 +31,8 @@ Alternatively, you can spin up the GUI version of the software as of 2.0.0 as fo
 
 ```shell
 image-titler-gui
-```
 
-Since 2.2.0, all the CLI commands from above will work to populate the GUI as well. Try
-some of these:
-
-```shell
+# Options can be used to preload GUI as of 2.2.0
 image-titler-gui --title "Hello, World!"  # Adds a custom title
 image-titler-gui --output_path "path/to/output"  # Sets the output path
 image-titler-gui --path "path/to/image"  # Sets the image path
