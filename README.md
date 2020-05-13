@@ -74,6 +74,11 @@ with the tool and share any issues you find.
 
 | Option | Domain | Description |
 |--------|--------|-------------|
+| --batch, -b | True/False | Turns on batch processing |
+| --font, -f | Any valid font file | Overrides the default title font |
+| --logo_path, -l | Any valid image file | Loads a logo onto the input image |
 | --output_path, -o | Any valid directory | Determines where files will be saved (has no effect in GUI) |  
-| --tier, -r | Choose between "free" (silver) or "premium" (gold) | Adds a border color to the title
+| --path, -p | Any valid file or directory | Loads the input image (or directory when in batch mode) |
+| --size, -s | Choose between "Twitter", "WordPress", and "YouTube" | Sets the aspect ratio of the output image |
+| --tier, -r | Choose between "free" (silver) or "premium" (gold) | Adds a border color to the title |
 | --title, -t | Any string | Overrides the automatic title feature |
