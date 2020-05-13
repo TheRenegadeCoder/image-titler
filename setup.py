@@ -5,10 +5,10 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="image-titler",
-    version="2.3.0",
+    version="2.3.1",
     author="The Renegade Coder",
     author_email="jeremy.grifski@therenegadecoder.com",
-    description="A image processing utility which provides options for generating thumbnails for various social media platforms.",
+    description="An image processing utility which provides options for generating thumbnails for various social media platforms.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/TheRenegadeCoder/image-titler",
