@@ -2,14 +2,8 @@
 
 [![Join the chat at https://gitter.im/TheRenegadeCoder/image-titler](https://badges.gitter.im/TheRenegadeCoder/image-titler.svg)](https://gitter.im/TheRenegadeCoder/image-titler?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Adds a title to an image using The Renegade Coder Featured Image style. The style can be
-defined as the following:
-
-> Titles are split in half by the closest space and displayed using two solid red bars
-> with a white text overlay on the upper right portion of the image. In addition, logos
-> can be added which will affect the bar color. 
-
-For example:
+The Image Titler is a tool which provides options for generating thumbnails for various social media platforms.
+Currently, the tool has a predefined style which looks roughly like the following image:
 
 ![23 Tech Topics to Tackle](https://raw.githubusercontent.com/TheRenegadeCoder/image-titler/master/samples/v1.8.0/23-tech-topics-to-tackle-featured-image-v1-8-0.JPEG)
 
@@ -71,6 +65,8 @@ There are likely other default behaviors not documented here. Feel free to exper
 with the tool and share any issues you find. 
 
 ## Full List of Options
+
+Here's a description of all the option used in the samples above.
 
 | Option | Domain | Description |
 |--------|--------|-------------|
