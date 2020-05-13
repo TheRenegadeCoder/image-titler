@@ -30,6 +30,7 @@ image-titler --tier "free"  # Sets the membership tier which changes the rectang
 image-titler --logo_path "path/to/logo"  # Adds a 145x145 logo to the lower left corner of the image
 image-titler --batch  # Runs the program in batch mode on a directory
 image-titler --font "path/to/font"  # Changes the default title font
+image-titler --size YouTube  # Changes the aspect ratio of the output file
 ```
 
 Alternatively, you can spin up the GUI version of the software as of 2.0.0 as follows:
@@ -49,6 +50,7 @@ image-titler-gui --tier "free"  # Sets the membership tier which changes the rec
 image-titler-gui --logo_path "path/to/logo"  # Adds a 145x145 logo to the lower left corner of the image
 image-titler-gui --batch  # Runs the program in batch mode on a directory
 image-titler-gui --font "path/to/font"  # Changes the default title font
+image-titler-gui --size YouTube  # Changes the aspect ratio of the output file
 ```
 
 ## Default Behavior
@@ -56,8 +58,6 @@ image-titler-gui --font "path/to/font"  # Changes the default title font
 Currently, the image-titler script makes a few assumptions about the images it 
 processes automatically: 
 
-- The size of an image is assumed to be 1920x960. Otherwise, this tool 
-will automatically crop the image to size. 
 - This tool scrapes file names for image titles. To do this, it assumes 
 file names are written in kebab-case where each word is separated by a hyphen.
 Then, words are extracted and title cased before being printed on the image.
@@ -69,3 +69,11 @@ Titles will always appear in the top right.
 
 There are likely other default behaviors not documented here. Feel free to experiment
 with the tool and share any issues you find. 
+
+## Full List of Options
+
+| Option | Domain | Description |
+|--------|--------|-------------|
+| --output_path, -o | Any valid directory | Determines where files will be saved (has no effect in GUI) |  
+| --tier, -r | Choose between "free" (silver) or "premium" (gold) | Adds a border color to the title
+| --title, -t | Any string | Overrides the automatic title feature |
