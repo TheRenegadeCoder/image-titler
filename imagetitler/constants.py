@@ -26,6 +26,7 @@ TIER_MAP = {
 }
 
 SIZE_MAP = {
+    "DEV": (1000, 420),  # Cover image size according to: https://dev.to/p/editor_guide
     "Twitter": (1200, 628),  # Card size according to: https://louisem.com/217438/twitter-image-size
     "WordPress": (1200, 628),  # Thumbnail size according to: https://blog.snappa.com/youtube-thumbnail-size/
     "YouTube": (1280, 720)  # Featured image size according to: https://blog.snappa.com/wordpress-featured-image-size/
