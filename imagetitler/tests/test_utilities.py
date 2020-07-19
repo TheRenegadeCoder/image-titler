@@ -274,7 +274,7 @@ class TestIntegration(TestUtilities):
         """
         Tests the following command: image-titler -p -t "Test Trailing Spaces   "
 
-        :return:
+        :return: None
         """
         trailing_spaces = ["image-titler", "--path", TRAILING_SPACE_IMAGE, "--title", "Test Trailing Spaces"]
         TestIntegration._generate_solo_test_image(trailing_spaces)
