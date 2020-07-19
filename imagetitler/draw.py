@@ -246,6 +246,7 @@ def _draw_overlay(image: Image.Image, color: tuple, **kwargs) -> Image:
     font = _get_appropriate_font_size(**kwargs)
 
     if title := kwargs.get(KEY_TITLE):
+        title = title.strip()
         # Detect space (precondition for split)
         if len(title.split()) > 1:
             top_half_text, bottom_half_text = _split_string_by_nearest_middle_space(title)

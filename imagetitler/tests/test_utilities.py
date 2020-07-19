@@ -31,6 +31,7 @@ SPECIAL_IMAGE = "imagetitler/assets/images/happy-new-year.jpg"
 CUSTOM_FONT_IMAGE = "imagetitler/assets/images/reflecting-on-my-third-semester-of-teaching.jpg"
 ONE_LINE_TITLE_IMAGE = "imagetitler/assets/images/minimalism.jpg"
 YOUTUBE_IMAGE = "imagetitler/assets/images/the-art-of-simplification.jpg"
+TRAILING_SPACE_IMAGE = "imagetitler/assets/images/how-to-iterate-over-multiple-lists-at-the-same-time-in-python.jpg"
 
 TEST_IMAGES = [
     Image.open(path) for path in
@@ -43,7 +44,8 @@ TEST_IMAGES = [
         SPECIAL_IMAGE,
         CUSTOM_FONT_IMAGE,
         ONE_LINE_TITLE_IMAGE,
-        YOUTUBE_IMAGE
+        YOUTUBE_IMAGE,
+        TRAILING_SPACE_IMAGE
     ]
 ]
 
@@ -267,6 +269,16 @@ class TestIntegration(TestUtilities):
         size = ["image-titler", "--path", YOUTUBE_IMAGE, "-s", "YouTube", "--title", "Test YouTube Size"]
         TestIntegration._generate_solo_test_image(size)
         TestIntegration._generate_sample_image(size[:-2])
+
+    def test_trailing_spaces(self) -> None:
+        """
+        Tests the following command: image-titler -p -t "Test Trailing Spaces   "
+
+        :return:
+        """
+        trailing_spaces = ["image-titler", "--path", TRAILING_SPACE_IMAGE, "--title", "Test Trailing Spaces"]
+        TestIntegration._generate_solo_test_image(trailing_spaces)
+        TestIntegration._generate_sample_image(trailing_spaces[:-2])
 
 
 class TestParseInput(TestUtilities):
