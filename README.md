@@ -1,6 +1,7 @@
 # Image Titler
 
-[![Join the chat at https://gitter.im/TheRenegadeCoder/image-titler](https://badges.gitter.im/TheRenegadeCoder/image-titler.svg)](https://gitter.im/TheRenegadeCoder/image-titler?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Discord](https://img.shields.io/discord/612072397545275424)](https://discord.gg/Jhmtj7Z)  
+
 
 The Image Titler is a tool which provides options for generating thumbnails for various social media platforms.
 Currently, the tool has a predefined style which looks roughly like the following image:
