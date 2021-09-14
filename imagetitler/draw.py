@@ -71,11 +71,19 @@ def _process_image(**kwargs) -> Image.Image:
     cropped_img: Image.Image = _resize_image(img, **kwargs)
     if hasattr(img, "filename"):
         cropped_img.filename = img.filename  # Ensures filename data is transferred to updated copy
+
+    # Add logo
     color = RECTANGLE_FILL
     if logo_path := kwargs.get(KEY_LOGO_PATH):
         logo: Image.Image = Image.open(logo_path)
         color = _get_best_top_color(logo)
         _draw_logo(cropped_img, logo, **kwargs)
+
+    # Add author
+    if kwargs.get(KEY_AUTHOR):
+        _draw_author(cropped_img, **kwargs)
+
+    # Add title
     edited_image = _draw_overlay(
         cropped_img,
         color,
@@ -294,6 +302,20 @@ def _draw_logo(img: Image.Image, logo: Image.Image, **kwargs):
     logo.thumbnail(logo_size)
     _, height = img.size
     img.paste(logo, (LOGO_PADDING, height - logo_size[1] - LOGO_PADDING), logo)
+
+
+def _draw_author(img: Image.Image, **kwargs):
+    padding = LOGO_PADDING
+    if kwargs.get(KEY_LOGO_PATH):
+        padding += _get_logo_size(**kwargs)[0]
+    draw = ImageDraw.Draw(img)
+    font = _get_appropriate_font_size(**kwargs)
+    draw.text(
+        (padding, img.size[1] - _get_logo_size(**kwargs)[1] - LOGO_PADDING),
+        kwargs.get(KEY_AUTHOR),
+        fill=(0, 0, 0),
+        font=font
+    )
 
 
 def _split_string_by_nearest_middle_space(input_string: str) -> tuple:

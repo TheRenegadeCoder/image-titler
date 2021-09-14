@@ -27,6 +27,7 @@ NEW_IMAGE_LABEL = "New Image"
 NEW_LOGO_LABEL = "New Logo"
 SAVE_AS_LABEL = "Save As"
 TITLE_OPTION_LABEL = "Title:"
+AUTHOR_OPTION_LABEL = "Author:"
 TIER_OPTION_LABEL = "Tier:"
 LOGO_OPTION_LABEL = "Logo:"
 
@@ -227,6 +228,8 @@ class ImageTitlerOptionPane(ttk.Frame):
         self.options = options
         self.title_state: tk.IntVar = tk.IntVar()
         self.title_value: tk.StringVar = tk.StringVar()
+        self.author_state: tk.IntVar = tk.IntVar()
+        self.author_value: tk.StringVar = tk.StringVar()
         self.tier_state: tk.IntVar = tk.IntVar()
         self.tier_value: tk.StringVar = tk.StringVar()
         self.logo_path: Optional[str] = None
@@ -268,6 +271,7 @@ class ImageTitlerOptionPane(ttk.Frame):
         :return: None
         """
         self.rows.append(self._init_title_frame())
+        self.rows.append(self._init_author_frame())
         self.rows.append(self.init_font_frame())
         self.rows.append(self._init_size_frame())
         self.rows.append(self._init_tier_frame())
@@ -292,7 +296,21 @@ class ImageTitlerOptionPane(ttk.Frame):
         title_label.variable = self.title_state
         self.title_value.trace(tk.W, self._update_title)
         title_entry = tk.Entry(title_frame, textvariable=self.title_value)
-        return title_frame, title_label, title_entry, "title"
+        return title_frame, title_label, title_entry, KEY_TITLE
+
+    def _init_author_frame(self) -> tuple:
+        author_frame = ttk.Frame(self)
+        author_label = ttk.Checkbutton(
+            author_frame,
+            text=AUTHOR_OPTION_LABEL,
+            variable=self.author_state,
+            command=self._update_author,
+            width=COLUMN_WIDTH
+        )
+        author_label.variable = self.author_state
+        self.author_value.trace(tk.W, self._update_author)
+        author_entry = tk.Entry(author_frame, textvariable=self.author_value)
+        return author_frame, author_label, author_entry, KEY_AUTHOR
 
     def _update_title(self, *_) -> None:
         """
@@ -305,6 +323,13 @@ class ImageTitlerOptionPane(ttk.Frame):
             self.options[KEY_TITLE] = self.title_value.get()
         else:
             self.options[KEY_TITLE] = None
+        self.parent.update_view()
+
+    def _update_author(self, *_) -> None:
+        if self.author_state.get():
+            self.options[KEY_AUTHOR] = self.author_value.get()
+        else:
+            self.options[KEY_AUTHOR] = None
         self.parent.update_view()
 
     def _init_tier_frame(self) -> tuple:
