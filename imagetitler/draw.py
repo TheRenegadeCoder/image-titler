@@ -306,14 +306,15 @@ def _draw_logo(img: Image.Image, logo: Image.Image, **kwargs):
 
 def _draw_author(img: Image.Image, color: tuple, **kwargs):
     padding = LOGO_PADDING
+    author = f"By: {kwargs.get(KEY_AUTHOR).strip()}"
     if kwargs.get(KEY_LOGO_PATH):
         padding += _get_logo_size(**kwargs)[0] + 10
     draw = ImageDraw.Draw(img)
     font = _get_appropriate_font_size(**kwargs)
     rect_y = img.size[1] - _get_logo_size(**kwargs)[1] - LOGO_PADDING
-    width, top_offset, height, _ = _get_text_metrics(kwargs.get(KEY_AUTHOR), font)
+    width, top_offset, height, _ = _get_text_metrics(author, font)
     text_position = _get_text_position(width, height, top_offset, rect_y, **kwargs)
-    draw.rectangle(
+    draw.rounded_rectangle(
         (
             (padding, rect_y),
             (padding + width + X_OFFSET * 2, img.size[1] - LOGO_PADDING)
@@ -324,7 +325,7 @@ def _draw_author(img: Image.Image, color: tuple, **kwargs):
     )
     draw.text(
         (padding + X_OFFSET, text_position[1]),
-        kwargs.get(KEY_AUTHOR),
+        author,
         fill=TEXT_FILL,
         font=font
     )
