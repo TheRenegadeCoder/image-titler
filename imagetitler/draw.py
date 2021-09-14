@@ -81,7 +81,7 @@ def _process_image(**kwargs) -> Image.Image:
 
     # Add author
     if kwargs.get(KEY_AUTHOR):
-        _draw_author(cropped_img, **kwargs)
+        _draw_author(cropped_img, color, **kwargs)
 
     # Add title
     edited_image = _draw_overlay(
@@ -304,12 +304,21 @@ def _draw_logo(img: Image.Image, logo: Image.Image, **kwargs):
     img.paste(logo, (LOGO_PADDING, height - logo_size[1] - LOGO_PADDING), logo)
 
 
-def _draw_author(img: Image.Image, **kwargs):
+def _draw_author(img: Image.Image, color: tuple, **kwargs):
     padding = LOGO_PADDING
     if kwargs.get(KEY_LOGO_PATH):
-        padding += _get_logo_size(**kwargs)[0]
+        padding += _get_logo_size(**kwargs)[0] + 10
     draw = ImageDraw.Draw(img)
     font = _get_appropriate_font_size(**kwargs)
+    draw.rectangle(
+        (
+            (padding, img.size[1] - _get_logo_size(**kwargs)[1] - LOGO_PADDING),
+            (padding + 100, img.size[1] - LOGO_PADDING)
+        ),
+        fill=color,
+        outline=TIER_MAP.get(kwargs.get(KEY_TIER), None),
+        width=4
+    )
     draw.text(
         (padding, img.size[1] - _get_logo_size(**kwargs)[1] - LOGO_PADDING),
         kwargs.get(KEY_AUTHOR),
