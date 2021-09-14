@@ -310,19 +310,22 @@ def _draw_author(img: Image.Image, color: tuple, **kwargs):
         padding += _get_logo_size(**kwargs)[0] + 10
     draw = ImageDraw.Draw(img)
     font = _get_appropriate_font_size(**kwargs)
+    rect_y = img.size[1] - _get_logo_size(**kwargs)[1] - LOGO_PADDING
+    width, top_offset, height, _ = _get_text_metrics(kwargs.get(KEY_AUTHOR), font)
+    text_position = _get_text_position(width, height, top_offset, rect_y, **kwargs)
     draw.rectangle(
         (
-            (padding, img.size[1] - _get_logo_size(**kwargs)[1] - LOGO_PADDING),
-            (padding + 100, img.size[1] - LOGO_PADDING)
+            (padding, rect_y),
+            (padding + width + X_OFFSET * 2, img.size[1] - LOGO_PADDING)
         ),
         fill=color,
         outline=TIER_MAP.get(kwargs.get(KEY_TIER), None),
         width=4
     )
     draw.text(
-        (padding, img.size[1] - _get_logo_size(**kwargs)[1] - LOGO_PADDING),
+        (padding + X_OFFSET, text_position[1]),
         kwargs.get(KEY_AUTHOR),
-        fill=(0, 0, 0),
+        fill=TEXT_FILL,
         font=font
     )
 
