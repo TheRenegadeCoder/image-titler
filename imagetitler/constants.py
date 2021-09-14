@@ -8,6 +8,7 @@ KEY_TIER = "tier"
 KEY_TITLE = "title"
 KEY_OUTPUT_PATH = "output_path"
 KEY_SIZE = "size"
+KEY_AUTHOR = "author"
 
 FILE_TYPES = [('image files', ('.png', '.jpg', '.jpeg'))]
 

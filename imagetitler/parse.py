@@ -18,6 +18,7 @@ def parse_input() -> argparse.Namespace:
     _add_batch_option(parser)
     _add_font_option(parser)
     _add_custom_size_option(parser)
+    _add_author_option(parser)
     args = parser.parse_args()
     return args
 
@@ -144,4 +145,12 @@ def _add_custom_size_option(parser: argparse.ArgumentParser) -> None:
         f'--{KEY_SIZE}',
         choices=SIZE_MAP.keys(),  # [f'{k} {v}' for k, v in SIZE_MAP.items()]
         help="change the default size of the output image"
+    )
+
+
+def _add_author_option(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "-a",
+        f"--{KEY_AUTHOR}",
+        help="add an author name to the output image"
     )
