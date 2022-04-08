@@ -11,7 +11,7 @@ from typing import Optional, List
 from PIL import ImageTk, Image
 from matplotlib import font_manager
 
-from . import __version__
+from __init__ import __version__
 from imagetitler.constants import *
 from imagetitler.draw import process_images
 from imagetitler.parse import parse_input
