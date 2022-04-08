@@ -30,10 +30,10 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     install_requires=[
-        'titlecase',
-        'pillow>=6.0.0',
-        'pathvalidate',
-        'piexif',
-        'matplotlib'
+        'titlecase>=2.0',
+        'pillow>=9.0.0',
+        'pathvalidate>=2.0.0',
+        'piexif>=1.0.0',
+        'matplotlib>=3.0.0'
     ],
 )
