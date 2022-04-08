@@ -4,9 +4,9 @@ from typing import List
 import pathvalidate
 import piexif
 import piexif.helper
-import pkg_resources
 from PIL import Image
 
+from . import __version__
 from imagetitler.constants import *
 
 
@@ -52,7 +52,7 @@ def _generate_version_exif(image: Image.Image) -> bytes:
     :return: the exif data as a byte string (empty string for images that didn't already have data)
     """
     exif_data = b""
-    version: str = pkg_resources.require("image-titler")[0].version
+    version: str = __version__
     version = version.replace(".", SEPARATOR)
     if exif := image.info.get('exif'):
         exif_dict = piexif.load(exif)
@@ -121,7 +121,7 @@ def _get_version() -> str:
 
     :return: the package version as a string (e.g. -v2.0.1)
     """
-    version = pkg_resources.require("image-titler")[0].version
+    version = __version__
     version = version.replace(".", SEPARATOR)
     return f'-v{version}'
 

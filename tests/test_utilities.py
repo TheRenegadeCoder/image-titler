@@ -7,7 +7,7 @@ from unittest.mock import patch
 from PIL import Image
 from imagetitler import cli
 
-from __init__ import __version__
+from . import __version__
 from imagetitler.draw import process_images
 from imagetitler.parse import parse_input
 from imagetitler.store import save_copies

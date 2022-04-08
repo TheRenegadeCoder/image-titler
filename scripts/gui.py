@@ -2,6 +2,8 @@
 The GUI interface for the image-titler script.
 """
 
+import os
+import sys
 import tkinter as tk
 import tkinter.ttk as ttk
 from pathlib import Path
@@ -11,7 +13,15 @@ from typing import Optional, List
 from PIL import ImageTk, Image
 from matplotlib import font_manager
 
-from __init__ import __version__
+PROJECT_ROOT = os.path.abspath(
+    os.path.join(
+        os.path.dirname(__file__), 
+        os.pardir
+    )
+)
+sys.path.append(PROJECT_ROOT)
+
+from imagetitler import __version__
 from imagetitler.constants import *
 from imagetitler.draw import process_images
 from imagetitler.parse import parse_input
