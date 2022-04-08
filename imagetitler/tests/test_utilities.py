@@ -4,10 +4,10 @@ from pathlib import Path
 from unittest import TestCase
 from unittest.mock import patch
 
-import pkg_resources
 from PIL import Image
 from imagetitler import cli
 
+from . import __version__
 from imagetitler.draw import process_images
 from imagetitler.parse import parse_input
 from imagetitler.store import save_copies
@@ -52,7 +52,7 @@ TEST_IMAGES = [
 TEST_DUMP = "imagetitler/tests/dump"
 TEST_SOLO_DUMP = TEST_DUMP + "/solo"
 TEST_BATCH_DUMP = TEST_DUMP + "/batch"
-SAMPLE_DUMP = "samples/v" + pkg_resources.require("image-titler")[0].version
+SAMPLE_DUMP = "samples/v" + __version__
 
 
 class TestUtilities(TestCase):
