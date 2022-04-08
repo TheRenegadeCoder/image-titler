@@ -1,11 +1,13 @@
 import setuptools
 
+from imagetitler import __version__
+
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="image-titler",
-    version="2.3.4",
+    version=__version__,
     author="The Renegade Coder",
     author_email="jeremy.grifski@therenegadecoder.com",
     description="An image processing utility which provides options for generating thumbnails for various social media platforms.",
