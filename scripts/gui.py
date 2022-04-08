@@ -124,7 +124,7 @@ class ImageTitlerGUI(ttk.Frame):
         self.menu.current_edit = process_images(**self.options)
         maxsize = (1028, 1028)
         small_image = self.menu.current_edit[0].copy()
-        small_image.thumbnail(maxsize, Image.ANTIALIAS)
+        small_image.thumbnail(maxsize, Image.Resampling.LANCZOS)
         image = ImageTk.PhotoImage(small_image)
         self.preview.config(image=image)
         self.preview.image = image
@@ -140,7 +140,7 @@ class ImageTitlerGUI(ttk.Frame):
             self.logo_path = logo_path
             maxsize = (50, 50)
             small_image = Image.open(logo_path)
-            small_image.thumbnail(maxsize, Image.ANTIALIAS)
+            small_image.thumbnail(maxsize, Image.Resampling.LANCZOS)
             image = ImageTk.PhotoImage(small_image)
             self.option_pane.logo_value.config(image=image)
             self.option_pane.logo_value.image = image
