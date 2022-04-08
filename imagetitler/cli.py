@@ -2,9 +2,9 @@
 The commandline interface for the image-titler script.
 """
 
-from imagetitler.draw import process_images
-from imagetitler.parse import parse_input
-from imagetitler.store import save_copies
+from draw import process_images
+from parse import parse_input
+from store import save_copies
 
 
 def main() -> None:

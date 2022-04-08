@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="image-titler",
-    version="2.3.3",
+    version="2.3.4",
     author="The Renegade Coder",
     author_email="jeremy.grifski@therenegadecoder.com",
     description="An image processing utility which provides options for generating thumbnails for various social media platforms.",
@@ -30,10 +30,10 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     install_requires=[
-        'titlecase',
-        'pillow>=6.0.0',
-        'pathvalidate',
-        'piexif',
-        'matplotlib'
+        'titlecase>=2.0',
+        'pillow>=9.0.0',
+        'pathvalidate>=2.0.0',
+        'piexif>=1.0.0',
+        'matplotlib>=3.0.0'
     ],
 )

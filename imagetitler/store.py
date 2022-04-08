@@ -7,7 +7,7 @@ import piexif.helper
 import pkg_resources
 from PIL import Image
 
-from imagetitler.constants import *
+from constants import *
 
 
 def save_copies(edited_images: List[Image.Image], **kwargs) -> List[str]:

@@ -12,10 +12,10 @@ import pkg_resources
 from PIL import ImageTk, Image
 from matplotlib import font_manager
 
-from imagetitler.constants import *
-from imagetitler.draw import process_images
-from imagetitler.parse import parse_input
-from imagetitler.store import save_copies
+from constants import *
+from draw import process_images
+from parse import parse_input
+from store import save_copies
 
 FONTS = {
     f"{f.name} ({f.style}, {f.variant}, {f.weight}, {f.stretch})": f.fname
@@ -114,7 +114,7 @@ class ImageTitlerGUI(ttk.Frame):
         self.menu.current_edit = process_images(**self.options)
         maxsize = (1028, 1028)
         small_image = self.menu.current_edit[0].copy()
-        small_image.thumbnail(maxsize, Image.ANTIALIAS)
+        small_image.thumbnail(maxsize, Image.Resampling.LANCZOS)
         image = ImageTk.PhotoImage(small_image)
         self.preview.config(image=image)
         self.preview.image = image
@@ -130,7 +130,7 @@ class ImageTitlerGUI(ttk.Frame):
             self.logo_path = logo_path
             maxsize = (50, 50)
             small_image = Image.open(logo_path)
-            small_image.thumbnail(maxsize, Image.ANTIALIAS)
+            small_image.thumbnail(maxsize, Image.Resampling.LANCZOS)
             image = ImageTk.PhotoImage(small_image)
             self.option_pane.logo_value.config(image=image)
             self.option_pane.logo_value.image = image
