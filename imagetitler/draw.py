@@ -9,7 +9,7 @@ from PIL import ImageDraw
 from PIL import ImageFont
 from titlecase import titlecase
 
-from constants import *
+from imagetitler.constants import *
 
 TEXT_FILL = (255, 255, 255)
 RECTANGLE_FILL = (201, 2, 41)
@@ -73,7 +73,7 @@ def _process_image(**kwargs) -> Image.Image:
         cropped_img.filename = img.filename  # Ensures filename data is transferred to updated copy
     color = RECTANGLE_FILL
     if logo_path := kwargs.get(KEY_LOGO_PATH):
-        logo: Image.Image = Image.open(logo_path).convert("RGBA")
+        logo: Image.Image = Image.open(logo_path)
         color = _get_best_top_color(logo)
         _draw_logo(cropped_img, logo, **kwargs)
     edited_image = _draw_overlay(
