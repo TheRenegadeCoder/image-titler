@@ -1,16 +1,25 @@
 import shutil
 import sys
+import os
 from pathlib import Path
 from unittest import TestCase
 from unittest.mock import patch
 
-import pkg_resources
 from PIL import Image
-from imagetitler import cli
 
+PROJECT_ROOT = os.path.abspath(
+    os.path.join(
+        os.path.dirname(__file__), 
+        os.pardir
+    )
+)
+sys.path.append(PROJECT_ROOT)
+
+from imagetitler import __version__
 from imagetitler.draw import process_images
 from imagetitler.parse import parse_input
 from imagetitler.store import save_copies
+from scripts import cli
 
 CUSTOM_FONT = "imagetitler/assets/fonts/arial.ttf"
 CUSTOM_FONT_TALL = "imagetitler/assets/fonts/gadugi.ttf"
@@ -52,7 +61,7 @@ TEST_IMAGES = [
 TEST_DUMP = "imagetitler/tests/dump"
 TEST_SOLO_DUMP = TEST_DUMP + "/solo"
 TEST_BATCH_DUMP = TEST_DUMP + "/batch"
-SAMPLE_DUMP = "samples/v" + pkg_resources.require("image-titler")[0].version
+SAMPLE_DUMP = "samples/v" + __version__
 
 
 class TestUtilities(TestCase):

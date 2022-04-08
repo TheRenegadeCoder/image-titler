@@ -2,16 +2,26 @@
 The GUI interface for the image-titler script.
 """
 
+import os
+import sys
 import tkinter as tk
 import tkinter.ttk as ttk
 from pathlib import Path
 from tkinter import filedialog
 from typing import Optional, List
 
-import pkg_resources
 from PIL import ImageTk, Image
 from matplotlib import font_manager
 
+PROJECT_ROOT = os.path.abspath(
+    os.path.join(
+        os.path.dirname(__file__), 
+        os.pardir
+    )
+)
+sys.path.append(PROJECT_ROOT)
+
+from imagetitler import __version__
 from imagetitler.constants import *
 from imagetitler.draw import process_images
 from imagetitler.parse import parse_input
@@ -114,7 +124,7 @@ class ImageTitlerGUI(ttk.Frame):
         self.menu.current_edit = process_images(**self.options)
         maxsize = (1028, 1028)
         small_image = self.menu.current_edit[0].copy()
-        small_image.thumbnail(maxsize, Image.ANTIALIAS)
+        small_image.thumbnail(maxsize, Image.Resampling.LANCZOS)
         image = ImageTk.PhotoImage(small_image)
         self.preview.config(image=image)
         self.preview.image = image
@@ -130,7 +140,7 @@ class ImageTitlerGUI(ttk.Frame):
             self.logo_path = logo_path
             maxsize = (50, 50)
             small_image = Image.open(logo_path)
-            small_image.thumbnail(maxsize, Image.ANTIALIAS)
+            small_image.thumbnail(maxsize, Image.Resampling.LANCZOS)
             image = ImageTk.PhotoImage(small_image)
             self.option_pane.logo_value.config(image=image)
             self.option_pane.logo_value.image = image
@@ -482,8 +492,7 @@ def main():
     """
     options: dict = vars(parse_input())
     root = ImageTitlerMain(options)
-    version = pkg_resources.require("image-titler")[0].version
-    root.title(f"The Renegade Coder Image Titler {version}")
+    root.title(f"The Renegade Coder Image Titler {__version__}")
     root.iconphoto(False, tk.PhotoImage(file=TRC_ICON))
     root.mainloop()
 
