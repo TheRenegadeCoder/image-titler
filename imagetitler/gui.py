@@ -8,10 +8,10 @@ from pathlib import Path
 from tkinter import filedialog
 from typing import Optional, List
 
-import pkg_resources
 from PIL import ImageTk, Image
 from matplotlib import font_manager
 
+from . import __version__
 from imagetitler.constants import *
 from imagetitler.draw import process_images
 from imagetitler.parse import parse_input
@@ -482,8 +482,7 @@ def main():
     """
     options: dict = vars(parse_input())
     root = ImageTitlerMain(options)
-    version = pkg_resources.require("image-titler")[0].version
-    root.title(f"The Renegade Coder Image Titler {version}")
+    root.title(f"The Renegade Coder Image Titler {__version__}")
     root.iconphoto(False, tk.PhotoImage(file=TRC_ICON))
     root.mainloop()
 
