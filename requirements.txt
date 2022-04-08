@@ -1,0 +1,5 @@
+titlecase>=2.0
+pillow>=9.0.0
+pathvalidate>=2.0.0
+piexif>=1.0.0
+matplotlib>=3.0.0
