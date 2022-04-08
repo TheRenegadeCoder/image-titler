@@ -26,4 +26,4 @@ jobs:
         pip install pytest
         pip install pytest-cov
     - name: PyTest
-      run: python -m pytest --cov=imagetitler.draw imagetitler/tests/
+      run: python -m pytest
