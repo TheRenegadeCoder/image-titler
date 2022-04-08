@@ -15,7 +15,7 @@ PROJECT_ROOT = os.path.abspath(
 )
 sys.path.append(PROJECT_ROOT)
 
-from . import __version__
+from imagetitler import __version__
 from imagetitler import cli
 from imagetitler.draw import process_images
 from imagetitler.parse import parse_input
