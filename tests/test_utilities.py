@@ -1,13 +1,22 @@
 import shutil
 import sys
+import os
 from pathlib import Path
 from unittest import TestCase
 from unittest.mock import patch
 
 from PIL import Image
-from imagetitler import cli
+
+PROJECT_ROOT = os.path.abspath(
+    os.path.join(
+        os.path.dirname(__file__), 
+        os.pardir
+    )
+)
+sys.path.append(PROJECT_ROOT)
 
 from . import __version__
+from imagetitler import cli
 from imagetitler.draw import process_images
 from imagetitler.parse import parse_input
 from imagetitler.store import save_copies
