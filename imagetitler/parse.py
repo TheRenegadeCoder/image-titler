@@ -1,6 +1,6 @@
 import argparse
 
-from imagetitler.constants import *
+from constants import *
 
 
 def parse_input() -> argparse.Namespace:

@@ -9,7 +9,7 @@ from PIL import ImageDraw
 from PIL import ImageFont
 from titlecase import titlecase
 
-from imagetitler.constants import *
+from constants import *
 
 TEXT_FILL = (255, 255, 255)
 RECTANGLE_FILL = (201, 2, 41)
@@ -293,7 +293,7 @@ def _draw_logo(img: Image.Image, logo: Image.Image, **kwargs):
     logo_size = _get_logo_size(**kwargs)
     logo.thumbnail(logo_size)
     _, height = img.size
-    img.paste(logo, (LOGO_PADDING, height - logo_size[1] - LOGO_PADDING), logo)
+    img.paste(logo, (LOGO_PADDING, height - logo_size[1] - LOGO_PADDING), logo.convert("RGBA"))
 
 
 def _split_string_by_nearest_middle_space(input_string: str) -> tuple:
