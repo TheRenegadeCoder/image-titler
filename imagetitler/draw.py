@@ -73,7 +73,7 @@ def _process_image(**kwargs) -> Image.Image:
         cropped_img.filename = img.filename  # Ensures filename data is transferred to updated copy
     color = RECTANGLE_FILL
     if logo_path := kwargs.get(KEY_LOGO_PATH):
-        logo: Image.Image = Image.open(logo_path)
+        logo: Image.Image = Image.open(logo_path).convert("RGBA")
         color = _get_best_top_color(logo)
         _draw_logo(cropped_img, logo, **kwargs)
     edited_image = _draw_overlay(
@@ -293,7 +293,7 @@ def _draw_logo(img: Image.Image, logo: Image.Image, **kwargs):
     logo_size = _get_logo_size(**kwargs)
     logo.thumbnail(logo_size)
     _, height = img.size
-    img.paste(logo, (LOGO_PADDING, height - logo_size[1] - LOGO_PADDING), logo.convert("RGBA"))
+    img.paste(logo, (LOGO_PADDING, height - logo_size[1] - LOGO_PADDING), logo)
 
 
 def _split_string_by_nearest_middle_space(input_string: str) -> tuple:
