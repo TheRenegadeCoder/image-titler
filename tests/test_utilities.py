@@ -41,6 +41,8 @@ CUSTOM_FONT_IMAGE = "imagetitler/assets/images/reflecting-on-my-third-semester-o
 ONE_LINE_TITLE_IMAGE = "imagetitler/assets/images/minimalism.jpg"
 YOUTUBE_IMAGE = "imagetitler/assets/images/the-art-of-simplification.jpg"
 TRAILING_SPACE_IMAGE = "imagetitler/assets/images/how-to-iterate-over-multiple-lists-at-the-same-time-in-python.jpg"
+NO_TITLE_IMAGE = "imagetitler/assets/images/baklava-in-every-language.jpg"
+NO_TITLE_LOGO_IMAGE = "imagetitler/assets/images/hello-world-in-c.jpg"
 
 TEST_IMAGES = [
     Image.open(path) for path in
@@ -54,7 +56,9 @@ TEST_IMAGES = [
         CUSTOM_FONT_IMAGE,
         ONE_LINE_TITLE_IMAGE,
         YOUTUBE_IMAGE,
-        TRAILING_SPACE_IMAGE
+        TRAILING_SPACE_IMAGE,
+        NO_TITLE_IMAGE,
+        NO_TITLE_LOGO_IMAGE,
     ]
 ]
 
@@ -289,6 +293,29 @@ class TestIntegration(TestUtilities):
         TestIntegration._generate_solo_test_image(trailing_spaces)
         TestIntegration._generate_sample_image(trailing_spaces[:-2])
 
+    def test_no_title(self) -> None:
+        """
+        Tests the following command: image-titler -n -p NO_TITLE_IMAGE
+
+        The resulting image should have the custom title on the default image.
+
+        :return: None
+        """
+        no_title = ["image-titler", "-n", "-p", NO_TITLE_IMAGE]
+        TestIntegration._generate_solo_test_image(no_title)
+        TestIntegration._generate_sample_image(no_title)
+
+    def test_no_title_logo(self) -> None:
+        """
+        Tests the following command: image-titler -n -p NO_TITLE_IMAGE -l TRC_ICON_PATH
+
+        The resulting image should have the custom title on the default image.
+
+        :return: None
+        """
+        no_title_logo = ["image-titler", "--no_title", "--no_title", "-p", NO_TITLE_LOGO_IMAGE, "-l", TRC_ICON_PATH]
+        TestIntegration._generate_solo_test_image(no_title_logo)
+        TestIntegration._generate_sample_image(no_title_logo)
 
 class TestParseInput(TestUtilities):
     """
@@ -309,6 +336,7 @@ class TestParseInput(TestUtilities):
             self.assertEqual(args.output_path, None)
             self.assertEqual(args.logo_path, None)
             self.assertEqual(args.title, None)
+            self.assertFalse(args.no_title)
 
     def test_title(self) -> None:
         """
@@ -324,6 +352,23 @@ class TestParseInput(TestUtilities):
             self.assertEqual(args.output_path, None)
             self.assertEqual(args.logo_path, None)
             self.assertEqual(args.title, "Hello World")
+            self.assertFalse(args.no_title)
+
+    def test_title(self) -> None:
+        """
+        Tests that the no title is properly stored.
+
+        :return: None
+        """
+        with patch.object(sys, "argv", ["image-titler", "-n"]):
+            args = parse_input()
+            self.assertEqual(args.batch, False)
+            self.assertEqual(args.path, None)
+            self.assertEqual(args.tier, None)
+            self.assertEqual(args.output_path, None)
+            self.assertEqual(args.logo_path, None)
+            self.assertEqual(args.title, None)
+            self.assertTrue(args.no_title)
 
     def test_path(self) -> None:
         """
@@ -339,6 +384,7 @@ class TestParseInput(TestUtilities):
             self.assertEqual(args.output_path, None)
             self.assertEqual(args.logo_path, None)
             self.assertEqual(args.title, None)
+            self.assertFalse(args.no_title)
 
     def test_output_path(self) -> None:
         """
@@ -354,6 +400,7 @@ class TestParseInput(TestUtilities):
             self.assertEqual(args.output_path, "path/to/stuff")
             self.assertEqual(args.logo_path, None)
             self.assertEqual(args.title, None)
+            self.assertFalse(args.no_title)
 
     def test_logo_path(self) -> None:
         """
@@ -369,6 +416,7 @@ class TestParseInput(TestUtilities):
             self.assertEqual(args.output_path, None)
             self.assertEqual(args.logo_path, "path/to/stuff")
             self.assertEqual(args.title, None)
+            self.assertFalse(args.no_title)
 
     def test_batch(self) -> None:
         """
@@ -384,6 +432,7 @@ class TestParseInput(TestUtilities):
             self.assertEqual(args.output_path, None)
             self.assertEqual(args.logo_path, None)
             self.assertEqual(args.title, None)
+            self.assertFalse(args.no_title)
 
     def test_tier_premium(self) -> None:
         """
@@ -399,6 +448,7 @@ class TestParseInput(TestUtilities):
             self.assertEqual(args.output_path, None)
             self.assertEqual(args.logo_path, None)
             self.assertEqual(args.title, None)
+            self.assertFalse(args.no_title)
 
     def test_tier_free(self) -> None:
         """
@@ -414,6 +464,7 @@ class TestParseInput(TestUtilities):
             self.assertEqual(args.output_path, None)
             self.assertEqual(args.logo_path, None)
             self.assertEqual(args.title, None)
+            self.assertFalse(args.no_title)
 
 
 class TestProcessImages(TestUtilities):
@@ -472,6 +523,7 @@ class TestProcessImages(TestUtilities):
         :return: None
         """
         self.images.extend(process_images(title="Test Red Logo", logo_path=TRC_ICON_PATH))
+        self.assertEqual(1, len(self.images))
 
     def test_logo_blue(self) -> None:
         """
@@ -480,6 +532,7 @@ class TestProcessImages(TestUtilities):
         :return: None
         """
         self.images.extend(process_images(title="Test Blue Logo", logo_path=VF_ICON_PATH))
+        self.assertEqual(1, len(self.images))
 
     def test_free_tier(self) -> None:
         """
@@ -488,6 +541,7 @@ class TestProcessImages(TestUtilities):
         :return: None
         """
         self.images.extend(process_images(title="Test Free Tier", tier="free"))
+        self.assertEqual(1, len(self.images))
 
     def test_premium_tier(self) -> None:
         """
@@ -496,6 +550,7 @@ class TestProcessImages(TestUtilities):
         :return: None
         """
         self.images.extend(process_images(title="Test Premium Tier", tier="premium"))
+        self.assertEqual(1, len(self.images))
 
     def test_custom_font(self) -> None:
         """
