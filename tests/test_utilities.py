@@ -354,7 +354,7 @@ class TestParseInput(TestUtilities):
             self.assertEqual(args.title, "Hello World")
             self.assertFalse(args.no_title)
 
-    def test_title(self) -> None:
+    def test_no_title(self) -> None:
         """
         Tests that the no title is properly stored.
 
