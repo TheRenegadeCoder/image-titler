@@ -35,6 +35,12 @@ def _add_title_option(parser: argparse.ArgumentParser) -> None:
         f'--{KEY_TITLE}',
         help="add a custom title to the image"
     )
+    parser.add_argument(
+        '-n',
+        f'--{KEY_NO_TITLE}',
+        action="store_true",
+        help="do not add a custom title to the image"
+    )
 
 
 def _add_path_option(parser: argparse.ArgumentParser) -> None:

@@ -26,6 +26,7 @@ image-titler --logo_path "path/to/logo"  # Adds a 145x145 logo to the lower left
 image-titler --batch  # Runs the program in batch mode on a directory
 image-titler --font "path/to/font"  # Changes the default title font
 image-titler --size YouTube  # Changes the aspect ratio of the output file
+image-titler --no_title  # Do not add title
 ```
 
 Alternatively, you can spin up the GUI version of the software as of 2.0.0 as follows:
@@ -42,6 +43,7 @@ image-titler-gui --logo_path "path/to/logo"  # Adds a 145x145 logo to the lower 
 image-titler-gui --batch  # Runs the program in batch mode on a directory
 image-titler-gui --font "path/to/font"  # Changes the default title font
 image-titler-gui --size YouTube  # Changes the aspect ratio of the output file
+image-titler-gui --no_title  # Do not add title
 ```
 
 ## Default Behavior
@@ -75,3 +77,4 @@ Here's a description of all the option used in the samples above.
 | --size, -s | Choose between "Twitter", "WordPress", and "YouTube" | Sets the aspect ratio of the output image |
 | --tier, -r | Choose between "free" (silver) or "premium" (gold) | Adds a border color to the title |
 | --title, -t | Any string | Overrides the automatic title feature |
+| --no_title, -n | | Do not add title |

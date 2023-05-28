@@ -6,6 +6,7 @@ KEY_LOGO_PATH = "logo_path"
 KEY_PATH = "path"
 KEY_TIER = "tier"
 KEY_TITLE = "title"
+KEY_NO_TITLE = "no_title"
 KEY_OUTPUT_PATH = "output_path"
 KEY_SIZE = "size"
 

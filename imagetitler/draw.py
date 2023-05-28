@@ -35,7 +35,10 @@ def process_images(**kwargs) -> List[Image.Image]:
         images = _process_batch(**kwargs)
     else:
         kwargs[KEY_PATH] = kwargs.get(KEY_PATH) if kwargs.get(KEY_PATH) else TRC_IMAGE
-        kwargs[KEY_TITLE] = kwargs.get(KEY_TITLE) if kwargs.get(KEY_TITLE) else _convert_file_name_to_title(**kwargs)
+        if kwargs.get(KEY_NO_TITLE):
+            kwargs[KEY_TITLE] = ""
+        else:
+            kwargs[KEY_TITLE] = kwargs.get(KEY_TITLE) if kwargs.get(KEY_TITLE) else _convert_file_name_to_title(**kwargs)
         images.append(_process_image(**kwargs))
     return images
 
@@ -53,7 +56,11 @@ def _process_batch(**kwargs) -> List[Image.Image]:
         absolute_path = os.path.join(input_path, path)
         image_kwargs = kwargs.copy()
         image_kwargs[KEY_PATH] = absolute_path
-        image_kwargs[KEY_TITLE] = kwargs.get(KEY_TITLE) if kwargs.get(KEY_TITLE) else _convert_file_name_to_title(**image_kwargs)
+        if kwargs.get(KEY_NO_TITLE):
+            image_kwargs[KEY_TITLE] = ""
+        else:
+            image_kwargs[KEY_TITLE] = kwargs.get(KEY_TITLE) if kwargs.get(KEY_TITLE) else _convert_file_name_to_title(**image_kwargs)
+
         edited_image = _process_image(**image_kwargs)
         edited_images.append(edited_image)
     return edited_images
@@ -243,9 +250,9 @@ def _draw_overlay(image: Image.Image, color: tuple, **kwargs) -> Image:
     :return: the updated image
     """
     draw = ImageDraw.Draw(image)
-    font = _get_appropriate_font_size(**kwargs)
 
     if title := kwargs.get(KEY_TITLE):
+        font = _get_appropriate_font_size(**kwargs)
         title = title.strip()
         # Detect space (precondition for split)
         if len(title.split()) > 1:
