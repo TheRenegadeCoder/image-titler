@@ -20,9 +20,9 @@ pytest = "*"
 pytest-cov = "*"
 
 [tool.poetry.scripts]
-image-titler = scripts.cli:main
-image_titler = scripts.cli:main
-image-titler-gui = scripts.gui:main
+image-titler = "scripts.cli:main"
+image_titler = "scripts.cli:main"
+image-titler-gui = "scripts.gui:main"
 
 [build-system]
 requires = ["poetry-core"]
