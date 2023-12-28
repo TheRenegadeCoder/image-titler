@@ -87,5 +87,5 @@ support for different versions of Python.
 | Python                 | 3.12 | 3.11 | 3.10 | 3.9 | 3.8 |
 | ---------------------- | ---- | ---- | ---- | --- | --- |
 | image-titler >= 2.5    | yes  | yes  |      |     |     |
-| image-titler 1.8 - 2.5 |      |      | yes  | yes | yes |
+| image-titler 1.8 - 2.4 |      |      | yes  | yes | yes |
 | image-titler <= 1.8    |      |      |      |     |     |
