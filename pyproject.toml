@@ -7,9 +7,9 @@ license = "GPLv3"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.9"
 titlecase = "^2.0"
-pillow = "^9.0.0"
+pillow = "^10.0.0"
 pathvalidate = "^2.0"
 piexif = "^1.0"
 matplotlib = "^3.0"

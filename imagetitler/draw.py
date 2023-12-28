@@ -237,7 +237,7 @@ def _get_appropriate_font_size(**kwargs) -> ImageFont:
     font = font if font else DEFAULT_FONT
     title = kwargs.get(KEY_TITLE)
     font_size = 12
-    while ImageFont.truetype(font, font_size).getsize(title)[1] < bar_height - 10:
+    while ImageFont.truetype(font, font_size).getbbox(title)[3] < bar_height - 10:
         font_size += 1
     return ImageFont.truetype(font, font_size)
 
