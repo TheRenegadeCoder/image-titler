@@ -78,3 +78,14 @@ Here's a description of all the option used in the samples above.
 | --tier, -r | Choose between "free" (silver) or "premium" (gold) | Adds a border color to the title |
 | --title, -t | Any string | Overrides the automatic title feature |
 | --no_title, -n | | Do not add title |
+
+## Python Version Compatibility
+
+As this utility has grown and changed, it has also changed its
+support for different versions of Python.
+
+| Python                 | 3.12 | 3.11 | 3.10 | 3.9 | 3.8 |
+| ---------------------- | ---- | ---- | ---- | --- | --- |
+| image-titler >= 2.5    | yes  | yes  |      |     |     |
+| image-titler 1.8 - 2.5 |      |      | yes  | yes | yes |
+| image-titler <= 1.8    |      |      |      |     |     |
