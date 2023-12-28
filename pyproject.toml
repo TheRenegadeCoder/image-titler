@@ -6,6 +6,7 @@ authors = ["Jeremy Grifski <jeremy.grifski@therenegadecoder.com>"]
 license = "GPL-3.0-or-later"
 readme = "README.md"
 repository = "https://github.com/TheRenegadeCoder/image-titler"
+packages = [{include = "imagetitler"}]
 
 [tool.poetry.dependencies]
 python = "^3.9"
