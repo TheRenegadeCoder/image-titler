@@ -9,7 +9,7 @@ repository = "https://github.com/TheRenegadeCoder/image-titler"
 packages = [{include = "imagetitler"}]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.11"
 titlecase = "^2.0"
 pillow = "^10.0.0"
 pathvalidate = "^2.0"
