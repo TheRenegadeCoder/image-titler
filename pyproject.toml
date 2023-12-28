@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "image-titler"
-version = "2.4.0"
+version = "2.5.0"
 description = "An image processing utility which provides options for generating thumbnails for various social media platforms."
 authors = ["Jeremy Grifski <jeremy.grifski@therenegadecoder.com>"]
 license = "GPLv3"
@@ -16,6 +16,7 @@ matplotlib = "^3.0"
 
 [tool.poetry.group.test.dependencies]
 pytest = "*"
+pytest-cov = "*"
 
 [build-system]
 requires = ["poetry-core"]
