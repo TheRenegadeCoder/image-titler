@@ -3,8 +3,9 @@ name = "image-titler"
 version = "2.5.0"
 description = "An image processing utility which provides options for generating thumbnails for various social media platforms."
 authors = ["Jeremy Grifski <jeremy.grifski@therenegadecoder.com>"]
-license = "GPLv3"
+license = "GPL-3.0-or-later"
 readme = "README.md"
+repository = "https://github.com/TheRenegadeCoder/image-titler"
 
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -17,6 +18,11 @@ matplotlib = "^3.0"
 [tool.poetry.group.test.dependencies]
 pytest = "*"
 pytest-cov = "*"
+
+[tool.poetry.scripts]
+image-titler = scripts.cli:main
+image_titler = scripts.cli:main
+image-titler-gui = scripts.gui:main
 
 [build-system]
 requires = ["poetry-core"]
